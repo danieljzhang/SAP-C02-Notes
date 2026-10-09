@@ -1,10 +1,14 @@
-# AWS Database Migration Service — SAP-C02 Study Notes
+> Exam relevance: Domain 4. DMS moves data between supported database engines with full load and ongoing change data capture (CDC); schema and code conversion are separate concerns.
+
+---
 
 ## 1. Purpose and Exam Relevance
 
 AWS Database Migration Service (AWS DMS) moves data between supported database and analytics engines, including migrations into, within, or out of AWS. It supports one-time full-load migrations and ongoing change data capture (CDC) so a target can stay close to the source until cutover. DMS is central when a database must move independently from its application servers or when downtime must be minimized.
 
 **Key distinction:** DMS moves and replicates data; schema and code conversion are separate concerns. Use DMS Schema Conversion or AWS Schema Conversion Tool (AWS SCT) where appropriate to assess/convert schema objects, then validate and remediate application SQL and semantic differences.
+
+---
 
 ## 2. Core Components and Flow
 
@@ -26,6 +30,8 @@ Target DB ── target endpoint ──> validation / cutover
 - **DMS Fleet Advisor:** helps discover database infrastructure and plan candidates. It is an assessment aid, not the replication engine.
 - **Schema Conversion:** assesses/converts supported schema objects for heterogeneous migrations. Automated conversion is not a substitute for application and data validation.
 
+---
+
 ## 3. Choosing a Migration Pattern
 
 | Need | Pattern |
@@ -35,6 +41,8 @@ Target DB ── target endpoint ──> validation / cutover
 | Different engines | Assess and convert schema/code; remediate incompatibilities; use DMS for full load/CDC where source/target pair and feature support allow |
 | Database modernization with major semantic differences | Benchmark target and application, redesign schema/query behavior as needed; do not treat engine conversion as a lift-and-shift |
 | Database files or server disks must move unchanged | Evaluate a server/storage migration approach, but maintain database-level consistency and supportability requirements |
+
+---
 
 ## 4. Cutover Architecture and Consistency
 
@@ -48,6 +56,8 @@ Target DB ── target endpoint ──> validation / cutover
 
 Do not promise zero data loss merely because CDC is enabled. Correctness depends on supported source logs, task configuration, transaction semantics, target behavior, and a controlled write transition.
 
+---
+
 ## 5. Security and Networking
 
 - Put replication resources where they can reach both endpoints over the intended network path. For hybrid sources, plan Direct Connect/VPN bandwidth, routing, DNS, firewall policy, and failover.
@@ -55,6 +65,8 @@ Do not promise zero data loss merely because CDC is enabled. Correctness depends
 - Use TLS for endpoint connections when supported and configure trust certificates correctly. Encrypt supported DMS storage with KMS; check key policies and cross-account access.
 - Use private subnets/VPC endpoints where applicable, and restrict security groups to the actual source, target, and DMS ports.
 - For cross-account migrations, authorize role and KMS access explicitly; avoid broad resource policies.
+
+---
 
 ## 6. Performance, Reliability, and Cost
 
@@ -64,6 +76,8 @@ Do not promise zero data loss merely because CDC is enabled. Correctness depends
 - DMS managed options reduce infrastructure operations but do not remove the need to operate tasks, endpoints, database engines, and migration validation.
 - Cost includes replication capacity/runtime, storage/logging, data transfer, target resources, and parallel-running environments. Stop temporary resources after acceptance and retention requirements are met.
 - Check current engine/version support, task limitations, table/LOB behavior, regional availability, and quotas in the DMS documentation.
+
+---
 
 ## 7. Common Failure Modes
 
@@ -75,13 +89,17 @@ Do not promise zero data loss merely because CDC is enabled. Correctness depends
 | CDC latency increases | Change rate versus apply rate, target locks/indexes, replication CPU/storage, network congestion, and long-running transactions |
 | Data differs after migration | Unsupported types/objects, transformations, character set/time-zone behavior, ongoing writes, validation coverage, and application-side writes |
 
-## 8. Original Scenario
+---
+
+## 8. Exam Scenarios
 
 **Scenario:** A company is moving a busy self-managed relational database to a different engine on Amazon RDS. The application can tolerate a short maintenance window but not a multi-day outage.
 
 **Recommended approach:** Use schema assessment/conversion first, remediate incompatible objects and SQL, load historical data with DMS, and use CDC while the application remains on the source. Test representative transactions and performance. For cutover, stop source writes, wait for CDC to catch up, validate critical data, switch application endpoints, and monitor. Keep a rollback decision point before allowing new target-only writes.
 
 **Why not just copy database files?** Physical file formats and engine semantics are not interchangeable across engines, and file copying does not provide the needed logical conversion or controlled CDC.
+
+---
 
 ## 9. Exam Tips
 
@@ -93,7 +111,7 @@ Do not promise zero data loss merely because CDC is enabled. Correctness depends
 
 ---
 
-## 🎯 Architecture Decision Notes
+## 10. 🎯 Architecture Decision Notes
 
 ### When DMS is the right tool
 
@@ -108,7 +126,9 @@ not universal. For homogeneous engine moves where native tools exist
 DMS shines on heterogeneous migrations and on keeping the source writable
 until cutover.
 
-## 10. Official References
+---
+
+## 11. Official References
 
 - [AWS DMS User Guide](https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html)
 - [AWS DMS Schema Conversion](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_SchemaConversion.html)

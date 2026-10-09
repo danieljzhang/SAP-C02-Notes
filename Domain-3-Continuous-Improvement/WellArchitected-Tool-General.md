@@ -1,5 +1,3 @@
-# AWS Well-Architected Tool — SAP-C02 Study Notes
-
 > Exam relevance: Domain 3 (25%). The Well-Architected Framework and Tool are the structured approach to architecture improvement. Know the 6 pillars, key design principles, and how the tool works.
 
 ---
@@ -131,9 +129,7 @@ Extend the Well-Architected Framework for specific domains:
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 8. 🎯 Architecture Decision Notes
 
 ### Make the review repeatable, not ceremonial
 
@@ -144,7 +140,7 @@ PDF nobody opens is theater. Use the review to force the tradeoff
 conversations teams avoid: cost vs resilience, speed vs control, build vs
 buy. Re-run after remediation and compare; the delta is the value.
 
-## 8. Official References
+## 9. Official References
 
 - [Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
 - [Well-Architected Tool](https://docs.aws.amazon.com/wellarchitected/latest/userguide/)

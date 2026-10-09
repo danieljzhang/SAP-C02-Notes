@@ -1,5 +1,3 @@
-# AWS CloudTrail — SAP-C02 Study Notes
-
 > Exam relevance: Domains 1, 3. CloudTrail is the API audit log for AWS. Know trail types, event types, CloudTrail Lake, and Insights.
 
 ---

@@ -1,5 +1,3 @@
-# AWS X-Ray — SAP-C02 Study Notes
-
 > Exam relevance: Domains 2, 3. X-Ray is the distributed tracing service. Know service maps, sampling, annotations, and integration with Lambda, ECS, and API Gateway.
 
 ---

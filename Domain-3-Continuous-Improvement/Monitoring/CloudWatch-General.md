@@ -1,5 +1,3 @@
-# Amazon CloudWatch — SAP-C02 Study Notes
-
 > Exam relevance: Domains 2, 3, 4. CloudWatch is the observability foundation. Know metrics, alarms, Logs Insights, dashboards, Container Insights, and cross-account observability.
 
 ---
@@ -200,9 +198,7 @@ Stream log data in real-time to:
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 12. 🎯 Architecture Decision Notes
 
 ### Choose the signal that answers the operational question
 
@@ -220,10 +216,6 @@ Stream log data in real-time to:
   Config records *what the configuration was* and evaluates compliance.
   Incident investigation usually needs both.
 
----
-
-## 🎯 Architecture Decision Notes
-
 ### API canary vs heartbeat — test the behavior, not just the reachability
 
 Both are Synthetics canaries, but they answer different questions. A **heartbeat** canary checks that an endpoint responds at all — it catches "the server is down." An **API canary** issues real requests and asserts on the response: status codes, payload shape, latency — it catches "the server is up but returning errors," like a dependency that started replying 200 with an error body, or a third-party API silently returning internal-error payloads.
@@ -231,15 +223,11 @@ Both are Synthetics canaries, but they answer different questions. A **heartbeat
 Decision rules:
 
 - **Heartbeat** for: cron-job liveness, "did the nightly ETL phone home," IoT keep-alives — anywhere failure is defined as *absence of a signal*.
-- **API canary** for: any endpoint whose wrong answer is worse than no answer — payment callbacks, pricing feeds, partner integrations. If a bad response would cause your system to act on garbage (the trading-app scenario: acting on a partner's error payload as if it were market data), heartbeat monitoring is the wrong tool.
+- **API canary** for: any endpoint whose wrong answer is worse than no answer — payment callbacks, pricing feeds, partner integrations. If a bad response would cause a system to act on garbage (the trading-app scenario: acting on a partner's error payload as if it were market data), heartbeat monitoring is the wrong tool.
 - **Pair with Route 53 health checks** when the response should drive failover: the canary's alarm becomes the health check that shifts traffic to a secondary region.
-- Trap: a heartbeat that hits `/health` proves the load balancer and the web server work; it says nothing about the database, the downstream APIs, or the business logic. Match the canary's assertions to the failure modes you actually fear.
+- Trap: a heartbeat that hits `/health` proves the load balancer and the web server work; it says nothing about the database, the downstream APIs, or the business logic. Match the canary's assertions to the failure modes the workload actually faces.
 
 **Fresh example:** A travel-booking platform depends on a partner airline's fare API. A heartbeat on the API's status page stays green while the fare endpoint starts returning malformed prices. An API canary that requests a known route and asserts the price falls within a sane range trips within minutes — before customers book at $0 fares.
-
----
-
-## 🎯 Architecture Decision Notes
 
 ### Container Insights — read metrics at the right altitude
 
@@ -250,11 +238,11 @@ Decision rules:
 - **Scaling decisions live at the service level:** alarm on service-aggregated CPU/memory to drive ECS Service Auto Scaling. Cluster-level alarms are for capacity planning, not scaling actions.
 - **Right-sizing lives at the task level:** compare task-level *utilized* CPU/memory against what the task *definition* requested. Persistent under-utilization means shrink the task definition (direct cost saving on Fargate); tasks hitting their limits means grow it before OOM kills start.
 - **Collection model differs by launch type:** on Fargate, telemetry is built into the platform — nothing to install. On EC2, the metrics come from agents on the container instances. If Container Insights shows gaps on EC2, check the agent before blaming the workload.
-- Trap: service-level averages hide a single hot task. When an alarm fires at the service level, drill to task level before scaling — you may have a skewed workload (one bad partition key, one poisoned container) that more tasks won't fix.
+- Trap: service-level averages hide a single hot task. When an alarm fires at the service level, drill to task level before scaling — the workload may be skewed (one bad partition key, one poisoned container) that more tasks won't fix.
 
 **Fresh example:** A team's Fargate service keeps getting OOM-killed at 2 AM. Service-level memory looks fine (average 40%), but task-level metrics show one task per night spiking to its 512 MB limit while the others idle — a single tenant's export job landing on whatever task it hits. The fix is per-task memory headroom plus a queue-based split of the export workload, not a service-wide scale-out.
 
-## 12. Official References
+## 13. Official References
 
 - [CloudWatch User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/)
 - [CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html)

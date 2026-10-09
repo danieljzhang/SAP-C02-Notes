@@ -1,5 +1,3 @@
-# Resilience Patterns and DR Strategies — SAP-C02 Study Notes
-
 > Exam relevance: Domains 2, 3. DR strategies and resilience patterns are core SAP-C02 topics. Know the 4 DR strategies, RTO/RPO trade-offs, and multi-region patterns cold.
 
 ---
@@ -192,9 +190,7 @@ def retry_with_backoff(func, max_retries=5):
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 8. 🎯 Architecture Decision Notes
 
 ### Set RTO/RPO from business impact, then test the design
 
@@ -216,7 +212,7 @@ data volume, automation, dependencies, DNS behavior, and human steps.
 Rehearse failover *and* failback; measure a real restore before claiming an
 objective is met.
 
-## 8. Official References
+## 9. Official References
 
 - [AWS DR Whitepaper](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html)
 - [AWS Resilience Hub](https://docs.aws.amazon.com/resilience-hub/latest/userguide/)

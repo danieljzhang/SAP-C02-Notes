@@ -1,5 +1,3 @@
-# Domain 3: Continuous Improvement for Existing Solutions (25%)
-
 > Third highest weight domain. Focuses on making existing architectures better — more observable, more cost-efficient, more reliable, and more performant. Expect ~16 questions.
 
 ---

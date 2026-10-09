@@ -1,5 +1,3 @@
-# AWS Systems Manager — SAP-C02 Study Notes
-
 > Exam relevance: Domains 2, 3. Systems Manager is the operational backbone for EC2 and hybrid environments. Know Parameter Store, Session Manager, Run Command, Patch Manager, and Automation.
 
 ---
@@ -194,9 +192,7 @@ Collect metadata about instances and installed software:
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 12. 🎯 Architecture Decision Notes
 
 ### Secrets rotation — how it actually works
 
@@ -213,7 +209,7 @@ Secrets Manager rotation is not magic — it is a Lambda function you configure 
 
 **Trap:** Assuming rotation is instant and atomic. There is a window where two credentials are valid; applications must handle the transition, not assume a single credential.
 
-## 12. Official References
+## 13. Official References
 
 - [Systems Manager User Guide](https://docs.aws.amazon.com/systems-manager/latest/userguide/)
 - [Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html)

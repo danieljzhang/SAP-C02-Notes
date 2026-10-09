@@ -1,5 +1,3 @@
-# AWS Service Quotas — SAP-C02 Study Notes
-
 > Exam relevance: Domain 3 (25%). Service Quotas is the centralized way to view and request quota increases. Know how to monitor quotas proactively and integrate with CloudWatch.
 
 ---
