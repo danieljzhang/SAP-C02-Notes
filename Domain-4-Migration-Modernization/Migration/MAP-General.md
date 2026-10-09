@@ -61,6 +61,33 @@ The exact phases, deliverables, tools, eligibility, and funding rules depend on 
 - Keep the landing zone, people/process readiness, and post-migration operations in scope.
 - Program incentives are conditional and version-sensitive; do not make unsupported cost claims.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Choose the migration path from the target outcome
+
+The "6 Rs" are not a ladder — the right answer depends on business goal,
+app constraints, and acceptable change:
+
+| Path | When |
+|---|---|
+| Rehost (lift-and-shift) | Minimal change, speed matters, app cannot be redesigned now |
+| Replatform | Targeted improvements (managed DB, containers) without full redesign |
+| Refactor / re-architect | Current design cannot meet the goals at all |
+| Repurchase | A SaaS product replaces the workload better than any migration |
+| Retain | Keep as-is temporarily with a revisit date |
+| Retire | Decommission — often the highest-ROI "migration" decision |
+
+A plan that treats every server as lift-and-shift is not a plan. Discovery
+(dependencies, licensing, data gravity), cutover/rollback criteria, and
+post-migration validation are the plan; the tools execute it.
+
+**Tool roles:** Application Discovery Service *collects* environment data;
+Migration Hub *tracks* progress; Application Migration Service *rehosts*
+servers; DMS *moves databases*; VM Import/Export handles VM images. Match
+the tool to its job — none of them assess dependencies or licensing for you.
+
 ## 8. Official References
 
 - [AWS Migration Acceleration Program](https://aws.amazon.com/migration-acceleration-program/)

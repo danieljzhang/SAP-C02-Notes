@@ -93,6 +93,25 @@ Source servers                 AWS target Region
 - Migration Hub can track waves; it does not itself replicate servers or databases.
 - Check current naming, Region/OS support, quotas, ports, and setup steps before implementation.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Cutover discipline for rehosting
+
+Application Migration Service replicates continuously, which makes the
+cutover window about *coordination*, not data movement:
+
+- **Pre-warm everything:** AMIs, Auto Scaling minima, database parameter
+  groups, DNS TTLs lowered ahead of time.
+- **Define the rollback trigger before the window starts** — who calls it,
+  on what signal, and the exact steps. An unrehearsed rollback is an
+  unavailable rollback.
+- **Keep the source running** until the target is validated in production
+  traffic, not just smoke tests.
+- **Data tier cutover** (via DMS with CDC) needs its own rehearsal: full
+  load plus change capture, tested at production change rates.
+
 ## 10. Official References
 
 - [AWS Transform MGN User Guide](https://docs.aws.amazon.com/mgn/latest/ug/what-is-application-migration-service.html)

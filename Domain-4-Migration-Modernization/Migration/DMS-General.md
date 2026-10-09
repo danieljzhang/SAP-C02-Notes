@@ -91,6 +91,23 @@ Do not promise zero data loss merely because CDC is enabled. Correctness depends
 - No-downtime claims need explicit source-write, final synchronization, and rollback design.
 - Choose DMS when the database is the migration unit; MGN when the server is the unit; DataSync for files/objects.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### When DMS is the right tool
+
+Choose DMS when the requirement is *database* migration with minimal
+downtime: full load plus ongoing change data capture, then a short cutover.
+Size the replication instance for the workload and test with
+production-like change rates — DMS performance is not automatic.
+
+Check the source/target combination in the supported matrix first; DMS is
+not universal. For homogeneous engine moves where native tools exist
+(e.g., Aurora clones, RDS snapshots), the native path is often simpler.
+DMS shines on heterogeneous migrations and on keeping the source writable
+until cutover.
+
 ## 10. Official References
 
 - [AWS DMS User Guide](https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html)

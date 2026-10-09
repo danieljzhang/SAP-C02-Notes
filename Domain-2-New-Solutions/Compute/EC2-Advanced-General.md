@@ -143,6 +143,30 @@
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Designing for Spot interruption
+
+Spot's discount is only a good deal when the workload tolerates reclamation.
+Before choosing Spot, verify the workload can do all of these:
+
+- **Checkpoint** progress so an interrupted job resumes rather than restarts.
+- **Handle the 2-minute warning** — drain connections, stop accepting work,
+  persist state.
+- **Run across diverse capacity** — Spot Fleet or Auto Scaling mixed-instances
+  policies across instance types and AZs, so one reclamation event does not
+  take the whole fleet.
+- **Fall back** — keep On-Demand capacity (or a second Spot pool) for the
+  portion that must stay available.
+
+For ECS tasks on Spot: watch termination notices, stop new placements on
+draining instances, let tasks finish or restart elsewhere, and keep enough
+alternative capacity for service availability. Savings Plans and Reserved
+Instances are billing commitments for steady usage — they are not a
+resilience architecture and do not substitute for the design above.
+
 ## 9. Official References
 
 - [EC2 Instance Types](https://aws.amazon.com/ec2/instance-types/)
