@@ -176,6 +176,109 @@ no host-management appetite picks App Runner. A platform team needing
 placement control, cooperating sidecars, or custom networking picks ECS —
 and chooses Fargate when host management adds no value.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### App Runner's operating model — when the simplest container platform wins
+
+App Runner is the lowest-operational-overhead way to run an HTTP workload on AWS: you hand it source code (from a repo) or a container image, and it returns a running HTTPS endpoint with load balancing and request-driven horizontal scaling — no clusters, task definitions, or service discovery to manage. Think of it as Elastic Beanstalk's simpler successor for plain web apps and APIs.
+
+Decision rules:
+
+- **Pick App Runner** when the workload is a stateless HTTP service, the team wants zero container-orchestration work, and the app doesn't need fine-grained VPC control. Monolith-to-serverless replatforming with minimal refactoring is the textbook case.
+- **Don't pick App Runner** for long-running background workers, scheduled batch processing, or event-driven pipelines — it scales on HTTP traffic, not queues or schedules. Those belong on Fargate or Batch.
+- **App Runner vs Fargate:** if you need placement control, sidecars, service mesh, or private-VPC-only networking, you need ECS/Fargate; if you just need "my container, reachable over HTTPS," App Runner removes a layer of machinery.
+- **App Runner vs Lambda:** Lambda is event-driven with 15-minute execution limits and per-request billing; App Runner is always-on HTTP with container packaging. A REST API backed by a containerized framework (Spring, Django) fits App Runner; a webhook handler that runs 200 ms fits Lambda.
+
+Traps: App Runner's VPC support is partial compared to ECS — verify private-resource access (private ECR, RDS in a VPC) against current connector support before committing. And "scales down" does not mean serverless-to-zero in every configuration; model cost on sustained baseline traffic, not on the assumption of zero idle cost.
+
+**Fresh example:** A two-person team has a Java Spring Boot service currently on EC2 behind an ALB and wants to stop patching hosts. They point App Runner at the GitHub repo, attach a custom domain with the built-in TLS certificate, and connect it to an RDS database. The hourly report job that used to run on the same EC2 box moves to Fargate as a scheduled task — because App Runner would have no trigger for it.
+
+---
+
+## 🎯 Architecture Decision Notes
+
+### AWS Batch — the managed scheduler for parallel batch work
+
+AWS Batch is the answer when the workload is a large number of independent, long-running compute jobs: it takes job definitions (container images + resource requirements), queues them, provisions the right compute (EC2, Spot, or Fargate), runs them, and tears the compute down. You pay only for the underlying compute — there is no Batch charge.
+
+Core model to internalize:
+
+- **Jobs** are the unit of work (a container run). **Job queues** hold jobs until capacity is free and map to one or more **compute environments**.
+- **Compute environments** come in two flavors: *managed* (AWS provisions and scales instances for you — the default choice) and *unmanaged* (you bring your own cluster). Managed environments can mix On-Demand and Spot.
+- **Scheduling features that matter:** array jobs (submit thousands of indexed copies of one job), job dependencies (B before A finishes), and retry strategies.
+
+Decision rules:
+
+- **Batch over Lambda:** any job that can exceed 15 minutes, needs gigabytes of memory/disk, or requires dependency ordering and retries.
+- **Batch over Fargate-alone:** when you have hundreds-to-thousands of jobs needing queueing, prioritization, and dependency graphs — Fargate runs containers, Batch *schedules* them.
+- **Batch over hand-rolled SQS + Auto Scaling:** the queue-consumer pattern works but you own deduplication, scaling logic, and dependency handling. Batch gives you all three, plus Spot-aware provisioning.
+- **Cost lever:** run fault-tolerant, checkpointed jobs on Spot within a managed compute environment; keep a small On-Demand allocation for jobs that can't tolerate interruption.
+
+**Fresh example:** A genomics team runs 20,000 independent sequence-alignment jobs nightly, each taking 1–3 hours. They define one Batch job definition, submit the work as an array job to a queue backed by a managed compute environment (Spot-first, On-Demand fallback), with input data in S3 and results written back to S3. No cluster to babysit, no queue consumer fleet to scale — and the Spot mix cuts the compute bill versus their old fixed cluster.
+
+
+---
+
+## 🎯 Architecture Decision Notes
+
+### ECS Anywhere — one orchestrator for cloud and on-premises capacity
+
+ECS Anywhere registers servers that live outside AWS (your data center,
+edge sites, even a lab machine) as container instances in an ECS cluster.
+Registration and the ongoing control channel run over the SSM agent, so
+the cloud control plane schedules tasks onto machines it does not own.
+
+Decide from the constraint, not the novelty:
+
+| Situation | Verdict |
+|---|---|
+| Regulation or data residency keeps the workload on premises, but the team wants ECS task definitions, services, and IAM roles | Fit — one set of task definitions works in both places |
+| Staged migration: run the same container on premises today, move it to Fargate or EC2 later without re-platforming | Fit — launch type becomes a deployment detail, not a rewrite |
+| Pure greenfield with no on-prem footprint | No fit — use Fargate and skip the operational overhead |
+
+Traps: ECS Anywhere is not a migration service — it does not move images,
+data, or state for you. On-prem tasks never run on Fargate; the Fargate
+launch type only exists inside AWS. And the cluster's scheduling brain
+stays in the cloud, so the registration and SSM channel must be reliable
+even when the workload itself is meant to be autonomous.
+
+**Fresh example:** A regional bank must keep its transaction service in
+its own data center for compliance but wants the same deployment pipeline
+as its cloud services. It registers the on-prem hosts with ECS Anywhere,
+ships identical task definitions to both, and later moves non-regulated
+services to Fargate without changing the task definitions — only the
+launch target changes.
+
+## 🎯 Architecture Decision Notes
+
+### Fargate pulling ECR images from private subnets — pick the egress path deliberately
+
+A Fargate task in a private subnet fails image pulls (`CannotPullContainer`
+style errors) when it has no route to ECR. Do not reach for a public IP
+on the task — that contradicts the private-subnet design. Decide:
+
+| Requirement | Choice |
+|---|---|
+| Tasks need only AWS services (ECR, CloudWatch Logs, Secrets Manager) | **Interface VPC endpoints**: `ecr.api` for API calls, `ecr.dkr` for image layers, `logs` for log delivery. Cheaper and stays on the AWS network. |
+| Tasks also call the public internet (third-party APIs, package registries) | **NAT gateway** in the public subnet; task route table sends 0.0.0.0/0 to the NAT. Higher cost, adds a hop. |
+| Tasks sit in a public subnet | Auto-assign public IP on the task; the subnet's route to the internet gateway handles the rest. |
+
+The classic trap: creating a **gateway** VPC endpoint for ECR. Gateway
+endpoints serve only S3 and DynamoDB — ECR requires **interface**
+endpoints. Route-table edits are unnecessary for interface endpoints;
+they work through ENIs and security groups, so check that the endpoint
+security group allows the task's HTTPS traffic.
+
+**Fresh example:** A payment API runs on Fargate in private subnets with
+no internet access allowed by policy. The team creates interface endpoints
+for `ecr.api`, `ecr.dkr`, and `logs`, keeps auto-assign public IP
+disabled, and verifies the task execution role can call ECR — image pulls
+and log delivery work with zero public exposure. When the same API later
+needs a fraud-scoring SaaS over HTTPS, they add a NAT gateway rather than
+punching public IPs onto tasks.
+
 ## 12. Official References
 
 - [ECS Developer Guide](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/)

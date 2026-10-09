@@ -168,6 +168,76 @@ Managed add-ons maintained by AWS:
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Cluster endpoint access — the exam's favorite kubectl trap
+
+The EKS API server endpoint has three postures. Pick by who needs kubectl
+and from where:
+
+| Posture | Reachability | Use when |
+|---|---|---|
+| Public | Internet (optionally CIDR-restricted) | Developers/tools reach the cluster from anywhere approved |
+| Private | VPC only | Cluster must not be internet-reachable |
+| Private + public | Both, independently toggled | Mixed access during migration |
+
+**Fresh mini-scenario:** Developers administer the cluster from the
+corporate office connected via Direct Connect. Requirement: "the API server
+must not be reachable from the internet." A public endpoint with the
+office CIDR allow-listed is **wrong** — the endpoint is still
+internet-reachable, and the requirement says it must not be. The answer is
+the **private endpoint**, with kubectl traveling over DX/VPN.
+
+**Trap:** "Restrict with security groups" does not make a public endpoint
+private. Reachability model (public vs private) is the decision;
+CIDR allow-lists are a refinement *within* the public model.
+
+### Storage for pods — EBS CSI vs EFS CSI
+
+| | EBS CSI driver | EFS CSI driver |
+|---|---|---|
+| Volume type | Block storage, one AZ | Shared file system, multi-AZ |
+| Access mode | ReadWriteOnce (one node) | ReadWriteMany (many pods, many nodes) |
+| Pick when | Database pods, single-writer stateful workloads | Shared config, media, multi-pod read/write |
+
+**Fresh mini-scenario:** Three replicas of a CMS need shared access to the
+same uploaded-files directory. EBS CSI fails — EBS volumes attach to one
+node in one AZ. EFS CSI with a StorageClass is the answer; dynamic
+provisioning creates the access point per claim.
+
+**Trap:** "Persistent storage for pods" alone does not pick the driver —
+*shared* vs *exclusive* access does. Also: EBS snapshots back up EBS
+volumes; EFS needs AWS Backup or its own backup story.
+
+### Cluster version upgrades — order matters
+
+Kubernetes enforces version skew policy: upgrade the **control plane
+first**, then nodes, then add-ons. Reversing the order (nodes before
+control plane) violates skew policy and can break the cluster.
+
+- AWS supports each minor version for ~14 months, then **extended
+  support** pricing applies — the exam may frame "avoid extended support
+  cost" as the upgrade driver.
+- Managed node groups automate much of the node upgrade; self-managed
+  nodes are your runbook.
+- Verify add-on (VPC CNI, CoreDNS, kube-proxy) compatibility with the
+  target version *before* upgrading — add-ons lag the control plane.
+
+### EKS Anywhere vs EKS on Outposts — whose hardware?
+
+| | EKS Anywhere | EKS on Outposts |
+|---|---|---|
+| Hardware | **Customer's** on-premises servers | **AWS** racks installed on-premises |
+| Control | EKS console/CLI experience on your infra | Full AWS services locally |
+| Pick when | "Kubernetes on-prem with EKS tooling, our hardware" | "AWS APIs on-prem for latency/residency" |
+
+**Trap:** EKS Anywhere is not "EKS in the cloud" and not "AWS hardware
+on-prem" — it is the EKS *software experience* on customer hardware.
+"Run EKS on our existing VMware cluster" → EKS Anywhere. "Need DynamoDB
+and RDS APIs in our data center" → Outposts.
+
 ## 11. Official References
 
 - [EKS User Guide](https://docs.aws.amazon.com/eks/latest/userguide/)

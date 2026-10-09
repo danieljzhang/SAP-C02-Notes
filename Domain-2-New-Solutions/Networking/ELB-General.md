@@ -154,6 +154,23 @@ GWLB for inserting virtual appliances. The exam often hides the real
 requirement in one adjective — "static IP," "preserve source IP," or
 "inspect traffic" each points to a different answer.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### ACM certificates are regional — plan one per region for regional endpoints
+
+An ACM certificate lives in exactly one region, and a regional service can only use a certificate from its own region. This bites in multi-region designs: an Application Load Balancer in eu-west-1 cannot use the certificate you requested in us-east-1 — you must request a separate certificate for the same domain in each region where an ALB (or NLB, or API Gateway) terminates TLS. CloudFront is the sole exception: because it is a global service, its viewer-facing certificate must be issued in us-east-1 and is then distributed to all edge locations.
+
+Decision rules:
+
+- **Multi-region ALB/NLB/API Gateway:** request (or import) the certificate in every region you terminate TLS in. Automate this — DNS-validated ACM requests are scriptable and renew automatically.
+- **CloudFront in front:** one certificate in us-east-1 covers the viewer leg globally; each regional origin behind it still needs its own regional certificate if you run HTTPS to the origin.
+- **Imported certificates:** same regional rule applies, except you now also own renewal everywhere — prefer ACM-issued certs unless compliance mandates your own CA.
+- Trap: "the certificate works in us-east-1, so I'll reuse it in eu-west-1" is the classic exam wrong answer. The console won't even list a foreign-region certificate on an ALB listener.
+
+**Fresh example:** A company runs its checkout API on ALBs in us-east-1 and eu-west-1 behind a CloudFront distribution. They hold three ACM certificates for `shop.example.com`: one in us-east-1 attached to the CloudFront distribution (viewer leg), one in us-east-1 attached to the us-east-1 ALB, and one in eu-west-1 attached to the eu-west-1 ALB (origin legs). One domain, three certificates — and zero renewal toil because all are ACM-managed.
+
 ## 9. Official References
 
 - [ELB User Guide](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/)

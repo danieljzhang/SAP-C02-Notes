@@ -189,6 +189,41 @@ Use when the application benefits from local reads/writes in multiple Regions an
   access, and conflict resolution follows last-writer-wins.
 - **DAX** caches eligible read paths; it does not fix a bad key design.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Reserved capacity — commit where the baseline is boring
+
+For provisioned-mode tables with steady, predictable throughput, DynamoDB reserved capacity lets you pre-commit to a read/write capacity baseline for 1 or 3 years in exchange for a steep discount over on-demand provisioned pricing. It is the DynamoDB analogue of EC2 Reserved Instances: you are buying a cheaper rate for capacity you were going to consume anyway.
+
+Decision rules:
+
+- **Buy reserved capacity** for the stable floor of a provisioned table — the throughput that is there 24/7. Size it to the minimum sustained RCU/WCU, not the peak.
+- **Don't reserve the peaks:** bursts and growth belong on auto scaling (or on-demand mode for the spiky portion). Reserved capacity is a commitment — over-committing on a table whose traffic later drops is money burned.
+- **Revisit the mode choice first:** if traffic is truly unpredictable, on-demand mode may beat provisioned-plus-reserved on total cost with zero commitment. Model the crossover before locking in.
+- Trap: reserved capacity applies to provisioned throughput only. A table on on-demand mode gets no benefit from it — a common exam distractor pairs "unpredictable traffic" with reserved capacity.
+
+**Fresh example:** A SaaS product's `tenants` table sustains 2,000 RCU around the clock with daytime peaks to 6,000. The team reserves 2,000 RCU for one year (the floor, heavily discounted), lets auto scaling handle 2,000–6,000, and keeps a second, spiky analytics table on on-demand. The reservation pays for itself in months; the peaks stay flexible.
+
+---
+
+## 🎯 Architecture Decision Notes
+
+### Throttling is a capacity signal — treat it as one
+
+A throttling exception on a provisioned table means request rate exceeded the table's (or a GSI's) allocated throughput. The SDK retries automatically, so transient throttling is invisible — but sustained throttling is your table telling you the capacity plan is wrong. Don't just "increase retries"; fix the capacity or the access pattern.
+
+Decision playbook, in order:
+
+1. **Check whether it's a hot partition, not a small table.** If one partition key dominates traffic, raising total table throughput barely helps — the partition-level limit still throttles. Fix the key design (add a random suffix, split the hot key) before buying capacity.
+2. **Raise provisioned throughput or enable auto scaling** when traffic genuinely grew. Auto scaling handles gradual growth; step increases handle known events (product launch, batch import).
+3. **Smooth the write pattern:** batch writes, buffer bursts through SQS/Kinesis, or spread load over time instead of hammering the table in spikes.
+4. **Switch modes** if the workload changed character: a table that went from predictable to spiky may belong on on-demand.
+5. Remember GSIs have **independent** provisioned throughput — a table that looks healthy can still throttle on a hot index.
+
+**Fresh example:** After a marketing email goes out, a `coupons` table throttles for 20 minutes every campaign. The table's average throughput is tiny, but redemptions all hit the single `campaign-2026-q4` partition key. The fix isn't more RCU — it's salting the partition key (`campaign-2026-q4#<random 1-10>`) so redemptions spread across ten partitions, plus a temporary auto-scaling bump for campaign days.
+
 ## 12. Official References
 
 - [DynamoDB Developer Guide](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/)

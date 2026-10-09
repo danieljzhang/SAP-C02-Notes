@@ -208,6 +208,23 @@ resources:
   configure **both** lifecycle attributes and validate the resource type's
   documented behavior.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### SSM parameter types — stop hardcoding values that change
+
+A CloudFormation parameter doesn't have to be a value the operator types in. Declaring a parameter with an SSM parameter type (e.g., a type that resolves an AMI ID from Parameter Store) makes the template read the *current* value at deploy time. The classic use is the AMI ID: instead of baking `ami-0abc123` into every template and editing them on each new AMI release, the template looks up the latest Amazon Linux AMI from the public parameter path and you never touch the template again.
+
+Decision rules:
+
+- **Use SSM parameter types** for values owned by someone/something else that changes on its own cadence: latest AMI IDs, shared config values, database endpoints published by another stack's automation.
+- **Use plain parameters** for values that are genuinely per-deployment choices (environment name, instance type, feature flags) — things a human should consciously pick.
+- **Use Mappings** for static lookup tables keyed by region or environment (AMI per region in the old pattern), and **Outputs/Exports** for values passed between stacks you own.
+- Traps: the SSM parameter must exist in the same region at deploy time; a deleted or renamed parameter fails the deployment, not the resource. And the resolved value is visible in stack events — never use this mechanism for secrets (that's what dynamic references to Secrets Manager are for).
+
+**Fresh example:** A team ships a golden-image pipeline that publishes each hardened AMI ID to Parameter Store under `/prod/golden-ami`. Their fifty application templates declare the AMI as an SSM parameter type pointing at that path. When the pipeline publishes a new image, the next stack update picks it up with no template edits — versus the old world where someone had to find-and-replace AMI IDs across fifty files.
+
 ## 11. Official References
 
 - [CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)

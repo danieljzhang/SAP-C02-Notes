@@ -194,6 +194,40 @@ for the second leg explicitly, or "HTTPS everywhere" is fiction past the edge.
   limits — pick the lightest that satisfies the requirement and verify
   current restrictions.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Origin groups — fail over before the user notices
+
+A CloudFront 504 means the edge waited too long for your origin — the fix isn't always "make the origin faster." An **origin group** pairs a primary origin with a secondary origin, and CloudFront automatically retries the secondary when the primary returns configured error codes (500, 502, 503, 504 by default). Failover happens inside the CDN: no DNS change, no client retry logic.
+
+Decision rules:
+
+- **Use an origin group** when the primary origin can degrade (overloaded ALB, deploy windows, regional impairment) and a degraded-but-working fallback exists — typically a static version of the site in S3, or a secondary region's ALB.
+- **Design the secondary for graceful degradation:** it doesn't have to serve the full app. A static "we're having trouble, try again shortly" page or a cached catalog served from S3 beats a 504 every time.
+- **Failover is per-request, not a mode switch:** CloudFront keeps sending new requests to the primary and only diverts the ones that fail. Recovery is automatic when the primary heals.
+- Traps: the secondary origin must be able to serve the *same paths* (or your error pages) — a fallback that 404s on every path is worse than useless. And don't confuse this with multi-region active-active: origin groups are a resilience pattern for one distribution, not a traffic-splitting design.
+
+**Fresh example:** A retail site runs its storefront on an ALB in us-east-1. During a flash sale the backend saturates and starts returning 504s. With an origin group configured (ALB primary, S3 bucket with a static "sale is hot, we're scaling — retry in a minute" page as secondary, failover on 502/503/504), shoppers see a branded holding page instead of a browser error, and full service resumes automatically as the backend recovers.
+
+---
+
+## 🎯 Architecture Decision Notes
+
+### Field-level encryption — protect the payload, not just the pipe
+
+TLS encrypts data in transit, but once CloudFront terminates TLS, the request body is plaintext inside your stack — visible to every hop, log, and service that touches it. **Field-level encryption** encrypts specific sensitive fields of POST requests *at the edge*, using a public key you configure on the distribution. The values stay encrypted through your entire pipeline; only the application holding the private key can decrypt them.
+
+Decision rules:
+
+- **Use it** when end users submit data that must stay confidential from intermediate systems — payment details, national IDs, health information — especially when the request passes through services you don't fully control (third-party processors, shared logging pipelines).
+- **Scope tightly:** you nominate up to 10 fields per distribution. Encrypt the sensitive fields (card number, SSN), not the whole form — over-encryption makes debugging miserable and gains nothing.
+- **It's a complement to, not a replacement for, HTTPS:** you still need TLS on both legs (viewer→edge, edge→origin). Field-level encryption answers "who inside my stack may see this field," TLS answers "who on the wire may see anything."
+- Trap: key management is yours — the public key lives on the distribution, the private key must be distributed only to the decrypting applications, with rotation planned. Losing the private key means losing the data.
+
+**Fresh example:** A loan-application form collects income and tax-ID numbers, then posts through CloudFront to an ALB fronting a shared application platform whose access logs are visible to a broad ops team. With field-level encryption on the two sensitive fields, the ops team sees ciphertext in every log and the loan-processing service alone decrypts with its private key — compliance is satisfied without re-architecting the shared platform.
+
 ## 9. Official References
 
 - [CloudFront Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/)
