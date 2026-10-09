@@ -1,8 +1,12 @@
-# Microservices Modernization Patterns — SAP-C02 Study Notes
+> Exam relevance: Domain 4. Microservices modernization patterns: decomposition, strangler migration, service boundaries, and data ownership.
+
+---
 
 ## 1. When Microservices Fit
 
 Microservices can help when independently deployable business capabilities need separate scaling, release cadence, fault boundaries, or team ownership. They are not a default upgrade for every monolith. A well-structured monolith may be cheaper and simpler when the domain is cohesive, scaling needs are shared, or teams cannot support distributed operations.
+
+---
 
 ## 2. Decomposition and Migration
 
@@ -22,6 +26,8 @@ Legacy monolith                         AWS target
 - Establish clear service ownership, APIs/events, data contracts, SLOs, and rollback behavior before broad decomposition.
 - Avoid a distributed monolith: services that must deploy together, share a schema, and synchronously call each other across every request have moved complexity without gaining independence.
 
+---
+
 ## 3. Communication and Data Patterns
 
 | Need | Pattern | Trade-off |
@@ -34,6 +40,8 @@ Legacy monolith                         AWS target
 
 Prefer data ownership per service. Cross-service joins and shared writable databases couple release and failure domains. Replicate read models or compose APIs for cross-domain views; define consistency and staleness expectations explicitly.
 
+---
+
 ## 4. Reliability, Security, and Operations
 
 - Use timeouts, bounded retries with backoff/jitter, circuit breakers, bulkheads, and idempotency keys to prevent cascading failures.
@@ -44,13 +52,17 @@ Prefer data ownership per service. Cross-service joins and shared writable datab
 - Monitor business-level indicators, distributed traces, queue age/depth, retries, errors, and dependency health.
 - Define ownership and on-call boundaries; service autonomy without operational ownership raises recovery risk.
 
+---
+
 ## 5. Cost and Migration Trade-offs
 
 Microservices add network calls, serialization, observability, deployment pipelines, security policies, and often duplicated data. Cost may rise before teams realize benefits. Start with a capability that has a clear scaling, release, reliability, or ownership driver; measure the result before decomposing more.
 
 A safe sequence is: map dependencies -> create an anti-corruption boundary -> route a narrow capability -> migrate data/traffic -> validate -> remove the legacy path. Keep a stable source of truth during transition and plan reconciliation for dual-running periods.
 
-## 6. Original Scenario
+---
+
+## 6. Exam Scenarios
 
 **Scenario:** A monolithic order application causes deployment bottlenecks. The catalog changes weekly, while billing is tightly regulated and rarely changes. The company wants faster catalog releases but cannot risk a broad rewrite.
 
@@ -58,12 +70,16 @@ A safe sequence is: map dependencies -> create an anti-corruption boundary -> ro
 
 **Trap:** Splitting every module into a separate service creates distributed operations without proving independent scaling or release value.
 
+---
+
 ## 7. Exam Tips
 
 - Choose microservices when independent business capabilities need independent ownership/scale/release, not because they are fashionable.
 - A strangler migration limits blast radius and avoids a big-bang rewrite.
 - Asynchrony reduces temporal coupling but introduces eventual consistency, retries, duplicate handling, and ordering concerns.
 - Shared database writes and synchronous dependency chains undermine service autonomy.
+
+---
 
 ## 8. Official References
 

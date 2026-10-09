@@ -1,8 +1,12 @@
-# Database Migration and Modernization Patterns — SAP-C02 Study Notes
+> Exam relevance: Domain 4. Database migration and modernization patterns: engine choice, conversion, replication, and cutover.
+
+---
 
 ## 1. Start with the Outcome
 
 Choose a database migration pattern from business and technical requirements: engine compatibility, data volume, write rate, downtime, RPO/RTO, application coupling, licensing, compliance, performance, operational skills, and cost. “Move to a managed database” is not sufficient design input.
+
+---
 
 ## 2. Common Migration Approaches
 
@@ -26,6 +30,8 @@ full load or replication        full load + CDC where supported
                 validate -> controlled cutover -> observe
 ```
 
+---
+
 ## 3. Heterogeneous Migration Checklist
 
 - Inventory schemas, indexes, constraints, views, procedures, triggers, extensions, jobs, users, encodings, collations, and application SQL.
@@ -34,6 +40,8 @@ full load or replication        full load + CDC where supported
 - Select target service/class based on availability, scaling, storage, network, backup, encryption, and operational needs.
 - Plan endpoint changes, connection pools, DNS TTL, certificates, secrets, IAM authentication where supported, and rollback.
 - Test data types, null behavior, time zones, numeric precision, isolation/locking, transaction semantics, and edge cases.
+
+---
 
 ## 4. Low-Downtime Cutover with DMS
 
@@ -48,6 +56,8 @@ full load or replication        full load + CDC where supported
 
 A low-downtime plan is not automatically zero downtime or zero data loss. Define exactly when the source stops accepting writes and how divergent writes are handled if rollback occurs.
 
+---
+
 ## 5. Modernization and Data Ownership
 
 - **Rehost database on EC2:** maximum engine/OS control, but retain patching, HA, backups, and operations responsibilities.
@@ -55,6 +65,8 @@ A low-downtime plan is not automatically zero downtime or zero data loss. Define
 - **Adopt a different managed engine:** may improve economics or capabilities, but requires conversion, application changes, and performance validation.
 - **Move to purpose-built stores:** use DynamoDB, analytics platforms, or object storage only when access patterns and consistency requirements fit; do not force relational workloads into a NoSQL model to claim modernization.
 - **Decompose database per service:** improves ownership autonomy but creates data duplication, distributed transactions, and eventual consistency concerns. Use events, outbox, sagas, and explicit read models where appropriate.
+
+---
 
 ## 6. Security, Resilience, and Cost
 
@@ -64,13 +76,17 @@ A low-downtime plan is not automatically zero downtime or zero data loss. Define
 - Compare target licensing, instance/storage, I/O, backup, data transfer, reserved commitments, and operational labor. Include parallel source/target cost during migration.
 - Confirm engine/version support, DMS limitations, data-type handling, quotas, regional availability, and current pricing in official docs.
 
-## 7. Original Scenario
+---
+
+## 7. Exam Scenarios
 
 **Scenario:** A company runs a commercial relational database on premises and wants to move to Aurora with less than 30 minutes of downtime. The database contains proprietary procedures and a high transaction rate.
 
 **Recommended approach:** Assess engine compatibility and procedure conversion first; measure change rate and source-log retention; convert and test the schema; use a full load plus CDC only after confirming the source/target pair and workload are supported. Benchmark the application, then perform a rehearsed write freeze, final catch-up, validation, and endpoint switch. If conversion risk is too high, consider a staged same-engine move before a later modernization.
 
 **Trap:** Assuming DMS automatically converts every procedure and guarantees the requested outage without measuring CDC lag.
+
+---
 
 ## 8. Exam Tips
 
@@ -79,9 +95,10 @@ A low-downtime plan is not automatically zero downtime or zero data loss. Define
 - Validate application semantics, not just row counts.
 - Treat migration replication separately from backup and DR; keep recoverable backups throughout.
 
+---
+
 ## 9. Official References
 
 - [AWS DMS User Guide](https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html)
 - [DMS Schema Conversion](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_SchemaConversion.html)
-- AWS Database Migration guidance (link removed — page unverifiable)
 - [Choosing a database on AWS](https://docs.aws.amazon.com/decision-guides/latest/decision-guides/databases-on-aws-how-to-choose.html)

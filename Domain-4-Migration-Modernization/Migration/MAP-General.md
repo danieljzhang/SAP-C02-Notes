@@ -1,10 +1,14 @@
-# AWS Migration Acceleration Program (MAP) — SAP-C02 Study Notes
+> Exam relevance: Domain 4. MAP is the structured migration program — assessment, mobilization, migration methodology, and conditional program support — not a data-transfer service.
+
+---
 
 ## 1. Purpose and Exam Relevance
 
 The AWS Migration Acceleration Program (MAP) is a structured program to help organizations assess, mobilize, migrate, and modernize workloads on AWS. It combines methodology, migration expertise, tools, and (for eligible engagements) financial incentives or credits subject to current program terms. MAP is not a data-transfer service and does not replace architecture, migration execution, or operational ownership.
 
 For exam scenarios, MAP is relevant when an organization needs a repeatable enterprise migration approach, skills and partner support, business-case development, and a governed transformation plan.
+
+---
 
 ## 2. Program Lifecycle (Conceptual)
 
@@ -15,6 +19,8 @@ case + strategy        + operating model           + optimization
 ```
 
 The exact phases, deliverables, tools, eligibility, and funding rules depend on current AWS program guidance and the specific engagement. Treat this as a planning model, not a guaranteed funding entitlement.
+
+---
 
 ## 3. Architecture Workstreams MAP Does Not Replace
 
@@ -27,6 +33,8 @@ The exact phases, deliverables, tools, eligibility, and funding rules depend on 
 | Modernization | Container, serverless, managed database, event-driven, or refactor patterns selected per workload |
 | Operating model | Skills, service ownership, observability, backup, incident response, FinOps, and continuous improvement |
 
+---
+
 ## 4. Decision and Governance Considerations
 
 - Establish executive sponsorship, business outcomes, workload owners, scope, and measurable acceptance criteria.
@@ -35,6 +43,8 @@ The exact phases, deliverables, tools, eligibility, and funding rules depend on 
 - Sequence waves around dependencies and risk. Pilot a representative workload, measure throughput and test assumptions, then scale the factory.
 - Separate program incentives from architecture decisions. A workload should not be moved or modernized solely to qualify for a program benefit.
 - Confirm current eligibility, partner participation, funding milestones, evidence requirements, and expiration dates directly with AWS or an authorized partner.
+
+---
 
 ## 5. Risks and Failure Modes
 
@@ -46,13 +56,17 @@ The exact phases, deliverables, tools, eligibility, and funding rules depend on 
 | Incentive assumed or misapplied | Verify current written program terms; model economics without assuming unconfirmed credits |
 | Factory optimizes for volume over business outcomes | Use risk-based waves, service acceptance criteria, and workload-specific exceptions |
 
-## 6. Original Scenario
+---
+
+## 6. Exam Scenarios
 
 **Scenario:** A company must migrate hundreds of applications over two years, has limited cloud skills, and needs a business case for leadership. Some systems are candidates for rehosting; others should be retired or replaced.
 
 **Recommended approach:** Use a MAP-style structured assessment and mobilization to build the portfolio, business case, landing zone, migration factory, skills plan, and governance. Classify every workload independently, pilot the tools and operating model, then execute waves. Verify eligibility for any program benefits and choose each technical service based on the workload.
 
 **Trap:** MAP is not the tool that replicates a server or guarantees credits for every workload.
+
+---
 
 ## 7. Exam Tips
 
@@ -63,16 +77,17 @@ The exact phases, deliverables, tools, eligibility, and funding rules depend on 
 
 ---
 
-## 🎯 Architecture Decision Notes
+## 8. 🎯 Architecture Decision Notes
 
 ### Choose the migration path from the target outcome
 
-The "6 Rs" are not a ladder — the right answer depends on business goal,
+The "7 Rs" are not a ladder — the right answer depends on business goal,
 app constraints, and acceptable change:
 
 | Path | When |
 |---|---|
 | Rehost (lift-and-shift) | Minimal change, speed matters, app cannot be redesigned now |
+| Relocate | Move a supported virtualized environment with minimal redesign; validate current service and platform support |
 | Replatform | Targeted improvements (managed DB, containers) without full redesign |
 | Refactor / re-architect | Current design cannot meet the goals at all |
 | Repurchase | A SaaS product replaces the workload better than any migration |
@@ -86,11 +101,7 @@ post-migration validation are the plan; the tools execute it.
 **Tool roles:** Application Discovery Service *collects* environment data;
 Migration Hub *tracks* progress; Application Migration Service *rehosts*
 servers; DMS *moves databases*; VM Import/Export handles VM images. Match
-the tool to its job — none of them assess dependencies or licensing for you.
-
----
-
-## 🎯 Architecture Decision Notes
+the tool to its job — none of them assess dependencies or licensing automatically.
 
 ### Discovery before migration — match the collection method to the estate
 
@@ -126,7 +137,9 @@ team has no runbook for cutover weekends. They fix the process gap
 before scheduling wave one, instead of discovering it at 2 a.m. on
 cutover night.
 
-## 8. Official References
+---
+
+## 9. Official References
 
 - [AWS Migration Acceleration Program](https://aws.amazon.com/migration-acceleration-program/)
 - [AWS Cloud Adoption Framework](https://aws.amazon.com/cloud-adoption-framework/)

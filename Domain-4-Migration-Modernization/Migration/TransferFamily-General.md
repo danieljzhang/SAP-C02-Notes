@@ -1,8 +1,12 @@
-# AWS Transfer Family — SAP-C02 Study Notes
+> Exam relevance: Domain 4. Transfer Family provides managed file-transfer protocols and interfaces (SFTP, FTPS, FTP, AS2, web apps) backed by S3/EFS — partner-facing workflows, not bulk NAS migration.
+
+---
 
 ## 1. Purpose and Exam Relevance
 
 AWS Transfer Family provides managed endpoints and interfaces for moving files into and out of AWS storage while preserving familiar file-transfer workflows. It supports SFTP, FTPS, FTP, AS2, and browser-based experiences for supported use cases, with Amazon S3 and Amazon EFS as storage backends. Use it when employees, customers, or business partners need a managed protocol-compatible interface; it is not a bulk NAS migration engine.
+
+---
 
 ## 2. Core Patterns
 
@@ -27,6 +31,8 @@ AWS Transfer Family endpoint
 - **Connectors:** support managed transfers to/from remote SFTP servers for supported workflows; validate exact connector capabilities separately from inbound server endpoints.
 - **Web apps:** provide a managed browser-based interface for supported S3 access patterns.
 
+---
+
 ## 3. When to Use It
 
 | Requirement | Fit |
@@ -38,6 +44,8 @@ AWS Transfer Family endpoint
 | Shared file system for Linux/Windows applications | EFS/FSx directly or an appropriate hybrid service; Transfer Family is a file-transfer interface |
 | Replace a database replication path | DMS, not Transfer Family |
 
+---
+
 ## 4. Security and Network Design
 
 - Select a public or VPC-hosted endpoint pattern based on partner reachability, private connectivity, address controls, and security requirements. Confirm current endpoint options before deployment.
@@ -48,6 +56,8 @@ AWS Transfer Family endpoint
 - For AS2, define partner identifiers, certificates, message signing/encryption expectations, receipts, retries, and duplicate-message handling.
 - Consider malware scanning and content validation before downstream processing; a successful transfer does not mean the file is safe or well-formed.
 
+---
+
 ## 5. Reliability, Operations, and Cost
 
 - Managed endpoint fleets reduce server patching and scaling work, but identity integration, DNS, certificates, storage permissions, partner configuration, and file-processing workflows remain customer responsibilities.
@@ -55,6 +65,8 @@ AWS Transfer Family endpoint
 - Monitor server health, authentication failures, transfer errors, workflow outcomes, and storage capacity/requests. Alert on certificate expiry and failed partner deliveries.
 - Use multiple Availability Zones where offered by the chosen configuration; verify endpoint type, Region, and resilience characteristics in current docs.
 - Costs include endpoint hours, protocol/connector usage where applicable, data transfer, S3/EFS storage and requests, logs, and downstream processing. Compare with the operational cost of self-managed file servers.
+
+---
 
 ## 6. Common Failure Modes
 
@@ -66,13 +78,17 @@ AWS Transfer Family endpoint
 | AS2 messages fail | Certificates, partner IDs, signing/encryption agreement, message format, receipt path, and clock/certificate validity |
 | Partner sees another tenant's data | Logical-directory mapping, policy scope, role session permissions, and test with negative authorization cases |
 
-## 7. Original Scenario
+---
+
+## 7. Exam Scenarios
 
 **Scenario:** A manufacturer must keep existing suppliers' SFTP clients unchanged while replacing internet-facing file servers. Each supplier may access only its own inbound/outbound folders, and uploaded files must be scanned and routed to an ERP import process.
 
 **Recommended approach:** Use Transfer Family SFTP endpoints backed by S3, a managed or custom identity provider, per-user logical directory mappings and least-privilege storage access. Route uploads through a quarantine/validation process, scan before release, then trigger idempotent processing and audit events. Test supplier isolation explicitly.
 
 **Why not DataSync?** DataSync is optimized for managed dataset transfers between storage locations, not interactive partner sessions with per-user authentication and protocol compatibility.
+
+---
 
 ## 8. Exam Tips
 
@@ -83,7 +99,7 @@ AWS Transfer Family endpoint
 
 ---
 
-## 🎯 Architecture Decision Notes
+## 9. 🎯 Architecture Decision Notes
 
 ### Transfer Family placement decisions
 
@@ -95,7 +111,9 @@ options, and the S3/EFS backend determines the IAM story. Measure the
 throughput need against the protocol choice; managed does not mean
 unlimited.
 
-## 9. Official References
+---
+
+## 10. Official References
 
 - [What is AWS Transfer Family?](https://docs.aws.amazon.com/transfer/latest/userguide/what-is-aws-transfer-family.html)
 - [Transfer Family identity providers](https://docs.aws.amazon.com/transfer/latest/userguide/custom-idp-intro.html)

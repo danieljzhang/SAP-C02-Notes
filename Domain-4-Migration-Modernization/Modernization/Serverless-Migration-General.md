@@ -1,8 +1,12 @@
-# Serverless Migration and Modernization — SAP-C02 Study Notes
+> Exam relevance: Domain 4. Serverless migration and modernization patterns: event-driven decomposition, service selection, and design constraints.
+
+---
 
 ## 1. When Serverless Fits
 
 Serverless architectures are useful when teams want managed scaling and reduced infrastructure operations for event-driven, variable, or independently deployable workloads. AWS services such as Lambda, API Gateway, EventBridge, SQS, SNS, Step Functions, and managed data stores can form the target. Serverless is not automatically cheaper, and it does not remove security, reliability, integration, or capacity planning.
+
+---
 
 ## 2. Modernization Pattern
 
@@ -26,6 +30,8 @@ Step Functions for durable multi-step orchestration
 - Externalize state and make handlers idempotent. Define event contracts, retries, dead-letter handling, and replay procedures.
 - Keep an explicit source of truth during dual-running periods and reconcile data before retiring the legacy path.
 
+---
+
 ## 3. Service and Integration Choices
 
 | Need | Candidate pattern |
@@ -37,6 +43,8 @@ Step Functions for durable multi-step orchestration
 | Multi-step workflow, retries, branching, human approval | Step Functions; select workflow type and integrations for duration/latency needs |
 | Shared relational data and transactions | Managed relational database; serverless compute does not imply a NoSQL database |
 
+---
+
 ## 4. Design Constraints and Security
 
 - Check current Lambda runtime, package, execution-duration, concurrency, payload, and service quota constraints against the workload. Use containers, ECS/EKS, or another compute model when the workload does not fit.
@@ -46,6 +54,8 @@ Step Functions for durable multi-step orchestration
 - Use asynchronous integration for long-running work and expose status/correlation IDs; do not hold a synchronous API connection open for an unbounded process.
 - Observe function errors/throttles/duration, queue age/depth, workflow failures, API latency, and business outcomes. Establish tracing/correlation across boundaries.
 
+---
+
 ## 5. Reliability, Cost, and Operations
 
 - Apply timeouts, bounded retries, backoff/jitter, circuit breakers, DLQs, and replay controls at the right layer.
@@ -53,6 +63,8 @@ Step Functions for durable multi-step orchestration
 - Define deployment/versioning and rollback for code, event schemas, and data migrations. Use aliases/gradual traffic shifting where supported.
 - Cost is driven by requests, duration, memory/compute, API calls, workflow transitions, messaging, logs, data transfer, and underlying data stores. Always include downstream services in the comparison.
 - Serverless can reduce idle infrastructure cost for spiky workloads, but continuous high utilization or chatty workflows may favor containers or another architecture.
+
+---
 
 ## 6. Common Pitfalls
 
@@ -63,7 +75,9 @@ Step Functions for durable multi-step orchestration
 - Connecting functions directly to databases without connection/concurrency management.
 - Assuming pay-per-use always means lowest total cost or zero operational work.
 
-## 7. Original Scenario
+---
+
+## 7. Exam Scenarios
 
 **Scenario:** An insurer's nightly batch process takes several hours and must be modernized gradually. Claims arrive through an API, enrichment can be retried, and some steps require human review.
 
@@ -71,12 +85,16 @@ Step Functions for durable multi-step orchestration
 
 **Why not one long Lambda invocation?** The workload has multi-hour duration and human waits; use durable orchestration and asynchronous state instead of a request-bound function.
 
+---
+
 ## 8. Exam Tips
 
 - Serverless fits event-driven, variable demand, and reduced-ops goals when constraints and integration model fit.
 - Queue/workflow patterns handle long-running work better than synchronous request chains.
 - “Managed” still requires IAM, observability, quotas, retries, idempotency, and cost controls.
 - Modernize incrementally when risk and downtime matter; preserve a rollback path and data consistency.
+
+---
 
 ## 9. Official References
 

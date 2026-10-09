@@ -1,5 +1,3 @@
-# Domain 4: Accelerate Workload Migration and Modernization (20%)
-
 > Focus on selecting workloads, migration strategies, target architectures, and modernization opportunities. Use the current official SAP-C02 exam guide to verify objective wording and weights before exam day.
 
 ## What This Domain Tests
