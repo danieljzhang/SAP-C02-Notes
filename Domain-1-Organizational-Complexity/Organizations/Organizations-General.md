@@ -42,8 +42,8 @@ AWS Organizations lets you centrally manage multiple AWS accounts under a single
 
 | Policy Type | Purpose |
 |---|---|
-| Service Control Policies (SCPs) | Restrict what actions principals in member accounts can perform |
-| Resource Control Policies (RCPs) | Restrict what resources in member accounts can accept (data perimeter) |
+| [Service Control Policies (SCPs)](./organizations/scps-general.md) | Restrict what actions principals in member accounts can perform |
+| [Resource Control Policies (RCPs)](./iam/resourcecontrolpolicies-general.md) | Restrict what resources in member accounts can accept (data perimeter) |
 | Tag Policies | Enforce tag key/value standards across accounts |
 | Backup Policies | Enforce AWS Backup plans across accounts |
 | AI Services Opt-Out Policies | Control whether AWS AI services can use data for improvement |
@@ -118,7 +118,7 @@ Supported services for delegated admin include: GuardDuty, Security Hub, Config,
 
 | Limit | Value |
 |---|---|
-| Max accounts per organization | 10 (default, can be increased) — verify current limit |
+| Max accounts per organization | 10 (default; increasable via quota request) — verify current limit |
 | Max OU nesting depth | 5 levels |
 | Max SCPs per account/OU | 5 |
 | Max SCP size | 5,120 characters |
@@ -207,9 +207,7 @@ aws organizations register-delegated-administrator \
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 11. 🎯 Architecture Decision Notes
 
 ### Sharing without losing control — RAM and tags
 
@@ -242,7 +240,7 @@ consistently:
 - Prevention and audit solve different halves — use both, and do not
   confuse a Config rule (detective) with an SCP (preventive).
 
-## 11. Official References
+## 12. Official References
 
 - [AWS Organizations User Guide](https://docs.aws.amazon.com/organizations/latest/userguide/)
 - [SCP Syntax Reference](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_syntax.html)

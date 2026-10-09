@@ -169,9 +169,7 @@ Small branch offices use VPN; headquarters uses Direct Connect.
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 9. 🎯 Architecture Decision Notes
 
 ### Site-to-Site vs Client VPN — different problems
 
@@ -187,7 +185,7 @@ with Client VPN. For encrypted hybrid connectivity with higher throughput
 and consistency, evaluate Direct Connect — optionally with a VPN overlay
 when encryption in transit is required.
 
-## 9. Official References
+## 10. Official References
 
 - [Site-to-Site VPN User Guide](https://docs.aws.amazon.com/vpn/latest/s2svpn/)
 - [Client VPN User Guide](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/)

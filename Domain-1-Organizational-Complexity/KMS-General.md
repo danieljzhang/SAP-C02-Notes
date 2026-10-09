@@ -23,7 +23,7 @@ Both control key usage, but they solve different problems:
 - **Key policy** (attached to the key): the primary authorization document. Defines who may use/manage the key. **Cross-account access REQUIRES the key policy to allow the external account** — IAM policies alone are insufficient.
 - **Grants**: temporary, fine-grained delegations (e.g., an EC2 instance needs decrypt for 1 hour). Grants do not appear in the key policy and are ideal for dynamic, short-lived access.
 
-**The cross-account rule:** For Account B to use Account A's CMK, you need BOTH:
+**The cross-account rule:** For Account B to use Account A's CMK, both of the following are required:
 1. Account A's **key policy** allows Account B (or B's role).
 2. Account B's **IAM policy** allows the kms: actions.
 
@@ -48,7 +48,7 @@ KMS uses envelope encryption: a **data key** encrypts the data; the **data key**
 
 ---
 
-## 🎯 Architecture Decision Notes
+## 5. 🎯 Architecture Decision Notes
 
 ### The KMS questions the exam asks
 
@@ -73,7 +73,7 @@ Both manage encryption keys. The decider is **who holds the hardware**:
 | Compliance fit | Standard regulatory needs | "Dedicated hardware, not shared with other tenants" |
 | Cost/ops | Pay per key + API calls, near-zero ops | Cluster hourly charge + real operational burden |
 
-**Fresh mini-scenario:** A bank's regulator requires encryption keys on
+**Fresh example:** A bank's regulator requires encryption keys on
 hardware "dedicated to the customer and not shared with any other tenant."
 KMS — despite being the default right answer for 95% of key questions — is
 wrong here. CloudHSM is the only fit, and the application team must budget
@@ -95,16 +95,16 @@ for HSM user management and client-side crypto integration.
 
 ---
 
-## 5. Exam Tips
+## 6. Exam Tips
 
-- Cross-account KMS = key policy + IAM policy. Memorize this.
+- Cross-account KMS = key policy + IAM policy. Both are required.
 - Grants are for temporary/delegated access; key policies are the durable control.
 - Envelope encryption means rotation does not re-encrypt all data.
 - Deletion waiting period (7–30 days) is the safety net — the exam tests whether you know deletion is not instant.
 
 ---
 
-## 6. Official References
+## 7. Official References
 
 - [AWS KMS key types](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html)
 - [Key policies](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html)

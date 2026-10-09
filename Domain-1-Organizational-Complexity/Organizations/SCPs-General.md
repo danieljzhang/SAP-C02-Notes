@@ -259,9 +259,7 @@ SCPs are **inherited** from parent to child. A child OU or account cannot escape
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 11. 🎯 Architecture Decision Notes
 
 ### Turning a soft budget alert into a hard spend guardrail
 
@@ -302,7 +300,7 @@ workloads continue, new launches stop, and on the first of the month the
 scheduled Lambda lifts the restriction. The teams feel the consequence
 exactly where the spending happened, and no one can click around it.
 
-## 11. Official References
+## 12. Official References
 
 - [SCP Overview](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html)
 - [SCP Syntax](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_syntax.html)

@@ -157,29 +157,21 @@ Options for encryption:
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 10. 🎯 Architecture Decision Notes
 
 ### DX is not encrypted by default — design for it
 
 A Direct Connect connection is a private path, not an encrypted one. When
-the requirement says "encrypted in transit," layer IPsec where supported:
+the requirement says "encrypted in transit," layer IPsec where supported —
+see the Encryption section above for the MACsec vs VPN-over-DX comparison.
 
-- **Site-to-Site VPN over DX** adds IPsec encryption on the private path.
-- **MACsec** is available on supported dedicated connections for
-  line-rate encryption — verify current availability per location.
 - A **Direct Connect gateway** associates the connection with virtual
   private/transit gateways; it is not a general router between everything
   attached to it.
 - For availability: redundant connections on independent failure paths.
   One DX connection is a single point of failure no matter how big the pipe.
 
-Virtual interface choice follows the destination: private VIF for VPC-bound
-private traffic, public VIF for AWS public endpoints, transit VIF via a DX
-gateway to Transit Gateway.
-
-## 10. Official References
+## 11. Official References
 
 - [Direct Connect User Guide](https://docs.aws.amazon.com/directconnect/latest/UserGuide/)
 - [DX Resilience Recommendations](https://docs.aws.amazon.com/directconnect/latest/UserGuide/resiliency_toolkit.html)
