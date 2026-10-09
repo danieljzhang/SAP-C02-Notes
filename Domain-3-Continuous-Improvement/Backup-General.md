@@ -149,6 +149,56 @@ separate account.
   permissions, and validation of recovered data — then test the restore
   quarterly. An untested backup is a hope.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Design the backup cadence from the RPO, not the other way around
+
+RPO (Recovery Point Objective) is the maximum data loss you can tolerate, measured in time. The design rule is simple: **your most frequent recovery point must be at least as frequent as the RPO**. An hourly full backup alone gives you an RPO of one hour — no better. To promise a 15-minute RPO, you need something captured every 15 minutes or less: transaction logs shipped every 5 minutes, continuous replication, or storage-level snapshots on a 15-minute schedule.
+
+Decision rules:
+
+- **Decompose the cadence:** full backups (cheap to reason about, slow to take) plus frequent incremental/log capture (cheap to take, gives the fine-grained recovery points). Restore = latest full + replay of everything after it.
+- **Put the pieces in different failure domains:** logs in a separate bucket (or account/region) from the full backups, so one bucket issue doesn't take both.
+- **RPO is about data loss; RTO is about time to restore.** A 5-minute RPO with a 6-hour restore is a valid design only if the business accepts the downtime — confirm both numbers, not just one.
+- **Test the replay path.** Log-shipped recovery that has never been rehearsed is a hope, not a plan. The restore drill is what turns "RPO 15 minutes" from a slide into a capability.
+
+**Fresh example:** A fintech ledger needs RPO ≤ 15 minutes. The design: nightly full database snapshots to S3, plus transaction logs streamed to a second S3 bucket every 5 minutes. Worst case, they lose at most 5 minutes of transactions — inside the objective. Quarterly, they restore the full snapshot plus logs into an isolated account and verify the ledger balances, proving the RPO is real.
+
+---
+
+## 🎯 Architecture Decision Notes
+
+### Classify what's in the backups — Macie on the backup buckets
+
+Backups concentrate your most sensitive data in one place, often with broader access than production (restores, audits, cross-account copies). Amazon Macie continuously scans S3 buckets and identifies sensitive data — PII, credentials, financial records — so you know *what* your backup buckets actually contain and can prove it to auditors.
+
+Decision rules:
+
+- **Run Macie on backup/log buckets**, not just production data lakes. Backup buckets are where forgotten sensitive fields accumulate, and they're the buckets most likely to be shared cross-account for DR.
+- **Use findings to scope controls:** a bucket Macie flags as holding national IDs gets tighter bucket policies, KMS encryption with a restricted key, and access logging — while the bucket holding public assets stays simple. Classification lets you spend security effort where the data warrants it.
+- **Feed it into the compliance story:** for regulated data, "we scan backups for sensitive data types and alert on unexpected findings" is a concrete control, stronger than "backups are encrypted" alone.
+- Trap: Macie classifies and alerts — it doesn't remediate. Pair findings with bucket policies and lifecycle rules; and remember scanning has a cost, so scope it to buckets that can plausibly hold sensitive data rather than every bucket in the account.
+
+**Fresh example:** A healthcare SaaS ships database transaction logs to S3 every 5 minutes for RPO purposes. Macie is enabled on the log bucket and flags that patient email addresses appear in a log stream the team assumed was de-identified. The team tightens the bucket policy, rotates to a dedicated KMS key, and fixes the logging pipeline — catching the exposure in the backup copy before an auditor (or worse) does.
+
+
+---
+
+## 🎯 Architecture Decision Notes
+
+### Continuous backups — when snapshot schedules can't meet the RPO
+
+AWS Backup offers two backup modes, and the choice is driven by the recovery point objective:
+
+- **Snapshot backups** (scheduled): recovery points at the backup frequency you choose (e.g., daily). RPO = the interval between snapshots.
+- **Continuous backups**: AWS Backup takes an initial full backup, then continuously captures transaction logs. You can rewind the resource to any second within the retention window (up to 35 days) — this is point-in-time recovery (PITR) through the centralized backup console.
+
+Use continuous backups when the RPO is measured in seconds-to-minutes rather than hours — e.g., "lose no more than 5 minutes of database writes." The tradeoff: continuous backup keeps log data flowing constantly, so model the storage cost of the log stream against the RPO it buys. For RDS specifically, native automated backups already provide PITR via 5-minute transaction-log capture to S3; choose AWS Backup continuous mode when you want that same PITR capability managed centrally alongside cross-region and cross-account copies in one backup plan.
+
+Mini-example: a payments database requires 10-minute RPO and 2-hour RTO. A daily snapshot alone misses the RPO — but an AWS Backup plan with continuous backups enabled gives second-granularity rewind within the window, satisfying the RPO while the plan's cross-region copy handles the DR side of the RTO.
+
 ## 9. Official References
 
 - [AWS Backup Developer Guide](https://docs.aws.amazon.com/aws-backup/latest/devguide/)

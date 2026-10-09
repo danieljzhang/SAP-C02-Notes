@@ -90,6 +90,22 @@ For cutover, stop or constrain source writes, run the final delta, verify the de
 - Transfer Family preserves file-transfer protocols for users/partners; DataSync moves datasets between storage locations.
 - Decide whether the goal is migration, recurring replication, archival, or ongoing hybrid access before choosing the service.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Storage Gateway — pick the gateway type by what the data is for, not where it lives
+
+Storage Gateway is ongoing hybrid storage (local protocols, AWS-backed), not a one-time copy tool — that's DataSync's job. Three gateway types, three different answers:
+
+- **File Gateway** (NFS/SMB → S3): for active file workloads. Files written locally land in S3 in near-real time, which makes the data immediately usable by AWS services. This is the gateway you want when on-premises files need *processing* in AWS — analytics, ML, media pipelines.
+- **Tape Gateway** (virtual tapes → S3 Glacier): for backup/archive replacing physical tape libraries. Retrieval requires a Glacier restore (minutes to hours) — it is *not* readable storage for applications.
+- **Volume Gateway** (iSCSI block): for on-premises block volumes with cloud-backed snapshots. **Cached volumes** keep hot data local with the full dataset in AWS (up to ~1 PB per volume); **stored volumes** keep the primary copy local (up to ~512 TB) with async backup to AWS. iSCSI initiator connections are authenticated with **CHAP** (per-target credentials, replay-attack protection).
+
+The exam's favorite trap: a scenario archives video to a Tape Gateway, then asks how to run real-time analysis on it. The answer is *not* to read from the Tape Gateway — it's to add a File Gateway so new files land in S3 where services like Rekognition can consume them directly. Tape is for retention; File is for access.
+
+Mini-example: a retailer archives surveillance footage via Tape Gateway, then wants face detection on new footage. Keep the Tape Gateway for the archive; deploy a File Gateway on the camera network writing to S3, and trigger Rekognition from S3 events. Trying to "read the tapes faster" fights the architecture.
+
 ## 10. Official References
 
 - [AWS DataSync User Guide](https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html)

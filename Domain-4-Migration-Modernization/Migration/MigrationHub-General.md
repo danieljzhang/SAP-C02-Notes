@@ -68,6 +68,39 @@ Discovery / inventory sources
 - Pair the tracking layer with workload-specific tools: MGN for servers, DMS for databases, DataSync for files/objects.
 - Automated discovery informs a plan; application owners and testing confirm the plan.
 
+---
+
+# Gap fill for Domain-4-Migration-Modernization/Migration/MigrationHub-General.md
+
+## 🎯 Architecture Decision Notes
+
+### Availability change (November 7, 2025) — know the status, keep the exam answer
+
+AWS closed both **Migration Hub** and **Application Discovery Service** to new
+customers on **November 7, 2025**; existing customers continue to use them for
+in-flight projects. AWS points new discovery, planning, and tracking work to
+**AWS Transform** (launched May 2025).
+
+Why this matters for the notes:
+
+- **Exam logic is unchanged.** SAP-C02 was authored against its guide: when a
+  scenario asks which service *tracks* migration waves or *collects*
+  on-premises inventory, Migration Hub and Application Discovery Service
+  remain the guide-correct answers. Do not let the closure talk you into
+  picking an execution service (MGN, DMS) for a tracking/discovery question.
+- **Real-world accuracy matters.** If you build or advise on migrations today,
+  new projects start in AWS Transform, not Migration Hub. The notes describe
+  the exam-correct service roles; verify current availability before
+  recommending either service for a live project.
+
+**Fresh example:** A practice scenario asks for "a single view of migration
+status across MGN and DMS waves." The answer is still Migration Hub's
+tracking — the closure affects who can *start* using it, not what the exam
+expects you to choose.
+
+---
+*Sources: [Migration Hub availability change](https://docs.aws.amazon.com/migrationhub/latest/ug/migrationhub-availability-change.html) (docs.aws.amazon.com); [Application Discovery Service availability change](https://docs.aws.amazon.com/application-discovery/latest/userguide/application-discovery-service-availability-change.html) (docs.aws.amazon.com). Both verified October 8, 2026.*
+
 ## 8. Official References
 
 - [AWS Migration Hub User Guide](https://docs.aws.amazon.com/migrationhub/latest/ug/whatishub.html)

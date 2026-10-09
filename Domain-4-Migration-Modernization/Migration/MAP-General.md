@@ -88,6 +88,44 @@ Migration Hub *tracks* progress; Application Migration Service *rehosts*
 servers; DMS *moves databases*; VM Import/Export handles VM images. Match
 the tool to its job — none of them assess dependencies or licensing for you.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Discovery before migration — match the collection method to the estate
+
+Migration fails most often before any workload moves: the inventory is
+wrong. Application Discovery Service collects server configuration and
+utilization data so the business case and wave plan rest on facts. Choose
+the collection method by what the estate allows:
+
+| Estate | Method |
+|---|---|
+| VMware environment where you can deploy an appliance | **Agentless** discovery via the OVA connector through vCenter — no per-VM installs |
+| Physical servers, non-VMware hypervisors, or cloud VMs | **Agent-based** — install the discovery agent on each server |
+
+Both feed Migration Hub, which is the *tracking* console — it does not
+discover or move anything itself. Keep the roles straight: Discovery
+*collects*, Migration Hub *tracks*, MGN *rehosts*, DMS *moves databases*.
+
+Before committing to waves, run a readiness self-assessment (the Cloud
+Adoption Readiness Tool's structured questionnaire across business,
+people, process, platform, operations, and security perspectives). It
+surfaces the non-technical blockers — skills, operating model, security
+posture — that derail migrations more reliably than any tooling gap.
+
+Trap: discovery data goes stale fast. Reconcile it with application
+owners and real utilization before sizing targets; an inventory built
+once and trusted for a year produces the wrong landing zone.
+
+**Fresh example:** A manufacturer with 400 VMware VMs and 60 physical
+servers deploys the agentless OVA connector for the virtual estate and
+agents on the physical hosts, groups everything into applications in
+Migration Hub, and runs the readiness survey — which reveals the ops
+team has no runbook for cutover weekends. They fix the process gap
+before scheduling wave one, instead of discovering it at 2 a.m. on
+cutover night.
+
 ## 8. Official References
 
 - [AWS Migration Acceleration Program](https://aws.amazon.com/migration-acceleration-program/)

@@ -21,7 +21,7 @@ This is a free study resource organized around SAP-C02 exam objectives, with ser
 | Exam code | SAP-C02 |
 | Questions | 75 (65 scored + 10 unscored) |
 | Duration | 180 minutes |
-| Passing score | 750 / 1000 (~75%) |
+| Passing score | 750 / 1000 (scaled score) |
 | Cost | $300 USD |
 | Validity | 3 years |
 

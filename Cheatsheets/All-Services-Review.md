@@ -94,3 +94,85 @@
 - Replication is not backup; multi-AZ is not multi-Region; a private connection is not automatically encrypted.
 - “Managed” does not remove the need for IAM, network, quotas, observability, testing, and cost controls.
 - Verify version-sensitive service availability, limits, pricing, and exam facts in current official sources.
+
+---
+
+## 🎯 Architecture Decision Notes
+
+### Textract — choose document intelligence, not just OCR
+
+When the input is a scanned or photographed document and the requirement
+goes beyond "read the characters," reach for a managed document-analysis
+service rather than building an OCR pipeline. The decision ladder:
+
+| Need | Choice |
+|---|---|
+| Plain text from an image | Basic OCR is enough |
+| Typed *and* handwritten text plus structure | Document analysis with form/table extraction |
+| "What is the invoice total?" / "Extract the vendor name" | Query-style or purpose-built expense analysis |
+| Identity documents (licenses, passports) | Purpose-built ID analysis |
+
+The trap is treating every document problem as an OCR problem: OCR gives
+you characters, not the relationship between "Total" and "$1,240.00" in
+a table, and not the field semantics of an invoice. Purpose-built
+analysis APIs return key-value pairs and line items, which is what a
+downstream workflow (approvals, ledger posting) actually consumes.
+
+**Fresh example:** An AP automation flow receives emailed PDF invoices.
+Instead of OCR plus fragile regex, the team extracts structured fields
+(vendor, date, line items, total) with an expense-oriented analysis API,
+matches totals against purchase orders, and routes only mismatches to
+humans — cutting manual keying without building any ML.
+
+## 🎯 Architecture Decision Notes
+
+### Contact-center voice AI — compose the pipeline from single-purpose services
+
+A "smart call center" question is usually a composition problem. Each
+service does one job; the architecture chains them:
+
+| Stage | Service role |
+|---|---|
+| Caller speaks to an IVR / chatbot | Conversational interface (Lex) — understands intent, drives the dialogue |
+| System speaks back | Text-to-speech (Polly) — natural voices in contact flows |
+| Recordings become text | Speech-to-text (Transcribe) — transcription of stored audio |
+| Transcripts become insight | Language analysis (Comprehend) — sentiment, key phrases, entities, topic detection |
+
+Decision guidance: if the scenario asks for *understanding what callers
+want* in real time, the conversational piece is the anchor. If it asks
+for *reviewing what happened* across thousands of calls, the anchor is
+transcribe-then-analyze — speech-to-text feeding language analysis for
+sentiment trends, compliance keywords, and coaching insights.
+
+Trap: do not pick a single service to "do AI on calls." Transcription
+without analysis is just text; analysis without transcription has no
+input; and neither replaces the conversational interface that handles
+the live caller.
+
+**Fresh example:** A support center wants to spot frustrated callers
+before they churn. Call recordings land in S3, are transcribed to text,
+and the transcripts are scored for sentiment and flagged for phrases
+like "cancel my account." Supervisors get a daily digest of at-risk
+calls — built from three managed services, with no custom ML.
+
+
+---
+
+## 🎯 Architecture Decision Notes
+
+### WorkSpaces vs AppStream 2.0 — desktops vs apps
+
+Both deliver Windows/Linux applications to users without local installs, but they answer different questions:
+
+- **WorkSpaces = a persistent virtual desktop (VDI).** Each user gets their own stateful desktop with their profile, files, and settings intact between sessions. Choose it for long-term remote-workforce desktop replacement — developers, back-office staff, anyone who lives in their desktop.
+- **AppStream 2.0 = streaming individual applications.** Sessions are stateless and on-demand; the user gets the app, not a desktop. Choose it for short-lived or large-scale access to specific apps — contractors, students, or distributing a legacy Windows app as SaaS without installing it anywhere.
+
+Shared traits the exam may mention: both run inside your VPC, integrate with AD/IAM Identity Center/MFA, and support encrypted storage. Decision rule: "needs *my* desktop that remembers me" → WorkSpaces; "needs *that app* for a while" → AppStream 2.0. Don't answer EC2-with-manual-patching for either — that's the operational-overhead distractor.
+
+*Note: no topical notes file covers end-user computing; consider a dedicated EUC notes file if this area grows.*
+
+## 🎯 Architecture Decision Notes — Legacy Awareness
+
+### Amazon WorkDocs — discontinued; recognize it only as a distractor
+
+WorkDocs was AWS's managed enterprise document-collaboration service (the AWS-native alternative to SharePoint/Google Drive, pitched on IAM/CloudTrail/KMS integration for regulated industries). **AWS discontinued WorkDocs — the service is end-of-life and closed.** It can only appear in exam questions as a legacy distractor. If a scenario asks for document collaboration or managed file sharing today, the current answers are S3-based patterns, WorkSpaces-family services, or third-party SaaS — never WorkDocs.

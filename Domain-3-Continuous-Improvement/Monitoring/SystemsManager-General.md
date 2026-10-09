@@ -194,6 +194,25 @@ Collect metadata about instances and installed software:
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Secrets rotation — how it actually works
+
+Secrets Manager rotation is not magic — it is a Lambda function you configure (or use the AWS-provided templates for RDS, Redshift, DocumentDB):
+
+1. **Staging labels:** rotation creates a new secret version labeled `AWSPENDING`, tests it, then promotes it to `AWSCURRENT`. The old version keeps `AWSPREVIOUS` until the next rotation. Applications should always read `AWSCURRENT` — never a hardcoded version.
+2. **Rotation strategies:** single-user (one credential, brief downtime during swap) vs alternating-users (two credentials, zero downtime — the database flips between them). Choose alternating-users when the application cannot tolerate a failed connection during rotation.
+3. **Rotation schedule:** automatic on a schedule (e.g., every 30 days) or on-demand. The Lambda function must have network access to the database (VPC configuration matters).
+4. **Cross-account:** secrets can be shared via resource policies — but the rotation Lambda must still reach the target database.
+
+**When Parameter Store is enough:** static configuration, non-rotating values, cost-sensitive fleets. **When Secrets Manager is required:** automatic rotation, RDS-native integration, cross-account secret sharing.
+
+**Fresh example:** A payment service uses RDS with 30-day rotation. The alternating-users strategy means the app never sees a failed connection: while `AWSPENDING` is tested, the app keeps using `AWSCURRENT`; only after the new credential validates does the label flip. The rotation Lambda runs in the same VPC as the database — a Lambda in the wrong subnets is the most common rotation failure.
+
+**Trap:** Assuming rotation is instant and atomic. There is a window where two credentials are valid; applications must handle the transition, not assume a single credential.
+
 ## 12. Official References
 
 - [Systems Manager User Guide](https://docs.aws.amazon.com/systems-manager/latest/userguide/)
