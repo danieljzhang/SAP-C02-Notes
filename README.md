@@ -86,12 +86,6 @@ This is a free study resource organized around SAP-C02 exam objectives, with ser
 - [In-scope service coverage map](./Cheatsheets/In-Scope-Service-Coverage.md)
 - [Readiness tracker](./Cheatsheets/Readiness-Tracker.md)
 
-### [Concept Guides](./Concept-Guides/) — Cross-Cutting Decision Guides
-
-- Theme-organized companions to the domain service notes: how to choose between related services, what constraints matter, classic exam traps
-- Compute & integration, networking & edge, identity & governance, data & analytics, operations & cost, migration & end-user services
-- Architecture decision scenarios with requirements-first reasoning
-
 ---
 
 ## 🚀 Quick Start Guide

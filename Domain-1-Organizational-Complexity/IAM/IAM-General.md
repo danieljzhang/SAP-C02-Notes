@@ -197,6 +197,47 @@ If this is set as a permission boundary on a role, the role can only perform S3,
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Workforce vs customer identity — decide first
+
+Authentication (proving who you are) and authorization (what you may do) are
+separate decisions, and workforce access vs customer sign-in are different
+problems. Pick the wrong category and every subsequent choice is wrong:
+
+| Need | Answer |
+|---|---|
+| Employees accessing AWS accounts | IAM Identity Center, optionally federated with a corporate IdP |
+| Application end-users signing in | Cognito user pools (issues tokens the app accepts) |
+| App calling AWS APIs directly | Cognito identity pools (exchanges IdP tokens for temporary AWS credentials) |
+
+Choose the protocol both the identity provider and the client support: SAML
+is common for enterprise browser SSO; OIDC/OAuth flows fit web and mobile
+apps. Never assume a social provider speaks SAML.
+
+For workloads, prefer temporary role credentials over long-lived access keys
+— an EC2 instance profile puts a role on the instance without embedding
+anything in the application.
+
+### Reading an authorization decision
+
+Treat each policy type as answering a different question, not as
+interchangeable grants. When access is unexpectedly denied, walk the full
+chain: identity policy → permission boundary → session policy → SCP → RCP →
+resource-based policy → role trust policy → VPC endpoint policy. An explicit
+deny at any layer is final; SCPs and RCPs set ceilings and never grant.
+
+### Access Analyzer subtleties
+
+- The external-access analyzer must be configured **in each Region** holding
+  covered resources; findings do not automatically span Regions.
+- Policy generation (suggesting least-privilege policies from CloudTrail
+  activity) is a separate feature from external-access analysis.
+- Analyzer output is a finding, not a fix — a human still validates the
+  intended principal and actions against least privilege.
+
 ## 11. Official References
 
 - [IAM User Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/)

@@ -181,6 +181,33 @@ Management Account
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Resource lifecycle on removal — set deliberately
+
+CloudFormation separates removal events into different controls. Leaving them
+at defaults is a decision too, and usually the wrong one for stateful
+resources:
+
+| Attribute | Governs |
+|---|---|
+| `DeletionPolicy` | Stack deletion or resource removal from the template (`Delete`, `Retain`, `Snapshot`) |
+| `UpdateReplacePolicy` | The old physical resource when an update replaces it |
+| `RetainExceptOnCreate` | New resource cleaned up if creation rolls back, retained on later deletion |
+
+- `Snapshot` only works for resource types that support snapshots — check the
+  resource documentation instead of assuming.
+- There are documented default-snapshot exceptions (RDS DB cluster and
+  standalone RDS instance); verify current per-resource behavior.
+- Retained resources and snapshots keep incurring charges and need an owner
+  and a cleanup plan. A snapshot policy is not a tested backup-and-restore
+  plan.
+- For a database that must survive both stack deletion and replacement,
+  configure **both** lifecycle attributes and validate the resource type's
+  documented behavior.
+
 ## 11. Official References
 
 - [CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)
