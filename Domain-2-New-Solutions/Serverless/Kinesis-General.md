@@ -126,6 +126,23 @@ Producers → Firehose → (optional Lambda transform) → S3 / Redshift / OpenS
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Kinesis Data Streams vs Firehose — who controls processing
+
+- **Kinesis Data Streams** keeps an ordered, replayable stream that *your*
+  consumers read with their own positions. Choose it when multiple
+  applications each need the full stream, custom processing, or replay.
+- **Firehose** manages delivery and buffering to destinations (S3, Redshift,
+  OpenSearch, HTTP endpoints) with built-in transforms. Choose it when the
+  goal is managed delivery, not custom stream processing.
+
+Do not pay the operational cost of shard management and consumer-position
+bookkeeping when the workload is really "land this data somewhere reliably"
+— that is Firehose's job.
+
 ## 8. Official References
 
 - [Kinesis Data Streams Developer Guide](https://docs.aws.amazon.com/streams/latest/dev/)

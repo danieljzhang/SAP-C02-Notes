@@ -118,6 +118,24 @@ Step Functions → SQS (with task token)
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Choosing the workflow type — decide before creating
+
+The workflow type cannot be changed after the state machine exists:
+
+| | Standard | Express |
+|---|---|---|
+| Duration | Long-running, durable | Short, high-volume |
+| Execution semantics | Exactly-once workflow model (unless retries configured) | Async: at-least-once; sync: at-most-once |
+| Fit | Order processing, human approvals, durable sagas | Streaming transforms, IoT ingestion, idempotent micro-workflows |
+
+Where duplicate processing is possible (Express async), design side effects
+to be idempotent. Check execution-history retention, duration limits, and
+pricing for the chosen type before committing — they differ materially.
+
 ## 8. Official References
 
 - [Step Functions Developer Guide](https://docs.aws.amazon.com/step-functions/latest/dg/)

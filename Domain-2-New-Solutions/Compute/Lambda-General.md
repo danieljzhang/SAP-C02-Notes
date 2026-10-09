@@ -158,6 +158,23 @@ Lambda (in VPC)
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Concurrency controls — what each one actually does
+
+- **Reserved concurrency** sets both an allocation and a ceiling for one
+  function. Use it to guarantee capacity for a critical function *and* to
+  cap a runaway function so it cannot starve others or overwhelm a
+  downstream database.
+- **Provisioned concurrency** keeps execution environments warm to cut cold
+  starts. It addresses latency, not throughput limits.
+- Neither control removes downstream limits. A function scaled to 1,000
+  concurrent executions still throttles against the database connection
+  limit or the third-party API rate limit — monitor throttles, duration,
+  retries, *and* downstream capacity together.
+
 ## 11. Official References
 
 - [Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/)

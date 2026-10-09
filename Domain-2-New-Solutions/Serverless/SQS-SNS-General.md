@@ -145,6 +145,28 @@ Producer → SNS Topic
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### DLQ design that actually helps
+
+A dead-letter queue isolates poison messages for investigation — but only if
+tuned deliberately:
+
+- Set `maxReceiveCount` high enough to survive transient downstream outages.
+  Too low, and recoverable messages get diverted on the first bad hour.
+- A DLQ is not a fix; pair it with **alarms on DLQ depth**, a retention
+  policy, and a runbook for the redrive operation that returns messages for
+  reprocessing.
+- Keep consumers **idempotent**: retries and redrives can deliver the same
+  message twice, and at-least-once delivery makes "exactly once" the
+  application's job, not the queue's.
+
+Use SNS when the pattern is fan-out to many subscribers; use SQS when the
+pattern is durable buffering for workers. A down SNS subscriber without a
+durable subscription (e.g., an SQS endpoint) loses messages.
+
 ## 7. Official References
 
 - [SQS Developer Guide](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/)

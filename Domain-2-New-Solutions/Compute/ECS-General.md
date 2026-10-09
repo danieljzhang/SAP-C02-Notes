@@ -148,6 +148,34 @@ ALB
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Choosing the compute operating model
+
+Start from how much of the runtime the team wants to operate — this one
+decision eliminates most options:
+
+| Control needed | Fit |
+|---|---|
+| Full OS and runtime control, custom AMIs | EC2 (you own patching, scaling, capacity) |
+| Managed app environment, some AWS resource access | Elastic Beanstalk |
+| Container image or code to HTTPS, minimal platform work | App Runner |
+| Container orchestration with placement/network control | ECS (EC2 capacity model) or ECS on Fargate (AWS manages hosts) |
+
+With Fargate tasks using `awsvpc`, each task gets its own network interface
+and security group. A task in a private subnet needs a route to every
+dependency: ECR image pulls can use ECR interface endpoints, but image
+layers, logs, secrets, and other integrations may each need their own
+endpoint or an egress path. Create only the endpoints the task needs and
+verify current service-specific requirements.
+
+**Fresh example:** A small team shipping an HTTPS API from a container with
+no host-management appetite picks App Runner. A platform team needing
+placement control, cooperating sidecars, or custom networking picks ECS —
+and chooses Fargate when host management adds no value.
+
 ## 12. Official References
 
 - [ECS Developer Guide](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/)
