@@ -13,6 +13,7 @@
 | AWS CodeStar (project service) | Retired | Shut down July 2024. Do not treat CodeCatalyst as a one-to-one replacement; select currently supported source-control, build, and deployment services for the requirements. |
 | Amazon WorkMail (exam relevance) | Low | Rarely tested at professional level. Skip unless exam guide explicitly lists it. |
 | AWS Managed Blockchain (Ethereum) | Limited | Ethereum network support ended. Hyperledger Fabric remains but is low exam priority. |
+| Amazon WorkDocs | Retired | Managed document collaboration service; closed and end-of-life. Treat it only as a legacy distractor in scenarios; current answers use S3-based patterns or third-party SaaS. |
 
 ## Services in Maintenance Mode / Limited Investment
 

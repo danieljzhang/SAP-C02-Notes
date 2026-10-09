@@ -169,9 +169,7 @@ Use when the application benefits from local reads/writes in multiple Regions an
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 12. 🎯 Architecture Decision Notes
 
 ### DynamoDB design decisions that matter at Professional level
 
@@ -191,8 +189,6 @@ Use when the application benefits from local reads/writes in multiple Regions an
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### Reserved capacity — commit where the baseline is boring
 
 For provisioned-mode tables with steady, predictable throughput, DynamoDB reserved capacity lets you pre-commit to a read/write capacity baseline for 1 or 3 years in exchange for a steep discount over on-demand provisioned pricing. It is the DynamoDB analogue of EC2 Reserved Instances: you are buying a cheaper rate for capacity you were going to consume anyway.
@@ -208,8 +204,6 @@ Decision rules:
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### Throttling is a capacity signal — treat it as one
 
 A throttling exception on a provisioned table means request rate exceeded the table's (or a GSI's) allocated throughput. The SDK retries automatically, so transient throttling is invisible — but sustained throttling is your table telling you the capacity plan is wrong. Don't just "increase retries"; fix the capacity or the access pattern.
@@ -224,7 +218,7 @@ Decision playbook, in order:
 
 **Fresh example:** After a marketing email goes out, a `coupons` table throttles for 20 minutes every campaign. The table's average throughput is tiny, but redemptions all hit the single `campaign-2026-q4` partition key. The fix isn't more RCU — it's salting the partition key (`campaign-2026-q4#<random 1-10>`) so redemptions spread across ten partitions, plus a temporary auto-scaling bump for campaign days.
 
-## 12. Official References
+## 13. Official References
 
 - [DynamoDB Developer Guide](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/)
 - [DynamoDB Global Tables](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GlobalTables.html)

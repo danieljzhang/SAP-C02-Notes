@@ -165,9 +165,7 @@ Primary Region (us-east-1)
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 9. 🎯 Architecture Decision Notes
 
 ### Choosing the relational engine and capacity model
 
@@ -188,8 +186,6 @@ for tested restores.
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### Aurora replica auto-scaling vs storage auto-scaling — two different knobs
 
 Aurora scales in two independent dimensions, and exam questions test them separately:
@@ -199,7 +195,7 @@ Aurora scales in two independent dimensions, and exam questions test them separa
 
 Decision rule: storage handles itself; if the workload is *read-spiky*, add an Aurora Auto Scaling policy on replicas. If the workload is *write-heavy*, replica scaling won't help — the writer is still one instance (consider Aurora Serverless v2 or sharding instead).
 
-Mini-example: a ticketing app sees 10x read traffic for two hours on onsale days. A policy "min 1, max 8 replicas, target 60% CPU" absorbs the spike and scales back in overnight — cheaper than running 8 replicas year-round.
+**Fresh example:** A ticketing app sees 10x read traffic for two hours on onsale days. A policy "min 1, max 8 replicas, target 60% CPU" absorbs the spike and scales back in overnight — cheaper than running 8 replicas year-round.
 
 ### Aurora's fast crash recovery — why restart times are short
 
@@ -215,7 +211,7 @@ RDS for Oracle is managed, but it does **not** support Oracle RAC, multitenant c
 
 For getting Oracle *into* AWS: match the tool to the downtime budget. DMS with continuous replication for minimal-downtime migrations (plus SCT/AWS DMS Schema Conversion for heterogeneous moves); Oracle Data Pump for bulk export/import; RMAN backup-to-S3 with restore onto RDS for offline migrations. Licensing is BYOL vs license-included — a cost decision, not a technical one. RMAN also remains the answer for block-level Oracle backups with compression, encryption via KMS, and cross-region copies.
 
-Mini-example: a bank's Oracle RAC cluster must move to AWS with near-zero downtime and keep RAC. Answer: EC2-based Oracle with RAC (RDS can't), DMS for the data move with CDC, SSM Patch Manager for ongoing patching. If RAC weren't required, RDS for Oracle with Multi-AZ would be the simpler answer.
+**Fresh example:** A bank's Oracle RAC cluster must move to AWS with near-zero downtime and keep RAC. Answer: EC2-based Oracle with RAC (RDS can't), DMS for the data move with CDC, SSM Patch Manager for ongoing patching. If RAC weren't required, RDS for Oracle with Multi-AZ would be the simpler answer.
 
 ### RDS Proxy — when a proxy beats a bigger instance
 
@@ -227,7 +223,7 @@ RDS Proxy sits between the application and the database, holding a pool of warm 
 
 Trap: the proxy doesn't make slow queries fast and doesn't add read capacity — pair it with read replicas for read scaling. And it isn't free: model proxy cost against the instance downsizing it enables.
 
-Mini-example: 200 Lambda functions burst on uploads, each opening a TLS connection to Aurora — the database spends more time handshaking than querying. RDS Proxy in front collapses this to a steady warm pool; failover during a deploy becomes a blip instead of a connection storm.
+**Fresh example:** 200 Lambda functions burst on uploads, each opening a TLS connection to Aurora — the database spends more time handshaking than querying. RDS Proxy in front collapses this to a steady warm pool; failover during a deploy becomes a blip instead of a connection storm.
 
 ### Sharding — horizontal scaling when vertical scaling runs out
 
@@ -238,8 +234,6 @@ Decision order before sharding: (1) read replicas for read-heavy skew, (2) Auror
 Trap: CDN and static-hosting answers are distractors for database-tier questions — CloudFront and S3 website hosting do nothing for a relational bottleneck.
 
 ---
-
-## 🎯 Architecture Decision Notes
 
 ### Global relational vs global key-value — the write pattern decides
 
@@ -252,7 +246,7 @@ Three services promise "global." Only one matches your write pattern:
 | Failover | Promote a secondary (minutes) | No failover — already writing everywhere | Promote a replica |
 | Pick when | Relational + single writer + global reads | Writes happen in multiple Regions | Read scaling on standard RDS |
 
-**Fresh mini-scenario:** A booking platform takes reservations in
+**Fresh example:** A booking platform takes reservations in
 us-east-1, eu-west-1, and ap-southeast-1, all writing to the same dataset.
 Aurora Global Database fails the requirement — it has one writer Region.
 DynamoDB global tables is the answer *if* the data model fits key-value
@@ -281,7 +275,7 @@ answer is "redesign the data model or accept single-writer."
 | Survives cluster deletion? | No — tied to the source | Yes | No |
 | Pick when | Dev/test copies, schema experiments | Durable backups, cross-account/Region copies | "Oops" recovery (Aurora MySQL only) |
 
-**Fresh mini-scenario:** QA needs a production-data copy every Monday for
+**Fresh example:** QA needs a production-data copy every Monday for
 testing. Snapshot-restore duplicates terabytes weekly and takes hours.
 Aurora cloning gives QA an instant copy at near-zero storage cost; writes
 diverge on copy-on-write. The snapshot schedule stays — for *backups*, not
@@ -291,7 +285,7 @@ for test data.
 and is not a substitute for snapshots. Cloning is not a backup either —
 delete the source and the clone's basis is gone.
 
-## 9. Official References
+## 10. Official References
 
 - [RDS User Guide](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/)
 - [Aurora User Guide](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/)

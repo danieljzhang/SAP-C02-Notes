@@ -102,7 +102,7 @@ User → Corporate IdP (AD/Okta)
 
 - Replaces manual SAML federation for human users
 - Centrally manages access across all Organization accounts
-- See [IAM-IdentityCenter-General.md](./IAM-IdentityCenter-General.md)
+- See [IAM Identity Center](./iam/iam-identitycenter-general.md)
 
 ---
 
@@ -197,9 +197,7 @@ If this is set as a permission boundary on a role, the role can only perform S3,
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 11. 🎯 Architecture Decision Notes
 
 ### Workforce vs customer identity — decide first
 
@@ -238,10 +236,6 @@ deny at any layer is final; SCPs and RCPs set ceilings and never grant.
 - Analyzer output is a finding, not a fix — a human still validates the
   intended principal and actions against least privilege.
 
----
-
-## 🎯 Architecture Decision Notes
-
 ### Service role vs service-linked role — who owns the role decides the behavior
 
 Both let an AWS service act on your behalf, but ownership and control
@@ -273,7 +267,7 @@ create a service role for the automation document granting only
 nothing more. They leave the Systems Manager service-linked role alone,
 knowing AWS manages it and that their SCPs won't touch it either.
 
-## 11. Official References
+## 12. Official References
 
 - [IAM User Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/)
 - [Policy Evaluation Logic](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html)

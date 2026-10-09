@@ -145,9 +145,7 @@ Config Rule detects non-compliance
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 9. 🎯 Architecture Decision Notes
 
 ### Companion services: certificates and parameters
 
@@ -172,7 +170,7 @@ gives a consolidated compliance view — but it does not itself enable
 recording in every account and Region. Recording must be on where you
 need it.
 
-## 9. Official References
+## 10. Official References
 
 - [AWS Config Developer Guide](https://docs.aws.amazon.com/config/latest/developerguide/)
 - [Managed Config Rules](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html)

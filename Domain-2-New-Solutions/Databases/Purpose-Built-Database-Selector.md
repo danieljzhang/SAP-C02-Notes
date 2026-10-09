@@ -1,6 +1,6 @@
 # Purpose-Built Database Selector — SAP-C02 Study Notes
 
-> Start from access patterns, consistency, latency, scale, query shape, and operational constraints. “NoSQL” and “managed” are not sufficient selection criteria.
+> Exam relevance: Domain 2 (29%). Start from access patterns, consistency, latency, scale, query shape, and operational constraints. “NoSQL” and “managed” are not sufficient selection criteria.
 
 ## 1. Fast Selection Table
 
@@ -36,7 +36,7 @@
 - **Cache vs source of truth:** ElastiCache can reduce latency/load, but data correctness, invalidation, and cache failure behavior remain application concerns.
 - **S3 data lake vs warehouse:** flexible object storage and decoupled analytics versus a managed SQL warehouse with dedicated analytical compute.
 
-## 4. Original Scenario
+## 4. Exam Scenario
 
 **Scenario:** A telemetry platform stores device measurements, customer profiles, and device-to-device relationships. Analysts need daily fleet-wide aggregates; the application needs millisecond profile lookups and relationship traversal.
 
@@ -53,7 +53,7 @@
 
 ---
 
-## 🎯 Architecture Decision Notes
+## 6. 🎯 Architecture Decision Notes
 
 ### OLAP vs OLTP — pick the database by the query shape, not the data size
 
@@ -78,9 +78,9 @@ Reach for Timestream when the workload is time-stamped measurements at scale: Io
 
 Decision rule: if the access pattern is "ingest millions of timestamped events, query by time window," Timestream outperforms MySQL-on-EC2 or DocumentDB by orders of magnitude with less operational work. If you need ad-hoc joins across entities or document flexibility, it's the wrong tool — pair it with DynamoDB/DocumentDB for the entity side.
 
-Mini-example: a weather company ingests billions of sensor events daily and builds hourly/daily/weekly trend forecasts; retrieval from MySQL keeps getting slower as data grows. Replatform the database tier to Timestream (time-window queries over the memory store are fast), keep long-running forecast jobs on containers (ECS), and use scheduled queries to pre-compute the hourly rollups the forecasters read.
+**Fresh example:** A weather company ingests billions of sensor events daily and builds hourly/daily/weekly trend forecasts; retrieval from MySQL keeps getting slower as data grows. Replatform the database tier to Timestream (time-window queries over the memory store are fast), keep long-running forecast jobs on containers (ECS), and use scheduled queries to pre-compute the hourly rollups the forecasters read.
 
-## 6. Official References
+## 7. Official References
 
 - [AWS database decision guide](https://docs.aws.amazon.com/decision-guides/latest/decision-guides/databases-on-aws-how-to-choose.html)
 - [Amazon DocumentDB](https://docs.aws.amazon.com/documentdb/latest/devguide/what-is.html)

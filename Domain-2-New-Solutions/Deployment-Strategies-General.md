@@ -1,6 +1,6 @@
 # Deployment Strategies and CI/CD — SAP-C02 Study Notes
 
-> Official Domain 2 task 2.1 covers deployment strategy, change management, rollback, IaC, configuration management, and managed services. Choose a rollout pattern from business risk and recovery requirements.
+> Exam relevance: Domain 2 (29%). Official Domain 2 task 2.1 covers deployment strategy, change management, rollback, IaC, configuration management, and managed services. Choose a rollout pattern from business risk and recovery requirements.
 
 ## 1. Service Roles
 
@@ -56,7 +56,7 @@ Commit -> build/test -> scan/artifact -> deploy infrastructure
 | Blue/green cutover overloads shared database | Capacity/load test both fleets and throttle traffic shift |
 | Artifact differs between test and production | Immutable artifact promotion with digest/version verification |
 
-## 5. Original Scenario
+## 5. Exam Scenario
 
 **Scenario:** A critical API is deployed to EC2 Auto Scaling groups behind an ALB. Releases must minimize downtime and provide rapid rollback; the database is shared by old and new application versions.
 
@@ -73,7 +73,7 @@ Commit -> build/test -> scan/artifact -> deploy infrastructure
 
 ---
 
-## 🎯 Architecture Decision Notes
+## 7. 🎯 Architecture Decision Notes
 
 ### Elastic Beanstalk rollout controls
 
@@ -90,13 +90,6 @@ CNAME swap is not instantaneous for every client — account for DNS caching
 in the cutover plan.
 
 ---
-
-## 🎯 Architecture Decision Notes — Legacy Awareness
-
-
----
-
-## 🎯 Architecture Decision Notes
 
 ### OpsWorks (legacy awareness) — recognize it, do not recommend it new
 
@@ -131,7 +124,7 @@ as code." The legacy answer is OpsWorks for Chef Automate; the
 modern answer the exam rewards is Systems Manager-based configuration
 management — same category (desired-state enforcement), current service.
 
-## 7. Official References
+## 8. Official References
 
 - [AWS CodePipeline](https://docs.aws.amazon.com/codepipeline/latest/userguide/welcome.html)
 - [AWS CodeBuild](https://docs.aws.amazon.com/codebuild/latest/userguide/welcome.html)

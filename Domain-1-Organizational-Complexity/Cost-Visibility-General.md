@@ -1,6 +1,6 @@
 # Cost Visibility and Optimization — SAP-C02 Study Notes
 
-> Official Domain 1 task 1.5 covers cost optimization and visibility. The objective is not merely to choose a cheaper instance: establish who owns spend, how usage is measured, and how the architecture can change safely.
+> Exam relevance: Domain 1 (26%). Cost optimization and visibility is not merely choosing a cheaper instance: establish who owns spend, how usage is measured, and how the architecture can change safely.
 
 ## 1. Cost Management Tool Selection
 
@@ -51,7 +51,7 @@ Change architecture/commitments -> measure actual outcome
 - Protect CUR/Data Export buckets with scoped IAM and KMS policies; billing data reveals resource and usage metadata.
 - Use budgets and anomaly alerts as detection/notification controls, not as a guaranteed hard spending cap. Budget actions can restrict selected resources only after configuration and should be tested carefully.
 
-## 5. Original Scenario
+## 5. Exam Scenario
 
 **Scenario:** A company sees a 30% increase in cloud spend, but its monthly invoice only identifies account totals. Product owners need cost responsibility, and leadership wants early warning before budget overruns.
 
@@ -68,7 +68,7 @@ Change architecture/commitments -> measure actual outcome
 
 ---
 
-## 🎯 Architecture Decision Notes
+## 7. 🎯 Architecture Decision Notes
 
 ### Reserved Instance discount sharing — pooled by default, separable by choice
 
@@ -94,8 +94,6 @@ Settle the policy, document it, and change it deliberately.
 fully standalone costs for the first year. FinOps leaves RI sharing on
 for the nine existing accounts but disables it for the new subsidiary's
 account, so its invoice reflects only its own commitments and usage.
-
-## 🎯 Architecture Decision Notes
 
 ### Who owns billing truth — management vs member account responsibilities
 
@@ -127,7 +125,7 @@ one QuickSight dashboard per cost center, and shares each dashboard with
 the right team — product teams get their numbers, nobody gets the whole
 org's invoice.
 
-## 7. Official References
+## 8. Official References
 
 - [AWS Cost Management User Guide](https://docs.aws.amazon.com/cost-management/latest/userguide/what-is-costmanagement.html)
 - [AWS Budgets](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html)
