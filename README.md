@@ -92,7 +92,7 @@ This is a free study resource organized around SAP-C02 exam objectives, with ser
 
 ### Comprehensive Study (6–8 weeks)
 
-1. **Week 1–2:** Domain 2 (New Solutions) — highest weight, broadest service coverage
+1. **Week 1–2:** Domain 2 (New Solutions) — highest weight, broadest service coverage. *Prerequisite:* skim Domain 1's [VPC-Advanced](./Domain-1-Organizational-Complexity/Networking/VPC-Advanced-General.md) (endpoints, PrivateLink) first — Domain 2's networking files assume it.
 2. **Week 3:** Domain 1 (Organizational Complexity) — multi-account, networking, governance
 3. **Week 4–5:** Domain 3 (Continuous Improvement) — monitoring, cost, reliability
 4. **Week 6:** Domain 4 (Migration) — migration strategies and modernization patterns
@@ -193,7 +193,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md). Contributions, corrections, and improv
 
 ## 📄 License
 
-MIT License — see the [MIT license text](https://opensource.org/licenses/MIT).
+MIT License — see [LICENSE](./LICENSE).
 
 ## 🙏 Acknowledgments
 
