@@ -238,6 +238,41 @@ deny at any layer is final; SCPs and RCPs set ceilings and never grant.
 - Analyzer output is a finding, not a fix — a human still validates the
   intended principal and actions against least privilege.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Service role vs service-linked role — who owns the role decides the behavior
+
+Both let an AWS service act on your behalf, but ownership and control
+differ completely:
+
+| | Service role | Service-linked role |
+|---|---|---|
+| Created by | You, manually | AWS, automatically when you enable the feature |
+| Permissions | You define the policy (custom, least privilege) | AWS defines a fixed policy you cannot freely edit |
+| Scope | Whatever your policy allows — often across your resources | Tightly bound to one service's documented needs |
+| Lifecycle | You manage and delete it | Follows the service — deleting the feature/related resources cleans it up; you cannot delete it while the service still needs it |
+
+Decide: when a service needs **custom access to your resources**
+(an automation document that reboots instances, writes snapshots, and
+logs to S3), create a **service role** with exactly those permissions.
+When the service needs to manage **its own internal machinery** (the
+service emitting its operational data to CloudWatch, managing ENIs for
+your tasks), accept the **service-linked role** AWS provisions.
+
+Exam traps: you cannot "tighten" a service-linked role's policy the way
+you would your own — if its permissions look broad, the answer is usually
+to constrain what the service can touch elsewhere, not to edit the role.
+And if a question asks why an SCP isn't restricting something, check
+whether the actor is a service-linked role — SCPs do not apply to them.
+
+**Fresh example:** A team automates patching with Systems Manager. They
+create a service role for the automation document granting only
+`ec2:RebootInstances`, `ec2:CreateSnapshot`, log writing, and S3 puts —
+nothing more. They leave the Systems Manager service-linked role alone,
+knowing AWS manages it and that their SCPs won't touch it either.
+
 ## 11. Official References
 
 - [IAM User Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/)

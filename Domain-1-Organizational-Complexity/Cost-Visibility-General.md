@@ -66,6 +66,67 @@ Change architecture/commitments -> measure actual outcome
 - Savings are not successful if they violate resilience, performance, or recovery requirements.
 - Verify current billing product names, report schemas, tag activation behavior, and service availability in AWS documentation.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Reserved Instance discount sharing — pooled by default, separable by choice
+
+Under consolidated billing, the organization is treated as one billing
+entity: a Reserved Instance purchased in any account discounts matching
+usage in *every* account. This pooling is usually what you want — it
+maximizes utilization of the commitment.
+
+The payer (management) account can disable RI discount sharing for a
+specific member account. Decide to disable only with a reason:
+
+| Situation | Verdict |
+|---|---|
+| Maximize commitment utilization across the org | Leave sharing on (default) |
+| A business unit must bear its true standalone cost (chargeback, divestiture prep, contractual isolation) | Disable sharing for that account — accept that its RIs may go underutilized and its bill may rise |
+
+Trap: disabling sharing is a billing-preference change, not an
+architecture change — each new bill is computed from the *current*
+preference, and flipping it repeatedly makes cost attribution noisy.
+Settle the policy, document it, and change it deliberately.
+
+**Fresh example:** A company acquires a subsidiary that must report
+fully standalone costs for the first year. FinOps leaves RI sharing on
+for the nine existing accounts but disables it for the new subsidiary's
+account, so its invoice reflects only its own commitments and usage.
+
+## 🎯 Architecture Decision Notes
+
+### Who owns billing truth — management vs member account responsibilities
+
+Cost visibility in Organizations splits along one hard line: the
+management account is the only place that can create billing truth;
+member accounts can only see their own slice.
+
+| Capability | Management account | Member (linked) account |
+|---|---|---|
+| Enable the Cost and Usage Report (CUR / Data Exports) | Yes — and chooses the S3 destination | No |
+| Activate cost allocation tags | Yes — required before tags appear in Cost Explorer | No |
+| See full org spend in the billing console | Yes | No — sees only its own cost and usage |
+| Consume org-wide analysis | Publishes it | Via shared QuickSight dashboards or granted S3/Athena access to the CUR bucket |
+
+Design implication: put the FinOps reporting pipeline (CUR → S3 →
+Athena/QuickSight) in the management account once, then distribute
+*read access to the outputs*, not billing-console access. Teams that ask
+"why can't I see the whole org's bill from my account" are hitting this
+boundary by design — least privilege applies to billing data too.
+
+Trap: the CUR bucket itself is sensitive — it reveals resource metadata
+and usage patterns org-wide. Protect it with scoped IAM and KMS policies
+even as you share dashboards derived from it.
+
+**Fresh example:** A platform team wants every product team to see
+spend trends. Instead of granting billing-console access everywhere,
+FinOps enables CUR and allocation tags in the management account, builds
+one QuickSight dashboard per cost center, and shares each dashboard with
+the right team — product teams get their numbers, nobody gets the whole
+org's invoice.
+
 ## 7. Official References
 
 - [AWS Cost Management User Guide](https://docs.aws.amazon.com/cost-management/latest/userguide/what-is-costmanagement.html)

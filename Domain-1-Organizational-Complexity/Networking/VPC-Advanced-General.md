@@ -191,6 +191,24 @@ link after re-addressing without touching the caller's endpoint pattern.
 An endpoint is reachability, not permission: combine it with security
 groups, endpoint policies, and the destination service's own authorization.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Forward proxy vs NAT Gateway — control versus plumbing
+
+A NAT Gateway is dumb plumbing: it lets private-subnet resources reach the internet, with no say over *what* they reach. A **forward proxy** (e.g., a Squid fleet behind an internal load balancer) is a policy checkpoint for outbound web traffic — and the exam reaches for it whenever the requirement is about *which* destinations are allowed, not just *whether* the internet is reachable.
+
+Choose a forward proxy when you need:
+
+- **URL/domain allow-listing** — e.g., "EC2 instances may only reach approved vendor update sites." A NAT Gateway cannot express this; a proxy enforces it per request.
+- **Centralized outbound logging** — one place recording every HTTP/HTTPS request for audit and compliance, far richer than flow logs.
+- **Content filtering/caching** — block categories of sites, cache repeated downloads (OS patches, dependencies).
+
+Tradeoffs: a proxy is usually HTTP/HTTPS-only (NAT handles all IP protocols), and unless you use a Marketplace appliance or firewall service, you're managing the fleet's HA and patching yourself. Also remember the client side: workloads must be configured to use the proxy (proxy env vars or transparent redirection) — traffic doesn't flow through it by default the way it does through a NAT route.
+
+Mini-example: a compliance rule says factory-floor instances may download PLC firmware only from `updates.vendor.com` and all outbound web requests must be logged. Answer: forward proxy fleet in a public subnet with a domain allow-list and request logging, default routes removed so nothing bypasses it — NAT Gateway alone fails both the allow-list and the logging requirement.
+
 ## 10. Official References
 
 - [VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html)

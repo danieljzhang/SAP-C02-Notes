@@ -259,6 +259,49 @@ SCPs are **inherited** from parent to child. A child OU or account cannot escape
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Turning a soft budget alert into a hard spend guardrail
+
+AWS Budgets notifies; it does not stop launches. When a team routinely
+blows past its monthly budget and notifications are ignored, you need an
+enforcement mechanism — and SCPs are the right one for two structural
+reasons: an SCP deny binds even users with administrative rights, and a
+budget owned by the management account cannot be edited or deleted by
+the spenders.
+
+The pattern, decision by decision:
+
+1. **Detect centrally.** Create the budget in the management account, one
+   per member account, alerting at 100% of the monthly threshold. Member
+   account admins cannot alter a management-account budget.
+2. **Enforce with an SCP, not IAM.** On breach, publish to SNS and have a
+   Lambda attach a deny-all-infrastructure SCP to the over-budget
+   account. IAM policies cannot do this job — an account admin could
+   simply remove an IAM-based restriction; they cannot remove or override
+   an SCP.
+3. **Release automatically.** Schedule a second Lambda (EventBridge
+   schedule at month start) to detach the SCP, so the guardrail resets
+   without manual toil.
+
+Traps: test the deny SCP in a sandbox OU first — a malformed deny can
+freeze legitimate automation, and because SCPs bind admins too, recovery
+requires the management account. Prefer narrowly-scoped denies (block
+launching new compute/storage) over a blanket deny-all if the account
+must keep running existing workloads. And treat this as a backstop, not
+a substitute for tag policies, budget actions, and cost anomaly alerts
+that catch the trend earlier.
+
+**Fresh example:** Ten product teams each own a dev account and all
+exceed budgets. Central FinOps creates per-account budgets in the
+management account. When Team Aurora hits 100%, the breach Lambda
+attaches a deny-launch SCP to their account within minutes — running
+workloads continue, new launches stop, and on the first of the month the
+scheduled Lambda lifts the restriction. The teams feel the consequence
+exactly where the spending happened, and no one can click around it.
+
 ## 11. Official References
 
 - [SCP Overview](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html)
