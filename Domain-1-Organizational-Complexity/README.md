@@ -55,6 +55,7 @@
 - [Config-General.md](./Config-General.md) — Config rules, conformance packs, aggregators
 - [SecurityHub-General.md](./SecurityHub-General.md) — Findings aggregation, standards, automation
 - [Security-Services-Selector.md](./Security-Services-Selector.md) — GuardDuty, Inspector, Macie, WAF/Shield, Firewall Manager, response patterns
+- [KMS-General.md](./KMS-General.md) — key types, key policies vs grants, cross-account access, envelope encryption, CloudHSM
 - [Cost-Visibility-General.md](./Cost-Visibility-General.md) — Cost Explorer, Budgets, billing exports, tags, commitments
 - [Route53-General.md](./Route53-General.md) — Routing policies, health checks, hybrid DNS, Resolver
 

@@ -84,6 +84,76 @@ Amazon MSK is a fully managed Apache Kafka service. It provisions, configures, a
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### MSK provisioned vs MSK Serverless vs Kafka on EC2
+
+| | MSK provisioned | MSK Serverless | Kafka on EC2 |
+|---|---|---|---|
+| Broker management | AWS manages brokers; you size them | None — fully serverless | You manage everything |
+| Scaling | Manual broker/storage scaling | Automatic | Manual |
+| VPC | Your VPC subnets | AWS-managed networking | Your VPC |
+| IAM auth | Yes | Yes (required style) | DIY |
+| Cost model | Per broker-hour | Per throughput + storage | EC2 + your labor |
+| Choose when | Predictable throughput, need broker-level control (instance types, configs) | Variable/spiky workloads, no capacity planning | Deep Kafka customization, unsupported configs |
+
+Decision rule: default to MSK provisioned for steady Kafka workloads where
+you want configuration control; MSK Serverless for new apps with
+unpredictable traffic. Kafka on EC2 is only justified when MSK's managed
+constraints block a required configuration — the exam almost never rewards
+it.
+
+### Tiered storage — the cost lever
+
+MSK tiered storage offloads older topic data to S3-backed low-cost storage
+while keeping recent data on broker disks. Hot data stays fast; cold data
+stays cheap and still consumable.
+
+Exam trap: "retain 2 years of events, minimize cost" — the naive answer
+provisions enormous broker EBS volumes. Tiered storage is the designed
+answer: long retention without paying hot-storage prices for cold data.
+Pair with a retention policy per topic, not one blanket setting.
+
+### Replication and multi-cluster patterns
+
+- **MSK Replicator** (managed MirrorMaker 2): replicate topics across MSK
+  clusters, including cross-Region. The DR story for Kafka on AWS —
+  "Region failover for Kafka workloads" points here, not to stretching one
+  cluster across Regions.
+- Do not confuse topic replication (Replicator) with consumer offset
+  management — offsets are per-cluster; failover runbooks must address
+  consumer position, not just data copy.
+
+### Security decisions that actually get tested
+
+- **Encryption in transit** is TLS; **at rest** is KMS — but the exam tests
+  *authentication*: SASL/SCRAM (username/password in Secrets Manager),
+  mTLS (client certificates), or **IAM auth** (roles/policies, no secret
+  rotation). "No credential rotation overhead" → IAM auth.
+- Brokers live in **your VPC subnets** with no public endpoint by default.
+  "On-premises producers need to reach MSK" → private connectivity via
+  DX/VPN, not opening brokers to the internet.
+
+### Scaling without guessing
+
+- **Storage autoscaling** expands broker EBS automatically — enable it
+  rather than over-provisioning "just in case."
+- **Broker scaling** (adding brokers / changing instance types) is a
+  deliberate operation with partition-rebalancing implications. The exam
+  rewards knowing that throughput problems are solved by partitions first
+  (more partitions → more parallelism), then brokers.
+- Monitor with CloudWatch broker metrics plus JMX/Prometheus scraping for
+  consumer lag — lag, not CPU, is the Kafka health signal that matters.
+
+**Fresh example:** A team migrates a Kafka workload with 90-day retention
+and spiky traffic. They choose MSK provisioned (steady baseline, custom
+broker configs their Streams app needs), enable tiered storage so the
+90-day tail doesn't inflate EBS costs, use MSK Replicator to a second
+Region for DR, and authenticate producers with IAM to avoid secret
+rotation. Each choice answers a distinct requirement word in the scenario.
+
 ## 8. Official References
 
 - [MSK Developer Guide](https://docs.aws.amazon.com/msk/latest/developerguide/)

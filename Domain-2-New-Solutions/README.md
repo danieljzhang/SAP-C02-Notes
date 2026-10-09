@@ -49,6 +49,7 @@
 - [S3-Advanced-General.md](./Storage/S3-Advanced-General.md) — storage classes, lifecycle, replication, encryption
 - [EFS-General.md](./Storage/EFS-General.md) — shared file storage, performance modes, replication
 - [FSx-General.md](./Storage/FSx-General.md) — FSx for Windows, Lustre, NetApp ONTAP, OpenZFS
+- [EBS-General.md](./Storage/EBS-General.md) — volume types, snapshots, encryption, multi-attach
 
 ### Databases/
 - [RDS-Aurora-General.md](./Databases/RDS-Aurora-General.md) — Multi-AZ, read replicas, Aurora Global, Serverless
