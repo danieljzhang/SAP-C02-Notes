@@ -12,7 +12,7 @@
 |---|---|---|
 | Throughput | Unlimited | 3,000 msg/s with batching, 300 without |
 | Ordering | Best-effort | Strict (First-In-First-Out) |
-| Delivery | At-least-once | Exactly-once |
+| Delivery behavior | SQS standard queues are at-least-once; FIFO deduplicates sends within its deduplication interval and orders within a message group | Subscription delivery behavior depends on the protocol/endpoint; consumers should be idempotent |
 | Deduplication | No | Yes (5-minute dedup window) |
 | Use case | High throughput, order not critical | Order-critical, financial transactions |
 
@@ -63,7 +63,7 @@ SNS is a pub/sub messaging service. Publishers send messages to **topics**; subs
 
 ### SNS FIFO
 
-- Strict ordering and exactly-once delivery
+- Ordered delivery within a message group and send deduplication; consumers still need idempotent effects
 - Only SQS FIFO queues can subscribe
 - Lower throughput than Standard SNS
 
@@ -117,7 +117,7 @@ Producer → SNS Topic
 
 **Scenario 1:** An application processes orders. Each order must be processed exactly once and in the order received. What is the queue type?
 
-> Use **SQS FIFO queue**. FIFO guarantees strict ordering and exactly-once processing. Use message group IDs to partition ordering within the queue.
+> Use an **SQS FIFO queue** with a message group ID for the required ordering scope and a deduplication ID (or content-based deduplication) to suppress duplicate sends within the deduplication interval. Make the consumer idempotent and record completed order IDs with the business update: FIFO deduplication does not make arbitrary downstream side effects exactly-once.
 
 **Scenario 2:** A company wants to send a single event to 5 different downstream services for processing. What is the pattern?
 
@@ -137,9 +137,9 @@ Producer → SNS Topic
 
 - **SQS** = pull-based, buffering, one consumer per message
 - **SNS** = push-based, fan-out, multiple subscribers
-- **FIFO** = ordering + exactly-once — lower throughput, higher cost
-- **DLQ** = preserve failed messages — always configure for production queues
-- **Long polling** = reduce empty responses and cost — always enable (20s wait)
+- **FIFO** = ordered delivery within a message group plus send deduplication; make consumer effects idempotent because retries/redelivery can still occur
+- **DLQ** = isolate repeatedly failing messages; configure redrive behavior to match replay and retention needs
+- **Long polling** = reduce empty responses and cost for polling consumers; tune wait time to the workload
 - **Visibility timeout** must be > Lambda function timeout to prevent duplicate processing
 - Fan-out = SNS → multiple SQS queues — not SNS → multiple Lambda (Lambda can fail and lose messages)
 

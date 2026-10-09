@@ -4,11 +4,13 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Exam: SAP-C02](https://img.shields.io/badge/Exam-SAP--C02-orange.svg)](https://aws.amazon.com/certification/certified-solutions-architect-professional/)
 
-## 🎯 Complete Exam Preparation Repository
+## 🎯 Exam-Focused Study Notes
 
-> **Free, comprehensive, and exam-focused study materials for AWS Certified Solutions Architect – Professional (SAP-C02) certification. Created with Amazon Q Developer and covering 60+ AWS services across all 4 exam domains.**
+> Study materials for AWS Certified Solutions Architect – Professional (SAP-C02), with service notes, architecture patterns, and original scenarios across all four exam domains.
 
-This repository contains comprehensive study materials for the SAP-C02 exam, organized by exam domains with detailed service coverage, architecture patterns, integration examples, and original practice scenarios.
+This is a free study resource organized around SAP-C02 exam objectives, with service guides, architecture patterns, and original scenario exercises. It is not a full mock exam or paid question bank, and it contains no actual exam questions. Some services in AWS's non-exhaustive in-scope list receive selector or awareness coverage rather than a standalone guide; see the [coverage map](./Cheatsheets/In-Scope-Service-Coverage.md) and consult current AWS documentation for feature-specific decisions.
+
+> **Exam-version notice (checked October 8, 2026):** [AWS states](https://aws.amazon.com/certification/certified-solutions-architect-professional/) that SAP-C02's last exam date is November 16, 2026, and registration for SAP-C03 opens October 27, 2026. This repository is mapped to SAP-C02. Confirm the version you are booking and use the corresponding official exam guide; SAP-C03 objectives may differ.
 
 ---
 
@@ -34,6 +36,7 @@ This repository contains comprehensive study materials for the SAP-C02 exam, org
 
 > Verify domain names and weights against the current official exam guide at:
 > https://aws.amazon.com/certification/certified-solutions-architect-professional/
+> The current SAP-C02 guide also identifies emerging responsible-AI/security topics as possible unscored pretest content. Review the live guide for updates.
 
 ---
 
@@ -44,7 +47,8 @@ This repository contains comprehensive study materials for the SAP-C02 exam, org
 - **Governance:** AWS Organizations, SCPs, Control Tower, Landing Zones, RAM
 - **Identity:** IAM, IAM Identity Center, Resource Control Policies
 - **Networking:** Transit Gateway, Direct Connect, VPN, VPC Advanced, Route 53
-- **Security:** Config, Security Hub, GuardDuty
+- **Security:** Config, Security Hub, GuardDuty, Inspector, Macie, WAF/Shield, Firewall Manager
+- **Cost visibility:** Cost Explorer, Budgets, Cost and Usage Reports, allocation tags
 - **Coverage:** Multi-account design, cross-account access, enterprise networking, governance guardrails
 
 ### [Domain 2: Design for New Solutions (29%)](./Domain-2-New-Solutions/)
@@ -54,21 +58,22 @@ This repository contains comprehensive study materials for the SAP-C02 exam, org
 - **Storage:** S3 Advanced, EFS, FSx
 - **Databases:** RDS/Aurora, DynamoDB, ElastiCache, OpenSearch
 - **Serverless & Messaging:** Step Functions, EventBridge, SQS/SNS, Kinesis, MSK
-- **IaC:** CloudFormation, CDK
+- **IaC and deployment:** CloudFormation, CDK, CodePipeline, CodeBuild, CodeDeploy
 - **Coverage:** Architecture design, scalability, resilience, security, cost optimization
 
 ### [Domain 3: Continuous Improvement for Existing Solutions (25%)](./Domain-3-Continuous-Improvement/)
 
 - **Monitoring:** CloudWatch, CloudTrail, X-Ray, Systems Manager
 - **Cost Optimization:** Cost Explorer, Compute Optimizer, Trusted Advisor
-- **Reliability:** Well-Architected Tool, AWS Backup, Resilience Patterns, Service Quotas
+- **Reliability:** Well-Architected Tool, AWS Backup, Elastic Disaster Recovery, Resilience Patterns, Service Quotas
 - **Coverage:** Operational excellence, performance tuning, cost reduction, reliability improvement
 
 ### [Domain 4: Accelerate Workload Migration and Modernization (20%)](./Domain-4-Migration-Modernization/)
 
 - **Migration Tools:** MGN, DMS, DataSync, Snow Family, Transfer Family, Migration Hub, MAP
 - **Modernization Patterns:** Microservices, containers, serverless, database modernization
-- **Coverage:** Migration strategies (6 Rs), lift-and-shift, re-platforming, re-architecting
+- **Coverage:** Migration strategies (7 Rs), lift-and-shift, re-platforming, re-architecting
+- **Domain guide:** [Domain 4 overview and study notes](./Domain-4-Migration-Modernization/README.md)
 
 ### [Cheatsheets](./Cheatsheets/) — Last-Minute Review
 
@@ -77,6 +82,9 @@ This repository contains comprehensive study materials for the SAP-C02 exam, org
 - Exam strategy and time management
 - Final exam tips
 - Original practice scenarios
+- [Cheatsheets index](./Cheatsheets/README.md)
+- [In-scope service coverage map](./Cheatsheets/In-Scope-Service-Coverage.md)
+- [Readiness tracker](./Cheatsheets/Readiness-Tracker.md)
 
 ---
 
@@ -126,7 +134,7 @@ This repository contains comprehensive study materials for the SAP-C02 exam, org
 
 - **Multi-account landing zone** — Organizations + Control Tower + SCPs + IAM Identity Center
 - **Hub-and-spoke networking** — Transit Gateway + Direct Connect + VPN
-- **Multi-region active-active** — Route 53 + Global Accelerator + Aurora Global + DynamoDB Global Tables
+- **Multi-Region traffic and data** — Route 53 / Global Accelerator for traffic; DynamoDB Global Tables can support multi-Region writes, while Aurora Global Database has a primary writer and read-only secondary Regions (optional write forwarding sends writes to the primary)
 - **Event-driven architecture** — EventBridge + Lambda + SQS/SNS + Step Functions
 - **Data lake architecture** — S3 + Glue + Athena + Lake Formation
 - **Lift-and-shift migration** — MGN + DMS + DataSync + Migration Hub

@@ -23,6 +23,9 @@
 | 1.2 Prescribe security controls | IAM, SCPs, RCPs, Config, Security Hub, GuardDuty |
 | 1.3 Design reliable and resilient architectures | Multi-AZ, multi-region, Route 53 failover |
 | 1.4 Design a multi-account AWS environment | Organizations, Control Tower, RAM, IAM Identity Center |
+| 1.5 Determine cost optimization and visibility strategies | Cost Explorer, Budgets, Trusted Advisor, Pricing Calculator, Compute Optimizer, tagging |
+
+> Task names aligned to the [official SAP-C02 exam guide](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-professional-02/solutions-architect-professional-02-domain1.html). The guide may change; recheck before exam day.
 
 ---
 
@@ -51,6 +54,8 @@
 - [RAM-General.md](./RAM-General.md) — Resource Access Manager, cross-account sharing
 - [Config-General.md](./Config-General.md) — Config rules, conformance packs, aggregators
 - [SecurityHub-General.md](./SecurityHub-General.md) — Findings aggregation, standards, automation
+- [Security-Services-Selector.md](./Security-Services-Selector.md) — GuardDuty, Inspector, Macie, WAF/Shield, Firewall Manager, response patterns
+- [Cost-Visibility-General.md](./Cost-Visibility-General.md) — Cost Explorer, Budgets, billing exports, tags, commitments
 - [Route53-General.md](./Route53-General.md) — Routing policies, health checks, hybrid DNS, Resolver
 
 ---

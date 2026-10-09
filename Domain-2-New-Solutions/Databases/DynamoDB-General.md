@@ -1,18 +1,18 @@
 # Amazon DynamoDB — SAP-C02 Study Notes
 
-> Exam relevance: Domain 2 (29%). DynamoDB is the go-to for single-digit millisecond latency at any scale. Know partition keys, GSIs, streams, DAX, Global Tables, and capacity modes.
+> Exam relevance: Domain 2 (29%). DynamoDB is a managed key-value/document database that can provide low-latency access at scale when the access pattern, partition key, capacity, and consistency model fit. Know partition keys, GSIs, streams, DAX, Global Tables, and capacity modes.
 
 ---
 
 ## 1. Overview
 
-Amazon DynamoDB is a fully managed, serverless NoSQL key-value and document database. It delivers single-digit millisecond performance at any scale with no infrastructure management.
+Amazon DynamoDB is a fully managed NoSQL key-value and document database. It removes database-server provisioning, but table design, capacity mode, quotas, partition-key distribution, consistency, and cost still require architecture decisions. Latency depends on workload and configuration; do not treat a typical service characteristic as an end-to-end guarantee.
 
 **When to choose DynamoDB:**
-- Single-digit millisecond latency requirement
+- Low-latency key-value/document access with well-defined access patterns
 - Massive scale (millions of requests/second)
 - Simple access patterns (key-value, document)
-- Serverless, no capacity planning
+- Managed operations without database-server provisioning
 
 **When NOT to choose DynamoDB:**
 - Complex joins or relational queries → use Aurora/RDS
@@ -102,18 +102,19 @@ DynamoDB Table → Stream → Lambda → downstream processing
 
 ## 7. Global Tables
 
-- Multi-region, multi-active replication
-- All replicas are readable and writable
-- Replication lag: typically < 1 second
-- Conflict resolution: last-writer-wins (based on timestamp)
-- Requires on-demand capacity mode or auto-scaling provisioned
+- Multi-Region replicas can serve reads and writes.
+- Choose a consistency mode when creating the global table: multi-Region eventual consistency (MREC) or multi-Region strong consistency (MRSC), subject to current Region/configuration constraints.
+- MREC replicates asynchronously; concurrent writes can conflict and use last-writer-wins resolution. Design application conflict behavior explicitly.
+- MRSC has different consistency, latency, Region, and account constraints; check the current guide before selecting it.
+- Replication lag and recovery behavior depend on the selected mode and Regions. Do not treat a typical lag figure as a hard guarantee.
+- Capacity and billing choices depend on the global-table mode and current service rules; verify before deployment.
 
 ```
 us-east-1 Table ←──── replication ────→ eu-west-1 Table
 (read/write)                              (read/write)
 ```
 
-Use for: global applications, multi-region active-active, DR with near-zero RPO.
+Use when the application benefits from local reads/writes in multiple Regions and can meet the selected consistency/conflict model. A low or zero RPO is not implied by the phrase “Global Tables”; verify the chosen mode, supported topology, and recovery behavior.
 
 ---
 
@@ -137,9 +138,9 @@ Use for: global applications, multi-region active-active, DR with near-zero RPO.
 
 ## 10. Exam Scenarios
 
-**Scenario 1:** A mobile application needs a database that can handle 1 million writes per second with single-digit millisecond latency globally. What is the solution?
+**Scenario 1:** A globally distributed application needs local reads and writes in multiple Regions. How should the team choose a DynamoDB Global Tables design?
 
-> Use **DynamoDB with Global Tables**. Global Tables provides multi-region active-active replication with < 1 second lag. On-demand capacity mode handles unpredictable traffic spikes. DAX can be added for microsecond read latency.
+> Evaluate MREC versus MRSC against consistency, latency, Region, account, and recovery requirements, then validate throughput and partition-key distribution with representative load tests. MREC is asynchronous and requires conflict handling. Do not assume a replication-lag guarantee or that on-demand mode removes throughput/quota design. Add DAX only if its cache consistency model fits the read path.
 
 **Scenario 2:** A company needs to query DynamoDB items by an attribute that is not the primary key. What is the solution?
 
@@ -157,10 +158,10 @@ Use for: global applications, multi-region active-active, DR with near-zero RPO.
 
 ## 11. Exam Tips
 
-- DynamoDB = **single-digit ms latency at any scale** — not for complex queries or joins
+- DynamoDB = managed low-latency key-value/document access when access patterns and partitioning fit — not a relational engine for joins
 - **GSI** = query on non-primary-key attributes; **LSI** = alternate sort key, same partition
 - **DAX** = microsecond reads, write-through — not for strongly consistent reads
-- **Global Tables** = multi-region active-active — last-writer-wins conflict resolution
+- **Global Tables** = multi-Region reads/writes with MREC or MRSC; conflict and consistency behavior depends on mode
 - **Streams** = 24-hour retention, triggers Lambda — use for event-driven patterns
 - **On-Demand** = unpredictable traffic; **Provisioned + Auto Scaling** = predictable traffic
 - **Transactions** = 2x cost — use only when ACID guarantees are required

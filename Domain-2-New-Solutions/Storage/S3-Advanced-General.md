@@ -68,7 +68,7 @@ New object → Standard (30 days) → Standard-IA (60 days) → Glacier Flexible
 
 ### Replication Time Control (RTC)
 
-- Guarantees 99.99% of objects replicated within **15 minutes**
+- AWS currently describes the RTC target as replicating 99.9% of objects within **15 minutes**; this is not a guarantee that every object completes within 15 minutes
 - Provides replication metrics and notifications
 - Additional cost
 
@@ -173,7 +173,7 @@ Enforce encryption at rest via bucket policy:
 
 **Scenario 2:** A company wants to replicate S3 objects to another region for DR with a guarantee that replication completes within 15 minutes. What is the solution?
 
-> Enable **Cross-Region Replication** with **Replication Time Control (RTC)**. RTC guarantees 99.99% of objects are replicated within 15 minutes and provides metrics for monitoring replication lag.
+> Enable **Cross-Region Replication** with **Replication Time Control (RTC)** when the requirement aligns with its documented 15-minute replication SLA. AWS currently states that 99.9% of objects replicate within 15 minutes and provides metrics/events for objects that exceed the threshold; it does not guarantee every object completes within 15 minutes. Check current SLA exclusions and request-rate/transfer quotas.
 
 **Scenario 3:** A data lake has a single S3 bucket accessed by 10 different teams with different access requirements. How to simplify access management?
 
@@ -190,7 +190,7 @@ Enforce encryption at rest via bucket policy:
 - **Intelligent-Tiering** = unknown access patterns, no retrieval fees — good default for variable workloads
 - **SSE-KMS** = audit trail + cross-account + key rotation — preferred for compliance
 - **Object Lock Compliance mode** = no one can delete — even root
-- **RTC** = 15-minute replication SLA — needed when the question specifies a replication time guarantee
+- **RTC** = documented 15-minute replication SLA for the stated percentage of objects, with exclusions; do not promise every object completes within 15 minutes
 - **S3 Access Points** = simplify multi-team access to shared buckets
 - **Block Public Access at account level** = organization-wide protection via SCP or account setting
 - Multipart upload: recommended > 100 MB, required > 5 GB — also use lifecycle to expire incomplete uploads

@@ -21,9 +21,11 @@
 |---|---|
 | 3.1 Determine a strategy to improve overall operational excellence | Systems Manager, CloudFormation, Config, CloudTrail |
 | 3.2 Determine a strategy to improve security | Security Hub, GuardDuty, IAM Access Analyzer, Macie |
-| 3.3 Determine a strategy to improve reliability | Backup, Resilience Hub, Route 53, Auto Scaling |
-| 3.4 Determine a strategy to improve performance | CloudWatch, X-Ray, Compute Optimizer, ElastiCache |
-| 3.5 Determine a strategy to improve cost optimization | Cost Explorer, Trusted Advisor, Savings Plans, S3 lifecycle |
+| 3.3 Determine a strategy to improve performance | CloudWatch, X-Ray, Compute Optimizer, ElastiCache |
+| 3.4 Determine a strategy to improve reliability | Backup, Resilience Hub, Route 53, Auto Scaling |
+| 3.5 Identify opportunities for cost optimizations | Cost Explorer, Trusted Advisor, Savings Plans, S3 lifecycle |
+
+> Task names aligned to the [official SAP-C02 exam guide](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-professional-02/solutions-architect-professional-02-domain3.html). The guide may change; recheck before exam day.
 
 ---
 
@@ -38,12 +40,13 @@
 ### CostOptimization/
 - [CostExplorer-General.md](./CostOptimization/CostExplorer-General.md) — cost analysis, forecasting, rightsizing
 - [ComputeOptimizer-General.md](./CostOptimization/ComputeOptimizer-General.md) — ML-based rightsizing recommendations
-- [TrustedAdvisor-General.md](./CostOptimization/TrustedAdvisor-General.md) — best practice checks across 5 pillars
+- [TrustedAdvisor-General.md](./CostOptimization/TrustedAdvisor-General.md) — checks across six categories; plan availability changes over time
 
 ### Standalone
 - [WellArchitected-Tool-General.md](./WellArchitected-Tool-General.md) — framework reviews, lenses, improvement plans
 - [Backup-General.md](./Backup-General.md) — centralized backup, policies, cross-region, cross-account
 - [Resilience-Patterns-General.md](./Resilience-Patterns-General.md) — DR strategies, RTO/RPO, multi-region patterns
+- [Elastic-Disaster-Recovery-General.md](./Elastic-Disaster-Recovery-General.md) — block replication, drills, recovery launch, failback
 - [ServiceQuotas-General.md](./ServiceQuotas-General.md) — quota management, monitoring, increase requests
 
 ---
@@ -69,7 +72,7 @@ Cost Explorer (analyze) → Compute Optimizer (rightsize)
 ```
 Well-Architected Review → identify gaps
 → AWS Backup (protect data)
-→ Multi-AZ / Multi-Region (eliminate SPOFs)
+→ Multi-AZ / Multi-Region (reduce selected failure risks)
 → Auto Scaling (handle load)
 → Route 53 health checks (detect failures)
 ```

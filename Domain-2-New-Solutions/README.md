@@ -19,13 +19,14 @@
 
 | Subdomain | Key Services |
 |---|---|
-| 2.1 Design deployment strategies | EC2, ECS, EKS, Lambda, Auto Scaling, CodeDeploy |
-| 2.2 Design solutions for high availability | ELB, Route 53, Aurora Global, DynamoDB Global Tables, S3 CRR |
-| 2.3 Design solutions for business continuity | RDS Multi-AZ, Aurora, Backup, S3 versioning, DR patterns |
-| 2.4 Determine security controls | IAM, KMS, Secrets Manager, WAF, Shield, VPC, PrivateLink |
-| 2.5 Design reliable and resilient architectures | SQS, SNS, EventBridge, Step Functions, Kinesis |
-| 2.6 Design solutions for performance | ElastiCache, CloudFront, Global Accelerator, DynamoDB DAX |
-| 2.7 Determine cost optimization strategies | Spot, Savings Plans, S3 tiers, serverless vs EC2 |
+| 2.1 Design a deployment strategy to meet business requirements | IaC, CI/CD, change management, Systems Manager, deployment and rollback strategies |
+| 2.2 Design a solution to ensure business continuity | Global infrastructure, RTO/RPO, DR, backup, replication, failover |
+| 2.3 Determine security controls based on requirements | IAM, network controls, encryption, endpoints, credentials, managed security services |
+| 2.4 Design a strategy to meet reliability requirements | Multi-AZ/Region, replication, quotas, scaling, loosely coupled integration |
+| 2.5 Design a solution to meet performance objectives | Monitoring, storage/compute/database selection, caching, buffering, rightsizing |
+| 2.6 Determine a cost optimization strategy | Cost visibility, pricing models, storage tiers, data transfer, rightsizing |
+
+> Task names aligned to the [official SAP-C02 exam guide](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-professional-02/solutions-architect-professional-02-domain2.html). The guide may change; recheck before exam day.
 
 ---
 
@@ -54,6 +55,7 @@
 - [DynamoDB-General.md](./Databases/DynamoDB-General.md) — partitions, GSI, streams, DAX, Global Tables
 - [ElastiCache-General.md](./Databases/ElastiCache-General.md) — Redis vs Memcached, caching patterns
 - [OpenSearch-General.md](./Databases/OpenSearch-General.md) — search, log analytics, domain design
+- [Purpose-Built-Database-Selector.md](./Databases/Purpose-Built-Database-Selector.md) — DocumentDB, Keyspaces, Neptune, Redshift, Timestream and selection cues
 
 ### Serverless/
 - [StepFunctions-General.md](./Serverless/StepFunctions-General.md) — Standard vs Express, state types, error handling
@@ -65,6 +67,7 @@
 - [MSK-General.md](./MSK-General.md) — managed Kafka, use cases vs Kinesis
 - [CloudFormation-General.md](./CloudFormation-General.md) — stacks, StackSets, drift, nested stacks
 - [CDK-General.md](./CDK-General.md) — constructs, stacks, pipelines, vs CloudFormation
+- [Deployment-Strategies-General.md](./Deployment-Strategies-General.md) — CodePipeline, CodeBuild, CodeDeploy, rollout and rollback patterns
 
 ---
 
@@ -94,20 +97,24 @@ Producer → EventBridge → Rules → Multiple consumers
 
 ### Multi-Region Active-Active
 ```
-Route 53 (Latency) → us-east-1 ALB → ECS → Aurora Global (primary)
-                  → eu-west-1 ALB → ECS → Aurora Global (replica)
-                                              ↕ replication
+Route 53 / Global Accelerator
+      ├── Region A: ALB → ECS → Aurora Global primary (writer)
+      └── Region B: ALB → ECS → Aurora Global secondary (read-only)
+                              └── optional write forwarding to primary
+
+For multi-Region writes, use a data store designed for that model (for example,
+DynamoDB Global Tables) and design for its consistency/conflict semantics.
 ```
 
 ---
 
 ## Exam Tips
 
-- **Decouple** with SQS/SNS/EventBridge — tight coupling is always wrong at the professional level
-- **Serverless first** for variable workloads — Lambda + DynamoDB + API Gateway
-- **Aurora** over RDS for most relational use cases — better HA, faster failover, Global Database
-- **DynamoDB** for single-digit millisecond latency at any scale — not for complex queries
+- **Decouple** with SQS/SNS/EventBridge when asynchronous processing, burst buffering, or independent consumers meet the requirements; account for retries and eventual consistency
+- **Serverless** can fit variable or event-driven workloads; validate runtime, duration, concurrency, data, latency, and total-cost constraints
+- **Aurora vs RDS** is workload-specific: compare engine compatibility, HA/replication needs, features, performance, operations, and cost
+- **DynamoDB** fits access-pattern-driven key-value/document workloads; design partition keys, indexes, throughput, consistency, and hot-key behavior
 - **CloudFront** for static content and global distribution — not just CDN, also security (WAF, Shield)
 - **ECS Fargate** vs **EKS** — Fargate for simplicity, EKS for Kubernetes compatibility
-- **Auto Scaling** — always combine with health checks and multiple AZs
+- **Auto Scaling** — use health checks and multiple AZs where availability requirements call for them
 - Cost optimization: Spot for fault-tolerant, Savings Plans for steady-state, serverless for variable

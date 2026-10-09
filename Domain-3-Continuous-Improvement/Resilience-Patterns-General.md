@@ -63,11 +63,11 @@ Full workload ──── replicate ──→ Scaled-down but functional worklo
 Active Region (us-east-1)        Active Region (eu-west-1)
 Full workload ←── Route 53 ──→ Full workload
               (latency routing)
-Both regions serve traffic simultaneously
+Both application stacks can serve traffic; the data write model needs its own consistency/conflict design
 ```
 
-- **RTO:** near zero (traffic rerouted automatically)
-- **RPO:** near zero (synchronous or near-synchronous replication)
+- **RTO:** can be low with healthy capacity and tested traffic controls; not guaranteed to be zero
+- **RPO:** depends on the replication and consistency model; asynchronous replication can lose acknowledged writes
 - **Cost:** highest — full infrastructure in multiple regions
 - **Use case:** mission-critical, zero-downtime requirement
 
@@ -77,10 +77,12 @@ Both regions serve traffic simultaneously
 
 | Strategy | RTO | RPO | Cost | Complexity |
 |---|---|---|---|---|
-| Backup & Restore | Hours | Hours | $ | Low |
-| Pilot Light | Minutes–Hours | Minutes | $$ | Medium |
-| Warm Standby | Minutes | Seconds–Minutes | $$$ | Medium-High |
-| Multi-Site Active-Active | Seconds | Seconds | $$$$ | High |
+| Backup & Restore | Usually longest; measured restore time | Depends on backup frequency and consistency | Lowest ongoing infrastructure cost | Lower steady-state, higher recovery effort |
+| Pilot Light | Depends on provisioning, scaling, and validation | Depends on replication/backup design | Low-to-moderate | Medium |
+| Warm Standby | Faster when continuously tested and ready | Depends on replication mode and lag | Moderate-to-high | Medium-high |
+| Multi-Site Active-Active | Can reduce traffic-recovery time; not automatically zero | Depends on consistency and replication model | Highest | High |
+
+These are relative patterns, not fixed service guarantees. Measure failover, recovery, and data-loss windows against the workload's actual RTO/RPO.
 
 ---
 
@@ -105,8 +107,8 @@ Both regions serve traffic simultaneously
 - **Route 53 health checks** — automatic DNS failover
 
 ### Multi-Site Active-Active
-- **Aurora Global Database** — active in multiple regions
-- **DynamoDB Global Tables** — active in multiple regions
+- **DynamoDB Global Tables** — can support multi-Region reads/writes; select MREC or MRSC and design for its consistency/conflict model
+- **Aurora Global Database** — one primary writer Region with read-only secondary Regions; supported write forwarding sends secondary writes to the primary, not independent regional writers
 - **Route 53 latency routing** — route users to nearest region
 - **Global Accelerator** — anycast routing to nearest healthy endpoint
 - **CloudFront** — global content delivery
@@ -126,7 +128,7 @@ ALB distributes across all AZs
 
 - Protects against AZ failure
 - RTO: minutes (RDS Multi-AZ auto-failover)
-- RPO: near zero (synchronous replication)
+- RPO: typically near zero for acknowledged writes in supported synchronous deployments; verify engine and commit semantics
 
 ### Circuit Breaker
 
@@ -174,7 +176,7 @@ def retry_with_backoff(func, max_retries=5):
 
 **Scenario 3:** A financial services company requires zero data loss and near-zero downtime. What DR strategy?
 
-> **Multi-Site Active-Active**. Deploy the full application in two regions. Use DynamoDB Global Tables or Aurora Global Database for data replication. Use Route 53 latency routing or Global Accelerator to distribute traffic. Both regions serve traffic simultaneously — no failover needed.
+> First clarify whether zero data loss is mandatory for every failure and whether the application can accept the latency and availability trade-offs of synchronous or strongly consistent cross-Region writes. Multi-site application capacity can reduce recovery time, but it does not itself guarantee zero data loss or zero downtime. For DynamoDB, evaluate MRSC where the required topology is supported; Aurora Global Database has a primary writer and read-only secondaries, with regional writes forwarded to the primary only when supported. Define traffic failover, conflict handling, and failback, then test the stated RTO/RPO.
 
 ---
 
@@ -182,8 +184,8 @@ def retry_with_backoff(func, max_retries=5):
 
 - Know the **4 DR strategies** and their RTO/RPO/cost trade-offs cold
 - **Backup & Restore** = cheapest, slowest; **Multi-Site Active-Active** = most expensive, fastest
-- **Aurora Global Database** = < 1 second replication lag — use for Pilot Light and Warm Standby
-- **DynamoDB Global Tables** = multi-region active-active — use for Multi-Site Active-Active
+- **Aurora Global Database** = primary writer plus read-only secondaries; typical replication lag is not a hard RPO guarantee
+- **DynamoDB Global Tables** = choose between MREC and MRSC; topology, latency, consistency, and conflict handling matter
 - **Route 53 failover routing** = DNS-based failover — has TTL delay (set low TTL for faster failover)
 - **Global Accelerator** = faster failover than Route 53 (anycast, no DNS TTL)
 - Multi-AZ ≠ Multi-Region — Multi-AZ protects against AZ failure, not region failure

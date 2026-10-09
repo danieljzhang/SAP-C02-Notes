@@ -21,11 +21,11 @@ AWS Step Functions is a serverless orchestration service that coordinates distri
 | Feature | Standard | Express |
 |---|---|---|
 | Max duration | 1 year | 5 minutes |
-| Execution model | Exactly-once | At-least-once |
-| Execution rate | 2,000/second | 100,000/second |
-| Pricing | Per state transition | Per execution duration + transitions |
+| Execution semantics | Exactly-once workflow execution unless Retry behavior is configured | Asynchronous: at-least-once; synchronous: at-most-once |
+| Execution rate | Region/account quotas vary; check current Service Quotas | Region/account quotas vary; check current Service Quotas |
+| Pricing | Per state transition | Per execution, duration, and memory consumed |
 | Audit history | Full execution history | CloudWatch Logs only |
-| Use case | Long-running, exactly-once workflows | High-volume, short-duration, event processing |
+| Use case | Long-running, durable, auditable workflows | High-volume, short-duration processing where the chosen delivery semantics fit |
 
 **Express subtypes:**
 - **Synchronous Express:** caller waits for result (API Gateway integration)
@@ -54,8 +54,8 @@ Step Functions can integrate with AWS services in two ways:
 
 | Integration | Behavior |
 |---|---|
-| Request-Response | Call service, move to next state immediately (async) |
-| .sync (Optimistic Locking) | Wait for service to complete before proceeding |
+| Request-Response | Call an integrated service API and proceed when its response is returned; some APIs return before their underlying job completes |
+| .sync (Run a Job) | Wait for a supported service job to complete before proceeding |
 | .waitForTaskToken | Pause until an external system sends a callback token |
 
 ### .waitForTaskToken Pattern (Human Approval)
@@ -99,7 +99,7 @@ Step Functions → SQS (with task token)
 
 **Scenario 2:** A company processes 500,000 IoT events per second, each requiring a 3-step transformation pipeline. What workflow type?
 
-> Use **Step Functions Express Workflows** (Asynchronous). Express supports 100,000 executions/second and is priced per duration — cost-effective for high-volume, short-duration workflows.
+> Consider **Asynchronous Express Workflows** only if the workflow duration, at-least-once execution semantics, integrations, and current account/Region quotas fit. At this event rate, first decide whether to batch/stream events (for example, through Kinesis or SQS) and size consumers to protect downstream services; do not assume a fixed Step Functions execution quota or exactly-once effects.
 
 **Scenario 3:** A workflow needs a human to approve a document before proceeding. The approval may take hours. What is the pattern?
 
@@ -109,8 +109,8 @@ Step Functions → SQS (with task token)
 
 ## 7. Exam Tips
 
-- **Standard** = long-running, exactly-once, full audit history — for business workflows
-- **Express** = high-volume, short-duration, at-least-once — for event processing
+- **Standard** = durable execution with exactly-once workflow semantics unless retries are configured
+- **Express** = asynchronous at-least-once; synchronous at-most-once — make side effects idempotent as needed
 - **.waitForTaskToken** = human approval or external system callback pattern
 - **Map state** = process arrays in parallel — replaces Lambda fan-out patterns
 - **Parallel state** = concurrent branches — all branches must complete before proceeding
@@ -122,4 +122,5 @@ Step Functions → SQS (with task token)
 
 - [Step Functions Developer Guide](https://docs.aws.amazon.com/step-functions/latest/dg/)
 - [Standard vs Express](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-standard-vs-express.html)
+- [Workflow type execution guarantees](https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html)
 - [Service Integrations](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-service-integrations.html)
