@@ -234,6 +234,76 @@ Versioning protects against overwrites/deletes but old versions keep
 billing until lifecycle rules expire them. Enabling versioning does not
 retroactively version existing objects — they stay as null-version objects.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Requester Pays — who foots the bill for someone else's downloads
+
+By default the bucket owner pays for storage *and* for every request and byte downloaded. **Requester Pays** flips the transfer/request cost to whoever reads the data (the owner still pays for storage). Requests against the bucket must be authenticated so AWS knows whom to bill — anonymous access and Requester Pays don't mix.
+
+Use it when you host a dataset that *other parties* consume heavily and you don't want their download bills: shared research datasets, a media library licensed to partners, a data vendor's product bucket. The exam pattern is usually cost attribution — "the startup wants the media company, not itself, to pay for transfer out of its buckets."
+
+Traps: (1) the requester must include the payer flag in their requests, so the consuming application needs code/config changes — it's not transparent; (2) it shifts cost, it doesn't reduce total cost — the requester may push back, so it's a commercial decision as much as a technical one; (3) don't confuse with S3 access points or bucket policies, which control *permission*, not *billing*.
+
+Mini-example: a genomics startup hosts a 50 TB public dataset that three pharma partners download repeatedly. Enabling Requester Pays on the dataset bucket means each partner's AWS account is billed for its own downloads, while the startup keeps paying only for the 50 TB of storage.
+
+## 🎯 Architecture Decision Notes
+
+### Multi-Region Access Points — when a single global S3 endpoint matters
+
+Standard S3 Access Points are regional. **Multi-Region Access Points (MRAP)**
+provide one global endpoint that routes requests to the closest bucket,
+with active-active failover between Regions:
+
+- **Use when:** a global application needs low-latency S3 access from multiple Regions with automatic failover — without building the routing logic in the application.
+- **How it works:** you define the set of buckets (one per Region); AWS routes each request to the lowest-latency bucket. Failover controls let you shift traffic between Regions.
+- **Replication:** MRAP does not replicate data — pair it with S3 Cross-Region Replication (CRR) so each Regional bucket actually has the objects. An MRAP pointing at empty buckets fails over to nothing.
+- **Not for:** single-Region workloads (a regional access point is simpler), or when you need custom routing logic beyond latency/failover.
+
+**Fresh example:** A media company serves user uploads from three Regions. MRAP gives the mobile app one endpoint; uploads land in the nearest bucket, and CRR keeps all three buckets in sync. When a Region has an event, traffic control shifts requests without an app update.
+
+**Trap:** Assuming MRAP copies the data. It routes requests — replication is a separate configuration you must set up.
+
+---
+
+# Gap fill for Domain-2-New-Solutions/Storage/S3-Advanced-General.md
+
+## 🎯 Architecture Decision Notes
+
+### S3 Express One Zone — the missing row in the storage-class table
+
+**S3 Express One Zone** (launched November 2023) is a high-performance,
+single-Availability-Zone storage class built for latency-sensitive workloads —
+single-digit-millisecond data access, far faster than S3 Standard. It belongs
+in the storage-class decision alongside the existing table:
+
+| Class | AZ resilience | Latency | Fit |
+|---|---|---|---|
+| S3 Express One Zone | Single AZ | Single-digit ms | Hot, latency-critical data that can be re-created or is replicated at the application layer |
+
+Decision rules:
+
+- **Pick Express One Zone** when the workload needs the lowest S3 latency
+  (ML training data, high-frequency analytics scratch, media processing) *and*
+  the data is reproducible or the application handles AZ-level replication
+  itself.
+- **Do not pick it** for data that must survive an AZ loss without
+  application help — that is what S3 Standard (multi-AZ) is for. The exam's
+  trap is offering Express One Zone's speed for a durability requirement.
+- It is **not** in the Intelligent-Tiering family and does not participate in
+  the same lifecycle-transition rules as the regional classes — check current
+  documentation before designing lifecycle policies around it.
+
+**Fresh example:** A video-transcoding pipeline stages raw uploads for
+processing within minutes, then deletes them; the originals live durably in
+S3 Standard. The staging prefix uses Express One Zone for speed, with a
+lifecycle expiration — not a transition — because the data is temporary by
+design.
+
+---
+*Source: [S3 storage classes](https://aws.amazon.com/s3/storage-classes/) (aws.amazon.com). Verified October 8, 2026.*
+
 ## 11. Official References
 
 - [S3 User Guide](https://docs.aws.amazon.com/AmazonS3/latest/userguide/)

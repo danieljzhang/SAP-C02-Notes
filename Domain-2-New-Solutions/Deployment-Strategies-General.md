@@ -93,18 +93,43 @@ in the cutover plan.
 
 ## 🎯 Architecture Decision Notes — Legacy Awareness
 
-### OpsWorks: know it exists, do not choose it new
 
-AWS OpsWorks appears in older study material as a configuration-management
-and lifecycle-automation service. For the exam:
+---
 
-- Know it well enough to **distinguish** configuration management (desired
-  state on hosts) from application deployment and from infrastructure
-  provisioning — the exam tests the distinction, not the service.
-- For new designs, select currently supported IaC, configuration, and
-  deployment tooling (CloudFormation/CDK, Systems Manager, CodeDeploy).
-  Verify any OpsWorks reference against current AWS service lifecycle
-  before treating it as a live recommendation.
+## 🎯 Architecture Decision Notes
+
+### OpsWorks (legacy awareness) — recognize it, do not recommend it new
+
+AWS OpsWorks was the configuration-management answer for estates already
+running Chef or Puppet: managed Chef Automate / Puppet Enterprise masters,
+plus OpsWorks Stacks with its layers model, lifecycle events (setup,
+configure, deploy, shutdown) running custom recipes, and auto-healing of
+failed instances. If an exam scenario describes a team standardized on
+Chef cookbooks or Puppet manifests asking for managed configuration
+enforcement, OpsWorks is the historical answer being referenced.
+
+For any new design, choose current tooling instead — this is the exam's
+actual test:
+
+| Old OpsWorks job | Current answer |
+|---|---|
+| Enforce desired state on hosts (Chef/Puppet) | Systems Manager (State Manager, associations) or current config-management tooling |
+| Run scripts at instance lifecycle points | EC2 Auto Scaling lifecycle hooks, user data, Systems Manager Automation |
+| Deploy application revisions | CodeDeploy / pipeline-based rollout strategies |
+| Provision the infrastructure itself | CloudFormation / CDK (OpsWorks never did this well) |
+
+Decision rule: when a scenario mentions configuration management,
+distinguish it from *application deployment* (CodeDeploy) and from
+*infrastructure provisioning* (CloudFormation) — the exam tests whether
+you pick the right category, not whether you can recite OpsWorks
+features. Treat any OpsWorks reference as legacy; verify against current
+service lifecycle before treating it as a live recommendation.
+
+**Fresh example:** A scenario describes a company with hundreds of EC2
+instances managed by Chef cookbooks asking for "consistent configuration
+as code." The legacy answer is OpsWorks for Chef Automate; the
+modern answer the exam rewards is Systems Manager-based configuration
+management — same category (desired-state enforcement), current service.
 
 ## 7. Official References
 

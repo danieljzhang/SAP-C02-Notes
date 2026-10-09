@@ -167,6 +167,47 @@ Use SNS when the pattern is fan-out to many subscribers; use SQS when the
 pattern is durable buffering for workers. A down SNS subscriber without a
 durable subscription (e.g., an SQS endpoint) loses messages.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### The five-way messaging decider — one pattern, one service
+
+Every messaging question reduces to the consumption pattern. Learn this table
+and most "which service" questions answer themselves:
+
+| Pattern | Service | Decider word |
+|---|---|---|
+| Buffered work for workers to pull | **SQS** | *queue* — one message, one consumer group |
+| One event to many subscribers | **SNS** | *fan-out* — pub/sub, no ordering guarantee |
+| Events routed by pattern to many targets | **EventBridge** | *bus* — rules match events; producers never know consumers |
+| Ordered stream, each consumer reads everything independently | **Kinesis Data Streams** | *stream* — consumer positions, replay |
+| Kafka protocol / ecosystem | **MSK** | *Kafka* — lift-and-shift or Kafka tooling |
+
+**Fresh mini-scenario:** An order service emits `OrderPlaced`. Inventory must
+deduct exactly once in order; notifications go to email/SMS/push; a future
+fraud service will need the event stream; analytics replays yesterday's
+orders. The composition: EventBridge as the bus (new consumers attach via
+rules, archive/replay for analytics), SQS FIFO for inventory (ordering +
+dedup), SNS for notifications (fan-out). One service cannot do all four jobs
+— the exam rewards the composition, not the single pick.
+
+### Trap callouts
+
+- **"Multiple consumers each need every message in order"** — SNS fan-out
+  loses ordering and durability; SQS lets one consumer group eat the
+  message. The answer is Kinesis (independent consumer positions) — or MSK
+  if the word "Kafka" appears.
+- **EventBridge vs SNS:** both fan out, but EventBridge routes by *event
+  pattern* with archive/replay and 20+ AWS targets; SNS is simpler
+  pub/sub. "Add consumers later without touching the producer" points to
+  EventBridge.
+- **Kinesis vs MSK:** "the team already runs Kafka" or "needs Kafka
+  Connect/ksqlDB" → MSK. "AWS-native, no broker management" → Kinesis.
+  Throughput alone rarely decides; ecosystem does.
+- **FIFO everywhere?** FIFO costs throughput and exists only where ordering
+  is a real requirement. Do not pay the FIFO tax on a notifications fan-out.
+
 ## 7. Official References
 
 - [SQS Developer Guide](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/)

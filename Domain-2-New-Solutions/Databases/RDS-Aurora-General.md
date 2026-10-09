@@ -186,6 +186,111 @@ For point-in-time recovery, verify the backup retention window covers the
 required RPO rather than assuming defaults. Backtrack is not a substitute
 for tested restores.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Aurora replica auto-scaling vs storage auto-scaling — two different knobs
+
+Aurora scales in two independent dimensions, and exam questions test them separately:
+
+- **Storage auto-scaling is automatic.** You never pre-provision Aurora storage; the cluster volume grows (and can shrink) with actual data. No policy, no action — this is just how Aurora works.
+- **Compute auto-scaling is a policy you define.** Aurora Auto Scaling adds/removes read replicas based on CloudWatch metrics (e.g., CPU or connections), bounded by the min/max replica counts in your scaling policy, with a cooldown to prevent flapping. It needs a primary plus at least one replica to start from, and it manages CloudWatch alarms behind the scenes.
+
+Decision rule: storage handles itself; if the workload is *read-spiky*, add an Aurora Auto Scaling policy on replicas. If the workload is *write-heavy*, replica scaling won't help — the writer is still one instance (consider Aurora Serverless v2 or sharding instead).
+
+Mini-example: a ticketing app sees 10x read traffic for two hours on onsale days. A policy "min 1, max 8 replicas, target 60% CPU" absorbs the spike and scales back in overnight — cheaper than running 8 replicas year-round.
+
+### Aurora's fast crash recovery — why restart times are short
+
+After a crash, a traditional database replays redo logs from the last checkpoint before serving traffic. Aurora skips this: its storage layer is distributed and self-healing, and the buffer cache lives outside the database process, so a restart typically completes in under a minute with a warm cache — no brownout while the cache repopulates. Practical upshot: Aurora failovers and instance reboots are less disruptive than the same events on classic RDS, but client reconnection and DNS behavior still matter (see below).
+
+### RDS Multi-AZ failover — what actually changes for the client
+
+On automatic failover, RDS updates the DB instance endpoint's DNS record to point at the promoted standby. Applications that connect through the endpoint reconnect transparently — *if* they honor the new DNS answer. The classic trap: an app that caches the old IP (JVM DNS caching, long-lived connection pools) keeps hammering the dead primary. Mitigations: use the endpoint (never hardcode IPs), keep DNS TTLs short on the client side, and consider RDS Proxy for workloads that can't tolerate the failover window. RDS Proxy also bypasses client DNS caches entirely, cutting Aurora failover times for the application.
+
+### When the workload is Oracle — know what RDS can't do
+
+RDS for Oracle is managed, but it does **not** support Oracle RAC, multitenant containers, Database Vault, or Unified Auditing. If the requirement names RAC (or any unsupported feature), the answer is Oracle on EC2 — typically EBS-backed instances across AZs with automated snapshots (Data Lifecycle Manager) and patching via SSM Patch Manager, not CI/CD tools.
+
+For getting Oracle *into* AWS: match the tool to the downtime budget. DMS with continuous replication for minimal-downtime migrations (plus SCT/AWS DMS Schema Conversion for heterogeneous moves); Oracle Data Pump for bulk export/import; RMAN backup-to-S3 with restore onto RDS for offline migrations. Licensing is BYOL vs license-included — a cost decision, not a technical one. RMAN also remains the answer for block-level Oracle backups with compression, encryption via KMS, and cross-region copies.
+
+Mini-example: a bank's Oracle RAC cluster must move to AWS with near-zero downtime and keep RAC. Answer: EC2-based Oracle with RAC (RDS can't), DMS for the data move with CDC, SSM Patch Manager for ongoing patching. If RAC weren't required, RDS for Oracle with Multi-AZ would be the simpler answer.
+
+### RDS Proxy — when a proxy beats a bigger instance
+
+RDS Proxy sits between the application and the database, holding a pool of warm connections to RDS/Aurora. Pick it when:
+
+- **Connection churn is the bottleneck**, not query load — classic with Lambda functions, where each invocation opens fresh connections (especially expensive with TLS). The proxy reuses connections so the database stops paying per-connection setup cost.
+- **Failovers must be fast and boring.** The proxy preserves application connections across failover, routes to the new writer without waiting on DNS propagation, and queues incoming requests while the writer is down. Only in-flight transactions are interrupted.
+- **You need more concurrency than the engine allows.** Infrequently-used connections are shared, so thousands of app-side connections collapse to a small pool on the database.
+
+Trap: the proxy doesn't make slow queries fast and doesn't add read capacity — pair it with read replicas for read scaling. And it isn't free: model proxy cost against the instance downsizing it enables.
+
+Mini-example: 200 Lambda functions burst on uploads, each opening a TLS connection to Aurora — the database spends more time handshaking than querying. RDS Proxy in front collapses this to a steady warm pool; failover during a deploy becomes a blip instead of a connection storm.
+
+### Sharding — horizontal scaling when vertical scaling runs out
+
+When one RDS instance can't grow further (or grows too expensively), split the data across multiple instances — shards — each holding a subset (e.g., by customer ID range or hash). Sharding gives horizontal scale-out and can be cheaper than one giant instance, but it moves complexity into the application: cross-shard queries, rebalancing, and transactions across shards are all your problem now.
+
+Decision order before sharding: (1) read replicas for read-heavy skew, (2) Aurora for a higher ceiling, (3) caching (ElastiCache) for hot keys, (4) sharding as the last resort. Don't shard a workload that a replica set or a bigger instance would have solved.
+
+Trap: CDN and static-hosting answers are distractors for database-tier questions — CloudFront and S3 website hosting do nothing for a relational bottleneck.
+
+---
+
+## 🎯 Architecture Decision Notes
+
+### Global relational vs global key-value — the write pattern decides
+
+Three services promise "global." Only one matches your write pattern:
+
+| | Aurora Global Database | DynamoDB global tables | RDS cross-Region read replicas |
+|---|---|---|---|
+| Writers | **One** primary Region | **Multi-active** writes in every Region | One primary; replicas are read-only |
+| Data model | Relational (MySQL/Postgres) | Key-value / document | Relational |
+| Failover | Promote a secondary (minutes) | No failover — already writing everywhere | Promote a replica |
+| Pick when | Relational + single writer + global reads | Writes happen in multiple Regions | Read scaling on standard RDS |
+
+**Fresh mini-scenario:** A booking platform takes reservations in
+us-east-1, eu-west-1, and ap-southeast-1, all writing to the same dataset.
+Aurora Global Database fails the requirement — it has one writer Region.
+DynamoDB global tables is the answer *if* the data model fits key-value
+access; if it must stay relational with multi-Region writes, the honest
+answer is "redesign the data model or accept single-writer."
+
+### Trap callouts
+
+- **"Global" ≠ "active-active writes."** Aurora Global Database is
+  single-writer; the secondaries serve reads. Multi-Region writes is a
+  DynamoDB-global-tables (or conflict-resolving custom) conversation.
+- **RPO language:** "low RPO" for DynamoDB global tables depends on the
+  consistency mode chosen — the phrase alone promises nothing. Verify mode
+  and topology.
+- **Promote ≠ failover magic:** promoting an Aurora secondary or RDS
+  replica is a planned operation with application consequences (connection
+  strings, DNS, write forwarding). Test it.
+
+### Aurora cloning vs snapshots vs backtrack — three different copies
+
+| | Clone | Snapshot | Backtrack |
+|---|---|---|---|
+| What | Copy-on-write instant copy of the cluster | Durable point-in-time backup | In-place rewind of the existing cluster |
+| Speed | Near-instant regardless of size | Restore time scales with data | Fast rewind, no restore |
+| Storage cost | ~Zero until writes diverge | Full copy | Minimal |
+| Survives cluster deletion? | No — tied to the source | Yes | No |
+| Pick when | Dev/test copies, schema experiments | Durable backups, cross-account/Region copies | "Oops" recovery (Aurora MySQL only) |
+
+**Fresh mini-scenario:** QA needs a production-data copy every Monday for
+testing. Snapshot-restore duplicates terabytes weekly and takes hours.
+Aurora cloning gives QA an instant copy at near-zero storage cost; writes
+diverge on copy-on-write. The snapshot schedule stays — for *backups*, not
+for test data.
+
+**Trap:** Backtrack is not a backup — it cannot survive cluster deletion
+and is not a substitute for snapshots. Cloning is not a backup either —
+delete the source and the clone's basis is gone.
+
 ## 9. Official References
 
 - [RDS User Guide](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/)

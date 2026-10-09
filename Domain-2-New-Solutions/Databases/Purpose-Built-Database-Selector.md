@@ -51,6 +51,35 @@
 - A service being managed does not remove schema, consistency, availability, migration, security, or cost decisions.
 - Check current feature/engine/Region support, quotas, and pricing before choosing a version-sensitive option.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### OLAP vs OLTP — pick the database by the query shape, not the data size
+
+The first question about any database requirement is what the queries look like:
+
+- **OLTP (transactional):** many short reads/writes on current data, ACID semantics — shopping carts, banking, CRM. Answers: RDS, Aurora, DynamoDB, DocumentDB.
+- **OLAP (analytical):** complex aggregations and joins over large historical datasets — BI dashboards, forecasting, trend analysis. Answers: Redshift, Athena, EMR.
+
+Trap: stuffing an OLAP workload into an OLTP database (or vice versa) "because we already run MySQL" is the most common real-world mistake the exam probes. A retailer's demand-forecasting job scanning years of sales belongs on Redshift or a data lake with Athena, not on the transactional MySQL that serves the storefront — even though both hold "sales data."
+
+### Redshift DR — automated snapshots are on; cross-region copy is not
+
+Redshift enables automated snapshots by default (roughly every 8 hours or per 5 GB-per-node of changes, 1-day default retention, adjustable). But the disaster-recovery pattern the exam tests is the part you must configure yourself: **cross-region snapshot copy**. Automated snapshots stay in their region unless you explicitly enable copy to a DR region with its own retention. If the scenario says "replicate the cluster to another region for DR," the answer is enabling cross-region snapshot copy — not just "turn on automated snapshots," which is already on.
+
+### Timestream — when the data is a timestamp with a value attached
+
+Reach for Timestream when the workload is time-stamped measurements at scale: IoT sensor streams, operational metrics, clickstream analytics. Three properties make it beat a relational or document database here:
+
+- **Purpose-built time-series functions** (aggregates, derivatives, interpolation, correlation) run in the query engine — no hand-rolled window math in application code.
+- **Tiered storage**: a memory store for recent data (fast queries) and a magnetic store for history, with lifecycle management between them — hundreds of terabytes without manual partitioning.
+- **Scheduled queries**: continuously pre-compute rollups (per-minute, hourly, daily) so dashboards read aggregates instead of scanning raw points.
+
+Decision rule: if the access pattern is "ingest millions of timestamped events, query by time window," Timestream outperforms MySQL-on-EC2 or DocumentDB by orders of magnitude with less operational work. If you need ad-hoc joins across entities or document flexibility, it's the wrong tool — pair it with DynamoDB/DocumentDB for the entity side.
+
+Mini-example: a weather company ingests billions of sensor events daily and builds hourly/daily/weekly trend forecasts; retrieval from MySQL keeps getting slower as data grows. Replatform the database tier to Timestream (time-window queries over the memory store are fast), keep long-running forecast jobs on containers (ECS), and use scheduled queries to pre-compute the hourly rollups the forecasters read.
+
 ## 6. Official References
 
 - [AWS database decision guide](https://aws.amazon.com/getting-started/decision-guides/databases-on-aws-how-to-choose/)

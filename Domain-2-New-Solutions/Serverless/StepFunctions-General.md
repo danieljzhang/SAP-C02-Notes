@@ -136,6 +136,21 @@ Where duplicate processing is possible (Express async), design side effects
 to be idempotent. Check execution-history retention, duration limits, and
 pricing for the chosen type before committing — they differ materially.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Starting a workflow from a queue — SQS can't call Step Functions directly
+
+SQS is a queue, not an event router: a message landing in SQS does not start a state machine by itself. The standard bridge is a Lambda function with the SQS queue as its event source; the function calls `StartExecution` with the message as input. (EventBridge, by contrast, *can* target a state machine directly — so if you control the producer, publishing to EventBridge instead of SQS removes the Lambda middleman.)
+
+Two exam details on execution identity:
+
+- **Same-name executions:** a Standard workflow cannot run two concurrent executions with the same execution name — the second start is rejected. Express workflows don't have this restriction, which is one more reason high-concurrency API patterns pair with Express.
+- **Synchronous Express** is the answer when an API Gateway call must wait for the workflow result: the caller blocks until completion (within the 5-minute Express limit) and gets the output back. Asynchronous execution is fire-and-forget — no response for the API to return.
+
+Mini-example: an order API fans out one workflow per order ID and reuses the order ID as the execution name for idempotency. On a Standard workflow, a retry with the same name while the first is still running fails — switch to Express (synchronous, under 5 minutes) and the retry/replay pattern works, with the API response carrying the workflow result.
+
 ## 8. Official References
 
 - [Step Functions Developer Guide](https://docs.aws.amazon.com/step-functions/latest/dg/)
