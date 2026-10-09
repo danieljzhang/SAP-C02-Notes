@@ -1,0 +1,206 @@
+# AWS IAM — SAP-C02 Study Notes
+
+> Exam relevance: Domains 1, 2, 3. IAM is the security foundation of every AWS architecture. At the professional level, focus on cross-account patterns, federation, permission boundaries, and policy evaluation.
+
+---
+
+## 1. Overview
+
+AWS Identity and Access Management (IAM) controls who can do what on which AWS resources. At the SAP-C02 level, the focus is on:
+- Cross-account role assumption
+- Identity federation (SAML, OIDC, web identity)
+- Permission boundaries and policy evaluation order
+- Least-privilege design at scale
+- Integration with Organizations, IAM Identity Center, and resource-based policies
+
+---
+
+## 2. Policy Types and Evaluation Order
+
+| Policy Type | Attached To | Purpose |
+|---|---|---|
+| Identity-based policy | IAM user/role/group | Grant permissions to a principal |
+| Resource-based policy | AWS resource (S3, KMS, etc.) | Grant access to a resource from any principal |
+| Permission boundary | IAM user/role | Maximum permissions a principal can have |
+| SCP | Organizations account/OU | Maximum permissions for all principals in an account |
+| Session policy | AssumeRole call | Restrict permissions for a specific session |
+| RCP | Organizations account/OU | Restrict what resources can accept |
+
+### Evaluation Logic (simplified)
+
+```
+1. Explicit DENY anywhere → DENY (final)
+2. SCP allows the action? No → DENY
+3. RCP allows the action? No → DENY
+4. Resource-based policy allows? → ALLOW (for cross-account, both identity + resource policy needed)
+5. Permission boundary allows? No → DENY
+6. Session policy allows? No → DENY
+7. Identity-based policy allows? Yes → ALLOW
+```
+
+---
+
+## 3. Cross-Account Role Assumption
+
+The standard pattern for cross-account access:
+
+```
+Account A (trusting)          Account B (trusted)
+IAM Role: cross-account-role  IAM User/Role: deployer
+  Trust policy: allows         calls sts:AssumeRole
+    Account B to assume         → gets temporary credentials
+  Permission policy: S3:*       → accesses Account A resources
+```
+
+### Trust Policy (in Account A)
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {"AWS": "arn:aws:iam::ACCOUNT_B_ID:role/deployer"},
+    "Action": "sts:AssumeRole",
+    "Condition": {
+      "StringEquals": {"sts:ExternalId": "unique-external-id"}
+    }
+  }]
+}
+```
+
+### ExternalId
+
+- Used to prevent the **confused deputy problem**
+- Required when a third party (e.g., SaaS vendor) assumes a role in your account
+- The third party provides the ExternalId; you set it in the trust policy condition
+
+---
+
+## 4. Identity Federation
+
+### SAML 2.0 Federation
+
+- Integrates with corporate IdPs (Active Directory, Okta, Ping)
+- Users authenticate with IdP → IdP issues SAML assertion → AWS STS exchanges for temporary credentials
+- Use `sts:AssumeRoleWithSAML`
+- Supports console access via SSO endpoint
+
+```
+User → Corporate IdP (AD/Okta)
+         └── SAML Assertion
+                └── AWS STS AssumeRoleWithSAML
+                       └── Temporary credentials → AWS Console/API
+```
+
+### OIDC / Web Identity Federation
+
+- For applications (mobile, web) using Google, Amazon, Facebook, or any OIDC provider
+- Use `sts:AssumeRoleWithWebIdentity`
+- For EC2/ECS/Lambda: use IAM roles directly (instance profile, task role, execution role)
+
+### IAM Identity Center (preferred for workforce)
+
+- Replaces manual SAML federation for human users
+- Centrally manages access across all Organization accounts
+- See [IAM-IdentityCenter-General.md](./IAM-IdentityCenter-General.md)
+
+---
+
+## 5. Permission Boundaries
+
+A permission boundary sets the **maximum permissions** an IAM entity can have. It does not grant permissions on its own.
+
+**Use case:** Allow developers to create IAM roles for their applications, but prevent them from creating roles with more permissions than they have.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": ["s3:*", "dynamodb:*", "cloudwatch:*"],
+    "Resource": "*"
+  }]
+}
+```
+
+If this is set as a permission boundary on a role, the role can only perform S3, DynamoDB, and CloudWatch actions — even if the identity policy grants more.
+
+**Effective permissions = identity policy ∩ permission boundary**
+
+---
+
+## 6. IAM Roles for AWS Services
+
+| Service | Role Type | Purpose |
+|---|---|---|
+| EC2 | Instance profile | Grants EC2 instance access to AWS services |
+| Lambda | Execution role | Grants Lambda function access to AWS services |
+| ECS | Task role | Grants container access to AWS services |
+| ECS | Task execution role | Grants ECS agent access to ECR, CloudWatch |
+| CodePipeline | Service role | Grants pipeline access to source, build, deploy |
+| CloudFormation | Stack role | Grants CloudFormation access to create resources |
+
+---
+
+## 7. IAM Best Practices at Scale
+
+- Use **IAM roles** everywhere — never long-term access keys for applications
+- Use **IAM Identity Center** for human access — not individual IAM users
+- Apply **permission boundaries** when delegating IAM management to developers
+- Use **SCPs** for organization-wide guardrails
+- Enable **IAM Access Analyzer** to identify unintended external access
+- Use **AWS Organizations** tag policies to enforce resource tagging
+- Rotate access keys regularly; prefer roles over keys
+- Enable **MFA** for all human IAM users (or enforce via SCP)
+
+---
+
+## 8. IAM Access Analyzer
+
+- Identifies resources shared with external principals (outside your account or organization)
+- Analyzes: S3 buckets, IAM roles, KMS keys, Lambda functions, SQS queues, Secrets Manager secrets
+- Can be scoped to the **organization** (findings only for truly external access)
+- Use **policy validation** to check policies for errors and best practice violations
+- Use **policy generation** to create least-privilege policies from CloudTrail activity
+
+---
+
+## 9. Exam Scenarios
+
+**Scenario 1:** A Lambda function in Account A needs to read from an S3 bucket in Account B. What is required?
+
+> Two things: (1) The Lambda execution role in Account A must have `s3:GetObject` permission for the bucket ARN in Account B. (2) The S3 bucket policy in Account B must allow the Lambda execution role ARN from Account A. Both identity-based and resource-based policies are required for cross-account access.
+
+**Scenario 2:** A company wants developers to be able to create IAM roles for their Lambda functions, but not create roles with admin access. What is the solution?
+
+> Attach a permission boundary to the developer's IAM user that limits the maximum permissions to the services they need. Require developers to attach this same permission boundary to any roles they create (enforce via SCP or IAM condition `iam:PermissionsBoundary`).
+
+**Scenario 3:** A third-party SaaS vendor needs access to an S3 bucket in your account. How do you prevent the confused deputy problem?
+
+> Create an IAM role with a trust policy that requires the vendor's AWS account ID and a unique ExternalId. Share the ExternalId with the vendor through a secure channel. The vendor must provide the ExternalId when calling AssumeRole.
+
+**Scenario 4:** A company uses Active Directory for authentication. They want AD users to access the AWS console without creating IAM users. What is the solution?
+
+> Configure SAML 2.0 federation between AD FS (or another SAML IdP) and AWS IAM. Create IAM roles with trust policies for the SAML provider. Users authenticate with AD, receive a SAML assertion, and are redirected to the AWS console via the SSO endpoint. Alternatively, use IAM Identity Center with AD as the identity source.
+
+---
+
+## 10. Exam Tips
+
+- Cross-account access requires **both** identity policy (in the calling account) **and** trust policy (in the target account)
+- Resource-based policies can grant cross-account access **without** AssumeRole for some services (S3, KMS, SQS)
+- Permission boundaries **do not grant** — they only restrict the ceiling
+- SCPs restrict the account ceiling; permission boundaries restrict the principal ceiling — they stack
+- `sts:AssumeRole` requires the caller to have explicit allow in their identity policy
+- IAM Access Analyzer uses **zone of trust** — set it to the organization for best coverage
+- For EC2: use **instance profiles** (a container for an IAM role) — not access keys on the instance
+
+---
+
+## 11. Official References
+
+- [IAM User Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/)
+- [Policy Evaluation Logic](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html)
+- [Cross-Account Role Access](https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html)
+- [Permission Boundaries](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html)
+- [IAM Access Analyzer](https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html)
