@@ -169,6 +169,24 @@ Small branch offices use VPN; headquarters uses Direct Connect.
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Site-to-Site vs Client VPN — different problems
+
+| | Site-to-Site VPN | Client VPN |
+|---|---|---|
+| Connects | Network to network (on-premises ↔ VPC) | Individual users → VPC resources |
+| Protocol | IPsec tunnels | OpenVPN-based client |
+| Use when | Branch office / data center connectivity | Remote workforce, contractors |
+
+Do not answer a "remote employees need VPC access" requirement with
+Site-to-Site VPN, and do not answer a "connect the data center" requirement
+with Client VPN. For encrypted hybrid connectivity with higher throughput
+and consistency, evaluate Direct Connect — optionally with a VPN overlay
+when encryption in transit is required.
+
 ## 9. Official References
 
 - [Site-to-Site VPN User Guide](https://docs.aws.amazon.com/vpn/latest/s2svpn/)

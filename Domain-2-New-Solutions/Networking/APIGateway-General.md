@@ -137,6 +137,25 @@ Stage: prod
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### API Gateway vs AppSync — REST vs GraphQL
+
+| | API Gateway | AppSync |
+|---|---|---|
+| API style | REST, HTTP, WebSocket | GraphQL |
+| Data sources | Lambda, HTTP, AWS service integrations | DynamoDB, Lambda, RDS, HTTP, OpenSearch — combined in one schema |
+| Real-time | WebSocket APIs | GraphQL subscriptions |
+| Offline | Not built-in | Requires client-side sync strategy (Amplify DataStore); the endpoint alone does not make clients offline-capable |
+
+Choose AppSync when the client needs flexible queries across multiple
+backends in one request and GraphQL subscriptions fit the real-time need.
+Choose API Gateway for REST contracts, request/response transformations,
+and usage-plan/throttling controls. For offline mobile, the decision is
+the *client sync architecture*, not just the API service.
+
 ## 10. Official References
 
 - [API Gateway Developer Guide](https://docs.aws.amazon.com/apigateway/latest/developerguide/)

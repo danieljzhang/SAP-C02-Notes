@@ -128,6 +128,24 @@
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Choosing the FSx variant
+
+| Variant | When |
+|---|---|
+| FSx for Windows File Server | SMB shares, Active Directory integration, Windows workloads |
+| FSx for Lustre | HPC, ML training — S3-backed, massive parallel throughput |
+| FSx for OpenZFS | NFS with ZFS features (snapshots, cloning, compression) |
+| FSx for NetApp ONTAP | ONTAP features, multi-protocol (NFS/SMB/iSCSI) |
+
+Match the variant to the protocol and the feature the workload actually
+needs — "file storage" alone does not decide it. For a lift-and-shift
+Windows file server, FSx for Windows with AD integration is usually the
+least-change answer.
+
 ## 9. Official References
 
 - [FSx for Windows](https://docs.aws.amazon.com/fsx/latest/WindowsGuide/)

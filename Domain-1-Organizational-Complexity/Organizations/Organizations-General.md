@@ -207,6 +207,41 @@ aws organizations register-delegated-administrator \
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Sharing without losing control — RAM and tags
+
+**AWS RAM** shares supported resources (subnets, Transit Gateway, Route 53
+rules, license configurations) across accounts, OUs, or the organization.
+Key exam points:
+
+- Sharing does **not** transfer ownership — the sharing account retains
+  control; consumers use the resource within their own configuration.
+- Some sharing integrations require **trusted access** between the AWS
+  service and Organizations. Enable it only for the service that needs it,
+  and understand which service acts on the organization's behalf.
+
+**Fresh example:** A central networking account shares subnets with
+application accounts via RAM. The network team keeps control of the IP
+plan, while each consumer deploys its own workloads — but each consumer
+must still configure its own routing and security groups correctly.
+Sharing the subnet does not share the responsibility for what runs in it.
+
+### Tag governance as a control plane
+
+Tags drive cost allocation, automation, and attribute-based access control
+(ABAC) — but only with a **small, governed vocabulary** enforced
+consistently:
+
+- **Preventive:** SCPs or IAM policies can deny create/tag operations that
+  violate the vocabulary.
+- **Detective:** AWS Config rules evaluate deployed resources for tag
+  compliance.
+- Prevention and audit solve different halves — use both, and do not
+  confuse a Config rule (detective) with an SCP (preventive).
+
 ## 11. Official References
 
 - [AWS Organizations User Guide](https://docs.aws.amazon.com/organizations/latest/userguide/)

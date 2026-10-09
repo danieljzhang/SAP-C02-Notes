@@ -137,6 +137,23 @@ Without: each LB node distributes only to targets in its AZ.
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### NLB as the PrivateLink front door
+
+When publishing a service via PrivateLink, the endpoint service is commonly
+fronted by a **Network Load Balancer** — the NLB's static IPs and
+TCP/UDP handling suit the PrivateLink model. (Gateway Load Balancer
+endpoint services serve the network-appliance pattern instead.)
+
+Choose the load balancer by traffic shape: ALB for HTTP(S) routing
+decisions, NLB for extreme throughput / static IPs / non-HTTP protocols,
+GWLB for inserting virtual appliances. The exam often hides the real
+requirement in one adjective — "static IP," "preserve source IP," or
+"inspect traffic" each points to a different answer.
+
 ## 9. Official References
 
 - [ELB User Guide](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/)

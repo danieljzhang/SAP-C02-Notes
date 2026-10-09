@@ -99,6 +99,23 @@ Use **EFS Lifecycle Management** to automatically move files to IA after 7, 14, 
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### EFS vs FSx vs S3 — choose by access pattern
+
+| Need | Fit |
+|---|---|
+| Shared POSIX file system, Linux workloads, elastic scale | EFS |
+| Windows file shares (SMB) or high-performance Lustre/OpenZFS | FSx (Windows File Server / Lustre / OpenZFS / NetApp ONTAP) |
+| Object access, web assets, data lake | S3, not a file system |
+
+EFS performance modes matter at scale: General Purpose for latency-sensitive
+workloads, Max I/O for highly parallel throughput. Throughput modes
+(bursting vs provisioned vs elastic) follow the workload's consistency —
+do not provision throughput for a workload that bursts.
+
 ## 10. Official References
 
 - [EFS User Guide](https://docs.aws.amazon.com/efs/latest/ug/)

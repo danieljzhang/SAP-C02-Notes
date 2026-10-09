@@ -145,6 +145,33 @@ Config Rule detects non-compliance
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Companion services: certificates and parameters
+
+**ACM — verify support before designing around it:**
+- ACM manages public and private TLS certificates and automates renewal
+  for *eligible* integrations. Confirm the target service and certificate
+  type are supported first — not every service consumes ACM certificates,
+  and private key exportability varies by workflow.
+
+**Parameter Store vs secrets — choose by rotation need:**
+- **Systems Manager Parameter Store** holds configuration values with
+  IAM-controlled access. CloudFormation typed parameters can reference
+  Parameter Store values, and dynamic references resolve them without
+  embedding values in templates.
+- When the value needs **rotation, cross-account sharing, or RDS-native
+  integration**, use a secrets-management service (Secrets Manager)
+  instead. Protect access to the underlying parameter/secret and consider
+  *when* the value resolves (deploy time vs runtime).
+
+**Config aggregator nuance:** a multi-account, multi-Region aggregator
+gives a consolidated compliance view — but it does not itself enable
+recording in every account and Region. Recording must be on where you
+need it.
+
 ## 9. Official References
 
 - [AWS Config Developer Guide](https://docs.aws.amazon.com/config/latest/developerguide/)

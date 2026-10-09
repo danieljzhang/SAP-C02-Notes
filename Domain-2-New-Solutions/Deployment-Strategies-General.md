@@ -89,6 +89,23 @@ the new environment. Keep the old environment for rollback. Note that a
 CNAME swap is not instantaneous for every client — account for DNS caching
 in the cutover plan.
 
+---
+
+## 🎯 Architecture Decision Notes — Legacy Awareness
+
+### OpsWorks: know it exists, do not choose it new
+
+AWS OpsWorks appears in older study material as a configuration-management
+and lifecycle-automation service. For the exam:
+
+- Know it well enough to **distinguish** configuration management (desired
+  state on hosts) from application deployment and from infrastructure
+  provisioning — the exam tests the distinction, not the service.
+- For new designs, select currently supported IaC, configuration, and
+  deployment tooling (CloudFormation/CDK, Systems Manager, CodeDeploy).
+  Verify any OpsWorks reference against current AWS service lifecycle
+  before treating it as a live recommendation.
+
 ## 7. Official References
 
 - [AWS CodePipeline](https://docs.aws.amazon.com/codepipeline/latest/userguide/welcome.html)
