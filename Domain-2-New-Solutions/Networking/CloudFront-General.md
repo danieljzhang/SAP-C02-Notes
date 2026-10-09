@@ -174,6 +174,26 @@ Use **CloudFront Functions** for simple, high-volume transformations. Use **Lamb
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### TLS has two legs — secure both
+
+A CloudFront distribution terminates two separate TLS connections:
+viewer→CloudFront and CloudFront→origin. A padlock in the browser proves
+only the first leg. Configure certificates and the origin protocol policy
+for the second leg explicitly, or "HTTPS everywhere" is fiction past the edge.
+
+- ACM certificates for CloudFront must live in **us-east-1**; regional
+  services need the certificate in their own Region.
+- A CloudFront **504** means the origin failed to respond in time — check
+  origin health, DNS, security rules, timeouts, and origin capacity before
+  blaming the edge.
+- **Lambda@Edge vs CloudFront Functions:** different runtimes, events, and
+  limits — pick the lightest that satisfies the requirement and verify
+  current restrictions.
+
 ## 9. Official References
 
 - [CloudFront Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/)

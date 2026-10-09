@@ -165,6 +165,32 @@ version account-id interface-id srcaddr dstaddr srcport dstport protocol packets
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Choosing the connection pattern — start from what must be reachable
+
+| Pattern | Reachability model | Key constraint |
+|---|---|---|
+| VPC peering | Two VPCs routed directly | **Not transitive**; needs non-overlapping CIDRs |
+| Transit Gateway | Regional hub for many VPCs/networks | Route tables need deliberate design; still needs non-overlapping CIDRs for routed traffic |
+| PrivateLink | One *service* exposed privately, no VPC routing | Consumer never routes into provider VPC — **works with overlapping CIDRs** |
+| Gateway endpoint | S3/DynamoDB via route-table entry | Only supported services |
+| Interface endpoint | ENIs for many AWS/PrivateLink services | Per-AZ ENIs, security groups, endpoint policies |
+
+The exam's favorite trap: overlapping CIDRs with a "connect the VPCs"
+requirement. Peering and Transit Gateway cannot fix overlapping address
+space for routed traffic — PrivateLink can, because no routes are exchanged.
+
+**Fresh example:** Two acquired companies both use `10.0.0.0/16`; one needs
+the other's catalog API. Publish the API as a PrivateLink endpoint service
+(typically behind an NLB) instead of attempting a network merger. Retire the
+link after re-addressing without touching the caller's endpoint pattern.
+
+An endpoint is reachability, not permission: combine it with security
+groups, endpoint policies, and the destination service's own authorization.
+
 ## 10. Official References
 
 - [VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html)

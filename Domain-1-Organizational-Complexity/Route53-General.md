@@ -177,6 +177,26 @@ Gradually shift traffic to new version. Roll back by setting new version weight 
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### DNS routing is not failover — respect the cache
+
+Route 53 routing policies (weighted, latency, geolocation/geoproximity,
+failover, multivalue) steer *name resolution*, not connections. Clients and
+resolvers cache answers, so a DNS change is not an instant traffic shift.
+For fast API failover, pair DNS with Global Accelerator or an ALB-level
+mechanism; do not rely on short TTLs alone — not every resolver honors them.
+
+- **Alias vs CNAME:** an Alias record targets AWS resources and works at the
+  zone apex; a CNAME cannot live at the apex. Use A/AAAA for literal IPs.
+- **Hybrid DNS:** Resolver inbound endpoints let on-premises query AWS names;
+  outbound endpoints with forwarding rules let VPC workloads query external
+  DNS selectively. Sharing a private hosted zone across accounts needs the
+  VPC association plus RAM sharing or cross-account authorization.
+- **DNSSEC** proves data integrity/authenticity; it does not encrypt queries.
+
 ## 9. Official References
 
 - [Route 53 Developer Guide](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/)

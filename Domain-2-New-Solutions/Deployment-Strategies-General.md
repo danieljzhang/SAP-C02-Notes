@@ -71,6 +71,24 @@ Commit -> build/test -> scan/artifact -> deploy infrastructure
 - Canary reduces blast radius but requires meaningful telemetry and a promotion/abort policy.
 - Use managed deployment services when they meet the target/runtime constraints; verify supported deployment types and current features.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Elastic Beanstalk rollout controls
+
+For supported Linux platforms, Beanstalk platform hooks run deployment
+scripts at defined lifecycle points: `prebuild` (before platform setup),
+`predeploy` (after setup, before the new version lands), `postdeploy`
+(after deployment). Use hooks for deployment-time customization — not as a
+substitute for an infrastructure-as-code plan.
+
+For blue/green: run two Beanstalk environments, validate the candidate,
+then swap the environment CNAMEs so the stable application name points at
+the new environment. Keep the old environment for rollback. Note that a
+CNAME swap is not instantaneous for every client — account for DNS caching
+in the cutover plan.
+
 ## 7. Official References
 
 - [AWS CodePipeline](https://docs.aws.amazon.com/codepipeline/latest/userguide/welcome.html)
