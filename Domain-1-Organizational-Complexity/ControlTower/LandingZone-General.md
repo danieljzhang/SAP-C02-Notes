@@ -161,4 +161,4 @@ Spoke Accounts
 - [Landing Zone Best Practices](https://docs.aws.amazon.com/controltower/latest/userguide/aws-multi-account-landing-zone.html)
 - [AFT Overview](https://docs.aws.amazon.com/controltower/latest/userguide/aft-overview.html)
 - [CloudFormation StackSets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html)
-- [AWS Security Reference Architecture](https://docs.aws.amazon.com/prescriptive-guidance/latest/security-reference-architecture/welcome.html)
+- [AWS Security Reference Architecture](https://docs.aws.amazon.com/prescriptive-guidance/latest/security-reference-architecture/)

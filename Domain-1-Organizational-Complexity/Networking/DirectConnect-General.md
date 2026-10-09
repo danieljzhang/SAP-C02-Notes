@@ -182,6 +182,6 @@ gateway to Transit Gateway.
 ## 10. Official References
 
 - [Direct Connect User Guide](https://docs.aws.amazon.com/directconnect/latest/UserGuide/)
-- [DX Resilience Recommendations](https://docs.aws.amazon.com/directconnect/latest/UserGuide/resilency_toolkit.html)
+- [DX Resilience Recommendations](https://docs.aws.amazon.com/directconnect/latest/UserGuide/resiliency_toolkit.html)
 - [MACsec on Direct Connect](https://docs.aws.amazon.com/directconnect/latest/UserGuide/MACsec.html)
 - [DX Gateway](https://docs.aws.amazon.com/directconnect/latest/UserGuide/direct-connect-gateways.html)

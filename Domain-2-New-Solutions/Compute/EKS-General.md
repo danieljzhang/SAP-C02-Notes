@@ -242,6 +242,6 @@ and RDS APIs in our data center" → Outposts.
 
 - [EKS User Guide](https://docs.aws.amazon.com/eks/latest/userguide/)
 - [IRSA](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)
-- [VPC CNI](https://docs.aws.amazon.com/eks/latest/userguide/pod-networking.html)
+- [VPC CNI](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html)
 - [Karpenter](https://karpenter.sh/)
 - [EKS Fargate](https://docs.aws.amazon.com/eks/latest/userguide/fargate.html)

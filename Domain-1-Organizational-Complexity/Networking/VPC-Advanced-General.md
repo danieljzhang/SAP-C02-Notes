@@ -211,7 +211,7 @@ Mini-example: a compliance rule says factory-floor instances may download PLC fi
 
 ## 10. Official References
 
-- [VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html)
+- [VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html)
 - [VPC Sharing](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html)
 - [AWS PrivateLink](https://docs.aws.amazon.com/vpc/latest/privatelink/)
 - [VPC Flow Logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html)

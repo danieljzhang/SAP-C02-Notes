@@ -54,7 +54,7 @@
 ## Official References
 
 - [Domain 4 overview](../Domain-4-Migration-Modernization/README.md)
-- [AWS Migration Hub](https://aws.amazon.com/migration-hub/)
+- [AWS Migration Hub](https://aws.amazon.com/transform/)
 - [AWS DMS](https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html)
 - [AWS DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html)
 - [AWS Transfer Family](https://docs.aws.amazon.com/transfer/latest/userguide/what-is-aws-transfer-family.html)

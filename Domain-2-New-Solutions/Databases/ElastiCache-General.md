@@ -156,6 +156,6 @@ User Request → ALB → Any EC2 instance → ElastiCache (session lookup)
 
 ## 9. Official References
 
-- [ElastiCache for Redis](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/)
-- [ElastiCache for Memcached](https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/)
-- [Caching Strategies](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/Strategies.html)
+- [ElastiCache for Redis](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/)
+- [ElastiCache for Memcached](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/)
+- [Caching Strategies](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Strategies.html)

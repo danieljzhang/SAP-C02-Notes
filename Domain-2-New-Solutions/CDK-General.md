@@ -137,5 +137,5 @@ Source (CodeCommit/GitHub)
 
 - [CDK Developer Guide](https://docs.aws.amazon.com/cdk/v2/guide/)
 - [CDK API Reference](https://docs.aws.amazon.com/cdk/api/v2/)
-- [CDK Pipelines](https://docs.aws.amazon.com/cdk/v2/guide/cdk_pipeline.html)
+- [CDK Pipelines](https://docs.aws.amazon.com/cdk/v2/guide/cdk-pipeline.html)
 - [Construct Hub](https://constructs.dev/)

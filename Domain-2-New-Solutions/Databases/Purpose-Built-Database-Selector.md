@@ -82,8 +82,8 @@ Mini-example: a weather company ingests billions of sensor events daily and buil
 
 ## 6. Official References
 
-- [AWS database decision guide](https://aws.amazon.com/getting-started/decision-guides/databases-on-aws-how-to-choose/)
-- [Amazon DocumentDB](https://docs.aws.amazon.com/documentdb/latest/developerguide/what-is.html)
+- [AWS database decision guide](https://docs.aws.amazon.com/decision-guides/latest/decision-guides/databases-on-aws-how-to-choose.html)
+- [Amazon DocumentDB](https://docs.aws.amazon.com/documentdb/latest/devguide/what-is.html)
 - [Amazon Keyspaces](https://docs.aws.amazon.com/keyspaces/latest/devguide/what-is-keyspaces.html)
 - [Amazon Neptune](https://docs.aws.amazon.com/neptune/latest/userguide/intro.html)
 - [Amazon Timestream](https://docs.aws.amazon.com/timestream/latest/developerguide/what-is-timestream.html)

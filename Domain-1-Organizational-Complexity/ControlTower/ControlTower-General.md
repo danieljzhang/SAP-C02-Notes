@@ -170,5 +170,5 @@ AFT Request (Terraform)
 
 - [AWS Control Tower User Guide](https://docs.aws.amazon.com/controltower/latest/userguide/)
 - [Account Factory for Terraform](https://docs.aws.amazon.com/controltower/latest/userguide/aft-overview.html)
-- [Control Tower Guardrails](https://docs.aws.amazon.com/controltower/latest/userguide/guardrails.html)
+- [Control Tower Guardrails](https://docs.aws.amazon.com/controltower/latest/userguide/controls.html)
 - [Landing Zone Setup](https://docs.aws.amazon.com/controltower/latest/userguide/setting-up.html)

@@ -68,7 +68,8 @@ High-volume, resource-level operations:
 
 - Managed data lake for CloudTrail events
 - Query events using SQL directly in CloudTrail (no Athena setup needed)
-- Retention: 7 years
+- Retention: configurable up to ~7 years (fixed pricing) or ~10 years (extendable retention pricing, the default)
+- Availability note: closed to new customers May 31, 2026 — existing customers continue normally
 - Supports: AWS events, non-AWS activity (via integrations), Config configuration items
 - Faster queries than S3 + Athena for CloudTrail data
 
