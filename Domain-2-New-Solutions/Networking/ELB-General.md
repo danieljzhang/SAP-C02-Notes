@@ -137,9 +137,7 @@ Without: each LB node distributes only to targets in its AZ.
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 9. 🎯 Architecture Decision Notes
 
 ### NLB as the PrivateLink front door
 
@@ -156,8 +154,6 @@ requirement in one adjective — "static IP," "preserve source IP," or
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### ACM certificates are regional — plan one per region for regional endpoints
 
 An ACM certificate lives in exactly one region, and a regional service can only use a certificate from its own region. This bites in multi-region designs: an Application Load Balancer in eu-west-1 cannot use the certificate you requested in us-east-1 — you must request a separate certificate for the same domain in each region where an ALB (or NLB, or API Gateway) terminates TLS. CloudFront is the sole exception: because it is a global service, its viewer-facing certificate must be issued in us-east-1 and is then distributed to all edge locations.
@@ -171,7 +167,7 @@ Decision rules:
 
 **Fresh example:** A company runs its checkout API on ALBs in us-east-1 and eu-west-1 behind a CloudFront distribution. They hold three ACM certificates for `shop.example.com`: one in us-east-1 attached to the CloudFront distribution (viewer leg), one in us-east-1 attached to the us-east-1 ALB, and one in eu-west-1 attached to the eu-west-1 ALB (origin legs). One domain, three certificates — and zero renewal toil because all are ACM-managed.
 
-## 9. Official References
+## 10. Official References
 
 - [ELB User Guide](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/)
 - [ALB User Guide](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/)

@@ -43,7 +43,16 @@
 
 ---
 
-## 🎯 Architecture Decision Notes
+## 5. Exam Tips
+
+- gp3 is the default answer unless the scenario demands provisioned IOPS (io2) or throughput HDD (st1).
+- "Encrypt an existing volume" → snapshot → encrypted copy → new volume. There is no in-place conversion.
+- Snapshot sharing across accounts requires **both** snapshot permissions **and** KMS key policy access.
+- Multi-attach is io1/io2, same-AZ, and the application owns write fencing.
+
+---
+
+## 6. 🎯 Architecture Decision Notes
 
 ### The EBS decision chain
 
@@ -56,16 +65,7 @@
 
 ---
 
-## 5. Exam Tips
-
-- gp3 is the default answer unless the scenario demands provisioned IOPS (io2) or throughput HDD (st1).
-- "Encrypt an existing volume" → snapshot → encrypted copy → new volume. There is no in-place conversion.
-- Snapshot sharing across accounts requires **both** snapshot permissions **and** KMS key policy access.
-- Multi-attach is io1/io2, same-AZ, and the application owns write fencing.
-
----
-
-## 6. Official References
+## 7. Official References
 
 - [Amazon EBS volume types](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volume-types.html)
 - [EBS snapshots](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-snapshots.html)

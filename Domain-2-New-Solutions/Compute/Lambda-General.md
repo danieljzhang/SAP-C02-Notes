@@ -32,7 +32,7 @@ AWS Lambda runs code in response to events without provisioning or managing serv
 
 - Occur when a new execution environment is initialized
 - Affected by: runtime (Java/C# slower than Python/Node), VPC attachment, package size
-- Mitigations: Provisioned Concurrency, SnapStart (Java), keep-warm pings (not recommended at scale)
+- Mitigations: Provisioned Concurrency, SnapStart (Java 11+, Python 3.12+, .NET 8+), keep-warm pings (not recommended at scale)
 
 ### SnapStart (Java, Python, .NET)
 

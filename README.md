@@ -193,7 +193,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md). Contributions, corrections, and improv
 
 ## 📄 License
 
-MIT License — see [LICENSE](./LICENSE).
+MIT License — see the [MIT license text](https://opensource.org/licenses/MIT).
 
 ## 🙏 Acknowledgments
 

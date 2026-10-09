@@ -40,6 +40,8 @@ User → Nearest AWS Edge Location (anycast IP)
 
 **Key rule:** If the question mentions **static IPs**, **TCP/UDP (non-HTTP)**, or **instant failover** → Global Accelerator. If it mentions **caching** or **HTTP content delivery** → CloudFront.
 
+Use both in one architecture without guilt: CloudFront in front of cacheable content, Global Accelerator in front of dynamic APIs. Choosing only CloudFront for a latency-sensitive API, or only Global Accelerator for a content-heavy site, leaves the other half of the requirement unaddressed.
+
 ---
 
 ## 4. Traffic Dials and Endpoint Weights
@@ -94,24 +96,6 @@ Accelerator
 - Both Global Accelerator and CloudFront include **Shield Standard** DDoS protection
 
 ---
-
----
-
-## 🎯 Architecture Decision Notes
-
-### Global Accelerator vs CloudFront — different jobs
-
-| | CloudFront | Global Accelerator |
-|---|---|---|
-| What it does | Caches and delivers HTTP(S) at the edge | Static anycast IPs + fast regional failover for TCP/UDP |
-| Caching/transform | Yes | No |
-| Non-HTTP traffic | No | Yes |
-
-Use both in one architecture without guilt: CloudFront in front of
-cacheable content, Global Accelerator in front of dynamic APIs. Choosing
-only CloudFront for a latency-sensitive API, or only Global Accelerator
-for a content-heavy site, leaves the other half of the requirement
-unaddressed.
 
 ## 8. Official References
 

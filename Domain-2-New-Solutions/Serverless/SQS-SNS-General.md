@@ -12,7 +12,7 @@
 |---|---|---|
 | Throughput | Unlimited | 3,000 msg/s with batching, 300 without |
 | Ordering | Best-effort | Strict (First-In-First-Out) |
-| Delivery behavior | SQS standard queues are at-least-once; FIFO deduplicates sends within its deduplication interval and orders within a message group | Subscription delivery behavior depends on the protocol/endpoint; consumers should be idempotent |
+| Delivery behavior | At-least-once delivery; messages can arrive more than once and out of order | Orders delivery within a message group; deduplicates sends within the deduplication interval |
 | Deduplication | No | Yes (5-minute dedup window) |
 | Use case | High throughput, order not critical | Order-critical, financial transactions |
 
@@ -145,9 +145,7 @@ Producer → SNS Topic
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 7. 🎯 Architecture Decision Notes
 
 ### DLQ design that actually helps
 
@@ -169,8 +167,6 @@ durable subscription (e.g., an SQS endpoint) loses messages.
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### The five-way messaging decider — one pattern, one service
 
 Every messaging question reduces to the consumption pattern. Learn this table
@@ -184,7 +180,7 @@ and most "which service" questions answer themselves:
 | Ordered stream, each consumer reads everything independently | **Kinesis Data Streams** | *stream* — consumer positions, replay |
 | Kafka protocol / ecosystem | **MSK** | *Kafka* — lift-and-shift or Kafka tooling |
 
-**Fresh mini-scenario:** An order service emits `OrderPlaced`. Inventory must
+**Fresh example:** An order service emits `OrderPlaced`. Inventory must
 deduct exactly once in order; notifications go to email/SMS/push; a future
 fraud service will need the event stream; analytics replays yesterday's
 orders. The composition: EventBridge as the bus (new consumers attach via
@@ -208,7 +204,7 @@ dedup), SNS for notifications (fan-out). One service cannot do all four jobs
 - **FIFO everywhere?** FIFO costs throughput and exists only where ordering
   is a real requirement. Do not pay the FIFO tax on a notifications fan-out.
 
-## 7. Official References
+## 8. Official References
 
 - [SQS Developer Guide](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/)
 - [SNS Developer Guide](https://docs.aws.amazon.com/sns/latest/dg/)

@@ -61,7 +61,15 @@ The exam's classic trap: describing Greengrass as "extending the AWS Region to t
 
 ---
 
-## 🎯 Architecture Decision Notes
+## 6. Exam Tips
+
+- Basic Ingest = cost optimization for telemetry-only flows; know when the broker path is unnecessary.
+- Greengrass vs Outposts is a favorite confusion pair — anchor on **who owns the hardware**.
+- Device shadows solve state sync; jobs solve fleet operations. Do not mix them up.
+
+---
+
+## 7. 🎯 Architecture Decision Notes
 
 ### The three edge answers — pick by ownership
 
@@ -73,15 +81,7 @@ When a scenario says "factory floor, unreliable WAN, local ML inference," the an
 
 ---
 
-## 6. Exam Tips
-
-- Basic Ingest = cost optimization for telemetry-only flows; know when the broker path is unnecessary.
-- Greengrass vs Outposts is a favorite confusion pair — anchor on **who owns the hardware**.
-- Device shadows solve state sync; jobs solve fleet operations. Do not mix them up.
-
----
-
-## 7. Official References
+## 8. Official References
 
 - [AWS IoT Core](https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html)
 - [IoT Core Basic Ingest](https://docs.aws.amazon.com/iot/latest/developerguide/iot-basic-ingest.html)

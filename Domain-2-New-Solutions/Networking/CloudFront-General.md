@@ -174,9 +174,7 @@ Use **CloudFront Functions** for simple, high-volume transformations. Use **Lamb
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 9. 🎯 Architecture Decision Notes
 
 ### TLS has two legs — secure both
 
@@ -196,8 +194,6 @@ for the second leg explicitly, or "HTTPS everywhere" is fiction past the edge.
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### Origin groups — fail over before the user notices
 
 A CloudFront 504 means the edge waited too long for your origin — the fix isn't always "make the origin faster." An **origin group** pairs a primary origin with a secondary origin, and CloudFront automatically retries the secondary when the primary returns configured error codes (500, 502, 503, 504 by default). Failover happens inside the CDN: no DNS change, no client retry logic.
@@ -213,8 +209,6 @@ Decision rules:
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### Field-level encryption — protect the payload, not just the pipe
 
 TLS encrypts data in transit, but once CloudFront terminates TLS, the request body is plaintext inside your stack — visible to every hop, log, and service that touches it. **Field-level encryption** encrypts specific sensitive fields of POST requests *at the edge*, using a public key you configure on the distribution. The values stay encrypted through your entire pipeline; only the application holding the private key can decrypt them.
@@ -228,7 +222,7 @@ Decision rules:
 
 **Fresh example:** A loan-application form collects income and tax-ID numbers, then posts through CloudFront to an ALB fronting a shared application platform whose access logs are visible to a broad ops team. With field-level encryption on the two sensitive fields, the ops team sees ciphertext in every log and the loan-processing service alone decrypts with its private key — compliance is satisfied without re-architecting the shared platform.
 
-## 9. Official References
+## 10. Official References
 
 - [CloudFront Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/)
 - [Origin Access Control](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)

@@ -197,9 +197,7 @@ Enforce encryption at rest via bucket policy:
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 11. 🎯 Architecture Decision Notes
 
 ### Choosing a storage class — decide from the access pattern
 
@@ -236,8 +234,6 @@ retroactively version existing objects — they stay as null-version objects.
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### Requester Pays — who foots the bill for someone else's downloads
 
 By default the bucket owner pays for storage *and* for every request and byte downloaded. **Requester Pays** flips the transfer/request cost to whoever reads the data (the owner still pays for storage). Requests against the bucket must be authenticated so AWS knows whom to bill — anonymous access and Requester Pays don't mix.
@@ -246,9 +242,7 @@ Use it when you host a dataset that *other parties* consume heavily and you don'
 
 Traps: (1) the requester must include the payer flag in their requests, so the consuming application needs code/config changes — it's not transparent; (2) it shifts cost, it doesn't reduce total cost — the requester may push back, so it's a commercial decision as much as a technical one; (3) don't confuse with S3 access points or bucket policies, which control *permission*, not *billing*.
 
-Mini-example: a genomics startup hosts a 50 TB public dataset that three pharma partners download repeatedly. Enabling Requester Pays on the dataset bucket means each partner's AWS account is billed for its own downloads, while the startup keeps paying only for the 50 TB of storage.
-
-## 🎯 Architecture Decision Notes
+**Fresh example:** A genomics startup hosts a 50 TB public dataset that three pharma partners download repeatedly. Enabling Requester Pays on the dataset bucket means each partner's AWS account is billed for its own downloads, while the startup keeps paying only for the 50 TB of storage.
 
 ### Multi-Region Access Points — when a single global S3 endpoint matters
 
@@ -266,10 +260,6 @@ with active-active failover between Regions:
 **Trap:** Assuming MRAP copies the data. It routes requests — replication is a separate configuration you must set up.
 
 ---
-
-# Gap fill for Domain-2-New-Solutions/Storage/S3-Advanced-General.md
-
-## 🎯 Architecture Decision Notes
 
 ### S3 Express One Zone — the missing row in the storage-class table
 
@@ -301,10 +291,7 @@ S3 Standard. The staging prefix uses Express One Zone for speed, with a
 lifecycle expiration — not a transition — because the data is temporary by
 design.
 
----
-*Source: [S3 storage classes](https://aws.amazon.com/s3/storage-classes/) (aws.amazon.com). Verified October 8, 2026.*
-
-## 11. Official References
+## 12. Official References
 
 - [S3 User Guide](https://docs.aws.amazon.com/AmazonS3/latest/userguide/)
 - [S3 Storage Classes](https://aws.amazon.com/s3/storage-classes/)
