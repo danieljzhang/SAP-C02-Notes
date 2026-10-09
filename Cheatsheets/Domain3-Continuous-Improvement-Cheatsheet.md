@@ -1,5 +1,7 @@
 # Domain 3 Cheatsheet: Continuous Improvement
 
+> Deeper notes: [Domain 3 overview](../Domain-3-Continuous-Improvement/README.md) and the linked service guides.
+
 > Focus: improve an existing workload using evidence. Measure first, identify the bottleneck or risk, apply the smallest effective change, and verify the outcome.
 
 ## Observability and Operations

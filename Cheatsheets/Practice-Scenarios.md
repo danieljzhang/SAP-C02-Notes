@@ -42,7 +42,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Federation authenticates; permission sets and IAM policies authorize.
 
-### Additional Scenario: Cost Allocation and Early Warning
+### 4. Cost Allocation and Early Warning
 
 **Problem:** A company needs to assign cloud spend to products and alert owners before monthly budgets are exceeded. Its finance team also needs line-item analysis when an alert fires.
 
@@ -52,7 +52,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Separate allocation, analysis, alerts, detailed billing data, and pre-deployment estimates.
 
-### Additional Scenario: Multi-Account Security Findings
+### 5. Multi-Account Security Findings
 
 **Problem:** A security team needs to detect suspicious behavior, find vulnerable EC2 software, and discover sensitive data in S3 across member accounts. Findings must reach a central operations team.
 
@@ -64,7 +64,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 ## Domain 2: New Solutions
 
-### 4. Global Static Content and Dynamic API
+### 6. Global Static Content and Dynamic API
 
 **Problem:** A media service has global users. Images and video should load quickly; a dynamic API needs stable entry points and fast failover between regional endpoints.
 
@@ -76,7 +76,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Match the global service to content caching versus connection routing.
 
-### 5. Burst-Heavy Order Processing
+### 7. Burst-Heavy Order Processing
 
 **Problem:** A retail API sees sharp bursts. Orders must not be dropped if workers or the database are temporarily unavailable, and clients need a quick acknowledgement.
 
@@ -88,7 +88,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** A queue absorbs bursts only when consumers, retries, and poison-message handling are designed.
 
-### 6. Relational Workload with Read Spikes
+### 8. Relational Workload with Read Spikes
 
 **Problem:** A customer-facing application has a relational system of record, high read volume, and a requirement for automatic in-Region failover. Reads can tolerate modest replica lag, but writes must remain relationally consistent.
 
@@ -100,7 +100,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Separate HA, read scaling, and caching requirements.
 
-### 7. Stream Processing with Replay
+### 9. Stream Processing with Replay
 
 **Problem:** An analytics platform ingests events at high volume. Consumers need ordered records per entity and the ability to replay a retention window after a processing bug.
 
@@ -112,7 +112,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Ordering is scoped by partition/key, not necessarily global.
 
-### Additional Scenario: Safe Lambda Release
+### 10. Safe Lambda Release
 
 **Problem:** A payments API needs to release a new Lambda version gradually and automatically restore the prior version if error rates increase.
 
@@ -122,7 +122,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Pair deployment strategy with measurable alarms and state-compatible rollback.
 
-### Additional Scenario: Mixed Database Workload
+### 11. Mixed Database Workload
 
 **Problem:** An application has transaction records, time-series device measurements, and multi-hop relationship queries. The existing relational database is overloaded by analytical scans and graph traversals.
 
@@ -132,7 +132,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Purpose-built databases solve different access patterns; a polyglot design needs explicit consistency and cost controls.
 
-### Additional Scenario: Recover an On-Premises Server Estate
+### 12. Recover an On-Premises Server Estate
 
 **Problem:** A company must recover supported on-premises servers into AWS after a site outage. It needs periodic non-disruptive drills and a short measured recovery objective, but it does not need a second full compute fleet running continuously.
 
@@ -144,7 +144,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 ## Domain 3: Continuous Improvement
 
-### 8. Regional Recovery Requirement
+### 13. Regional Recovery Requirement
 
 **Problem:** A business application has a one-hour RTO and five-minute RPO. A secondary Region must be ready without paying for two full-size production fleets continuously.
 
@@ -156,7 +156,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** The label “warm standby” is not proof the measured RTO/RPO is met.
 
-### 9. Find a Distributed Latency Bottleneck
+### 14. Find a Distributed Latency Bottleneck
 
 **Problem:** A user-facing API has intermittent slow requests across several microservices. CPU averages are normal, and operators need to identify which dependency is responsible.
 
@@ -168,7 +168,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Choose observability based on the question: audit, metrics/logs, or distributed traces.
 
-### 10. Reduce Compute Spend Safely
+### 15. Reduce Compute Spend Safely
 
 **Problem:** A company suspects over-provisioned EC2 instances but has seasonal peaks and strict latency SLOs. It wants evidence before committing to a long-term discount plan.
 
@@ -182,7 +182,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 ## Domain 4: Migration and Modernization
 
-### 11. Data Center Exit with Poorly Documented Servers
+### 16. Data Center Exit with Poorly Documented Servers
 
 **Problem:** A company must leave a data center in six months. It has hundreds of supported Windows/Linux servers, undocumented dependencies, and little capacity for application rewrites. Downtime must be short.
 
@@ -194,7 +194,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Rehost can be a deliberate first step; it is not the final modernization design.
 
-### 12. Heterogeneous Database Migration
+### 17. Heterogeneous Database Migration
 
 **Problem:** A high-write database must move to a different engine with minimal downtime. The schema uses stored procedures and engine-specific functions.
 
@@ -206,7 +206,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Data movement, schema conversion, application compatibility, and cutover are separate workstreams.
 
-### 13. Multi-Terabyte File Migration
+### 18. Multi-Terabyte File Migration
 
 **Problem:** An organization must migrate a large NFS dataset to S3. Files continue to change during transfer. The WAN may or may not meet the deadline.
 
@@ -218,7 +218,7 @@ These are free, original architecture exercises, not actual or reconstructed exa
 
 **Trap / takeaway:** Choose by transfer shape, throughput, and current service availability—not raw data size alone.
 
-### 14. Modernize a Monolith Incrementally
+### 19. Modernize a Monolith Incrementally
 
 **Problem:** A monolith’s catalog feature needs independent releases, while billing is stable and regulated. The company cannot fund a full rewrite.
 
@@ -238,7 +238,7 @@ The scenarios below are organized by *decision* rather than by domain — each
 one forces a choice between easily confused services. Work them
 requirements-first: cover the recommendation, decide, then read the reasoning.
 
-## 1. Global storefront with regional failover
+## 20. Global storefront with regional failover
 
 **Scenario.** A retail company runs its storefront in `us-east-1`. Shoppers are
 global. The business requires: checkout must stay available if a Region has an
@@ -278,7 +278,7 @@ data tier survives a regional event.
 - Treating "multi-AZ" as "multi-Region." An AZ event and a Region event are
   different blast radii with different answers.
 
-### 2. Order pipeline: queue, topic, bus, or stream?
+## 21. Order pipeline: queue, topic, bus, or stream?
 
 **Scenario.** An e-commerce platform must process orders through payment,
 inventory, and notification steps. Requirements: no order lost if a downstream
@@ -322,7 +322,7 @@ jobs.
 - Choosing Kinesis for a simple queue workload and paying the operational
   cost of stream management for no benefit.
 
-### 3. Acquired company, overlapping networks
+## 22. Acquired company, overlapping networks
 
 **Scenario.** A company acquires a competitor. Both run production in VPCs
 using `10.0.0.0/16`. The parent needs to call the acquired company's
@@ -361,7 +361,7 @@ configuration pattern.
 - Exposing the API through a public ALB "temporarily" and never
   revisiting it.
 
-### 4. Nightly analytics on a budget
+## 23. Nightly analytics on a budget
 
 **Scenario.** A data team runs a nightly 3-hour analytics job over 2 TB of
 data in S3. The job is checkpointed and can resume after interruption. The
@@ -395,7 +395,7 @@ CFO wants the lowest compute cost; the team wants no capacity management.
   — it trades cost for operational simplicity, which is the right trade
   only if the team values it.
 
-### 5. SaaS tenant isolation that auditors accept
+## 24. SaaS tenant isolation that auditors accept
 
 **Scenario.** A SaaS company hosts 200 tenants' workloads in one AWS
 organization. Requirements: no tenant can reach another tenant's data plane;
@@ -434,7 +434,7 @@ permission guardrails.
 - Using Cognito identity pools where user pools belong, or vice versa:
   pools authenticate users, identity pools vend AWS credentials.
 
-### 6. Spiky relational workload
+## 25. Spiky relational workload
 
 **Scenario.** A ticketing platform has 10x traffic spikes during on-sales,
 then idles. The data model is relational with transactions. Requirements:
@@ -467,7 +467,7 @@ point in the last 7 days.
 - Forgetting that serverless scaling has limits and warm-up behavior;
   test the spike, do not assume instant infinite scale.
 
-### 7. Ransomware-resilient backups
+## 26. Ransomware-resilient backups
 
 **Scenario.** After an industry ransomware incident, a company needs backups
 that survive a compromised AWS account. Requirements: backups immutable for
@@ -501,7 +501,7 @@ backup administrator must not be able to delete the backups they manage.
 - Replicating to a second Region but with the same KMS key and admin
   — shared fate dressed as redundancy.
 
-### 8. Cutting a monolith without stopping the business
+## 27. Cutting a monolith without stopping the business
 
 **Scenario.** A 10-year-old monolith on EC2 must move to AWS with minimal
 downtime and minimal rewrite. The database is 4 TB. Requirements: cutover

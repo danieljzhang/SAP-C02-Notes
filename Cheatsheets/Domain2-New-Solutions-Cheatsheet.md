@@ -1,5 +1,7 @@
 # Domain 2 Cheatsheet: Design for New Solutions
 
+> Deeper notes: [Domain 2 overview](../Domain-2-New-Solutions/README.md) and the linked service guides.
+
 > Focus: choose an architecture that meets scale, availability, security, performance, and cost requirements. Pick the simplest service model that satisfies explicit constraints.
 
 ## Compute and Networking
@@ -23,6 +25,7 @@
 | Need | Candidate | Key distinction |
 |---|---|---|
 | Object storage, lifecycle, replication | S3 | Strong consistency; choose class from access/retrieval/retention economics |
+| Block storage for EC2 | EBS | Choose volume type by IOPS/throughput; snapshots for backup, multi-attach where supported |
 | Shared Linux file system | EFS | NFS, elastic shared file access |
 | Windows SMB / Windows semantics | FSx for Windows File Server | AD integration and SMB feature fit |
 | High-performance parallel/HPC file data | FSx for Lustre | Link to S3 and validate workload throughput/metadata needs |

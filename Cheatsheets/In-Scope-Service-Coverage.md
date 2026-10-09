@@ -39,21 +39,21 @@ These service families appear in the official SAP-C02 in-scope list but do not a
 
 | Family | Services with brief or no standalone coverage | Awareness cue |
 |---|---|---|
-| Analytics | Athena, Glue, Lake Formation, EMR, Data Firehose, Managed Service for Apache Flink, QuickSight, Data Exchange | SQL on S3 / ETL-catalog / data governance / Hadoop-Spark / managed delivery / stream processing / BI / third-party datasets |
-| Application integration | AppFlow, AppSync, Amazon MQ | SaaS data transfer / managed GraphQL APIs / broker compatibility for existing middleware |
+| Analytics | Athena, Glue, Lake Formation, EMR, Data Firehose, Managed Service for Apache Flink, QuickSight, Data Exchange | SQL on S3<br>ETL-catalog<br>data governance<br>Hadoop-Spark<br>managed delivery<br>stream processing<br>BI<br>third-party datasets |
+| Application integration | AppFlow, AppSync, Amazon MQ | SaaS data transfer<br>managed GraphQL APIs<br>broker compatibility for existing middleware |
 | Cloud financial management | Cost and Usage Report/Data Exports, Savings Plans | Granular billing datasets and commitment options; detailed cost workflows are in the cost visibility guide |
-| Compute and containers | App Runner, Batch, Elastic Beanstalk, Lightsail, Outposts, Wavelength, ECS Anywhere, EKS Anywhere | Managed web app / batch jobs / application platform / simple VPS / on-premises AWS hardware / edge zones / hybrid container operations |
-| Databases | DocumentDB, Keyspaces, Neptune, Redshift, Timestream | MongoDB-compatible document / Cassandra-compatible wide column / graph / warehouse / time-series; see [database selector](../Domain-2-New-Solutions/Databases/Purpose-Built-Database-Selector.md) |
-| Developer tools | CodeArtifact, CodeGuru | Package repository / code quality and performance insights; CodeBuild, CodeDeploy, and CodePipeline are in the deployment guide |
-| Blockchain and business applications | Amazon Managed Blockchain, Amazon SES | Managed blockchain network awareness / transactional email integration |
-| End-user and frontend | AppStream 2.0, WorkSpaces, Amplify, Device Farm, Pinpoint | App streaming / virtual desktops / full-stack web-mobile development / device testing / customer engagement messaging |
-| IoT | IoT Core, Device Defender, Device Management, IoT Events, Greengrass, SiteWise, IoT Things Graph, IoT 1-Click | Secure device messaging / fleet security and management / edge processing / industrial data; verify lifecycle and current support |
-| Machine learning | Comprehend, Fraud Detector, Kendra, Lex, Personalize, Polly, Rekognition, SageMaker AI, Textract, Transcribe, Translate | Text analytics / fraud / search / conversational / personalization / speech / vision / ML platform / document extraction / transcription / translation |
-| Media | Elastic Transcoder, Kinesis Video Streams | Legacy media conversion awareness / video ingestion and streaming; verify current product lifecycle |
-| Management and governance | Health Dashboard, License Manager, Managed Grafana/Prometheus, Proton, Service Catalog | Service events / license tracking / managed observability / platform delivery / governed product provisioning |
-| Migration and transfer | Application Discovery Service, Schema Conversion Tool (SCT) | Inventory/dependency assessment / schema assessment and conversion; pair with the execution services in Domain 4 |
-| Security | Artifact, Audit Manager, ACM, CloudHSM, Cognito, Detective, Directory Service, Firewall Manager, Network Firewall, STS, WAF, Shield | Compliance documents / evidence collection / certificates / dedicated HSM / user identity / investigation / managed directories / central policy / network inspection / temporary credentials / web filtering / DDoS protection |
-| Storage | EBS, S3 Glacier, Storage Gateway | Block volumes / archival classes / hybrid storage access; compare with S3, DataSync, AWS Backup, and the DRS guide |
+| Compute and containers | App Runner, Batch, Elastic Beanstalk, Lightsail, Outposts, Wavelength, ECS Anywhere, EKS Anywhere | Managed web app<br>batch jobs<br>application platform<br>simple VPS<br>on-premises AWS hardware<br>edge zones<br>hybrid container operations |
+| Databases | DocumentDB, Keyspaces, Neptune, Redshift, Timestream | MongoDB-compatible document<br>Cassandra-compatible wide column<br>graph<br>warehouse<br>time-series; see [database selector](../Domain-2-New-Solutions/Databases/Purpose-Built-Database-Selector.md) |
+| Developer tools | CodeArtifact, CodeGuru | Package repository<br>code quality and performance insights; CodeBuild, CodeDeploy, and CodePipeline are in the deployment guide |
+| Blockchain and business applications | Amazon Managed Blockchain, Amazon SES | Managed blockchain network awareness<br>transactional email integration |
+| End-user and frontend | AppStream 2.0, WorkSpaces, Amplify, Device Farm, Pinpoint | App streaming<br>virtual desktops<br>full-stack web-mobile development<br>device testing<br>customer engagement messaging |
+| IoT | IoT Core, Device Defender, Device Management, IoT Events, Greengrass, SiteWise, IoT Things Graph, IoT 1-Click | Secure device messaging<br>fleet security and management<br>edge processing<br>industrial data; verify lifecycle and current support |
+| Machine learning | Comprehend, Fraud Detector, Kendra, Lex, Personalize, Polly, Rekognition, SageMaker AI, Textract, Transcribe, Translate | Text analytics<br>fraud<br>search<br>conversational<br>personalization<br>speech<br>vision<br>ML platform<br>document extraction<br>transcription<br>translation |
+| Media | Elastic Transcoder, Kinesis Video Streams | Legacy media conversion awareness<br>video ingestion and streaming; verify current product lifecycle |
+| Management and governance | Health Dashboard, License Manager, Managed Grafana/Prometheus, Proton, Service Catalog | Service events<br>license tracking<br>managed observability<br>platform delivery<br>governed product provisioning |
+| Migration and transfer | Application Discovery Service, Schema Conversion Tool (SCT) | Inventory/dependency assessment<br>schema assessment and conversion; pair with the execution services in Domain 4 |
+| Security | Artifact, Audit Manager, ACM, CloudHSM, Cognito, Detective, Directory Service, Firewall Manager, Network Firewall, STS, WAF, Shield | Compliance documents<br>evidence collection<br>certificates<br>dedicated HSM<br>user identity<br>investigation<br>managed directories<br>central policy<br>network inspection<br>temporary credentials<br>web filtering<br>DDoS protection |
+| Storage | EBS, S3 Glacier, Storage Gateway | Block volumes<br>archival classes<br>hybrid storage access; compare with S3, DataSync, AWS Backup, and the DRS guide |
 
 ## Study Priority
 

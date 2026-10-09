@@ -181,9 +181,7 @@ Management Account
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 11. 🎯 Architecture Decision Notes
 
 ### Resource lifecycle on removal — set deliberately
 
@@ -210,8 +208,6 @@ resources:
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### SSM parameter types — stop hardcoding values that change
 
 A CloudFormation parameter doesn't have to be a value the operator types in. Declaring a parameter with an SSM parameter type (e.g., a type that resolves an AMI ID from Parameter Store) makes the template read the *current* value at deploy time. The classic use is the AMI ID: instead of baking `ami-0abc123` into every template and editing them on each new AMI release, the template looks up the latest Amazon Linux AMI from the public parameter path and you never touch the template again.
@@ -225,7 +221,7 @@ Decision rules:
 
 **Fresh example:** A team ships a golden-image pipeline that publishes each hardened AMI ID to Parameter Store under `/prod/golden-ami`. Their fifty application templates declare the AMI as an SSM parameter type pointing at that path. When the pipeline publishes a new image, the next stack update picks it up with no template edits — versus the old world where someone had to find-and-replace AMI IDs across fifty files.
 
-## 11. Official References
+## 12. Official References
 
 - [CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)
 - [StackSets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html)

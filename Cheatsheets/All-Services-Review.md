@@ -102,8 +102,8 @@
 ### Textract — choose document intelligence, not just OCR
 
 When the input is a scanned or photographed document and the requirement
-goes beyond "read the characters," reach for a managed document-analysis
-service rather than building an OCR pipeline. The decision ladder:
+goes beyond "read the characters," prefer a managed document-analysis
+service to building an OCR pipeline. The decision ladder:
 
 | Need | Choice |
 |---|---|
@@ -122,9 +122,7 @@ downstream workflow (approvals, ledger posting) actually consumes.
 Instead of OCR plus fragile regex, the team extracts structured fields
 (vendor, date, line items, total) with an expense-oriented analysis API,
 matches totals against purchase orders, and routes only mismatches to
-humans — cutting manual keying without building any ML.
-
-## 🎯 Architecture Decision Notes
+humans — reducing manual keying without custom ML.
 
 ### Contact-center voice AI — compose the pipeline from single-purpose services
 
@@ -158,8 +156,6 @@ calls — built from three managed services, with no custom ML.
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### WorkSpaces vs AppStream 2.0 — desktops vs apps
 
 Both deliver Windows/Linux applications to users without local installs, but they answer different questions:
@@ -167,12 +163,8 @@ Both deliver Windows/Linux applications to users without local installs, but the
 - **WorkSpaces = a persistent virtual desktop (VDI).** Each user gets their own stateful desktop with their profile, files, and settings intact between sessions. Choose it for long-term remote-workforce desktop replacement — developers, back-office staff, anyone who lives in their desktop.
 - **AppStream 2.0 = streaming individual applications.** Sessions are stateless and on-demand; the user gets the app, not a desktop. Choose it for short-lived or large-scale access to specific apps — contractors, students, or distributing a legacy Windows app as SaaS without installing it anywhere.
 
-Shared traits the exam may mention: both run inside your VPC, integrate with AD/IAM Identity Center/MFA, and support encrypted storage. Decision rule: "needs *my* desktop that remembers me" → WorkSpaces; "needs *that app* for a while" → AppStream 2.0. Don't answer EC2-with-manual-patching for either — that's the operational-overhead distractor.
-
-*Note: no topical notes file covers end-user computing; consider a dedicated EUC notes file if this area grows.*
-
-## 🎯 Architecture Decision Notes — Legacy Awareness
+Shared traits the exam may mention: both run inside your VPC, integrate with AD/IAM Identity Center/MFA, and support encrypted storage. Decision rule: "needs *my* desktop that remembers me" → WorkSpaces; "needs *that app* for a while" → AppStream 2.0. Do not answer EC2-with-manual-patching for either — that's the operational-overhead distractor.
 
 ### Amazon WorkDocs — discontinued; recognize it only as a distractor
 
-WorkDocs was AWS's managed enterprise document-collaboration service (the AWS-native alternative to SharePoint/Google Drive, pitched on IAM/CloudTrail/KMS integration for regulated industries). **AWS discontinued WorkDocs — the service is end-of-life and closed.** It can only appear in exam questions as a legacy distractor. If a scenario asks for document collaboration or managed file sharing today, the current answers are S3-based patterns, WorkSpaces-family services, or third-party SaaS — never WorkDocs.
+WorkDocs was AWS's managed enterprise document-collaboration service (the AWS-native alternative to SharePoint/Google Drive, pitched on IAM/CloudTrail/KMS integration for regulated industries). **AWS discontinued WorkDocs — the service is end-of-life and closed.** It can only appear in exam questions as a legacy distractor. See [DEPRECATED-SERVICES.md](../DEPRECATED-SERVICES.md). If a scenario asks for document collaboration or managed file sharing today, the current answers are S3-based patterns, WorkSpaces-family services, or third-party SaaS — never WorkDocs.

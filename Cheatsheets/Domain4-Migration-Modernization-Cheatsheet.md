@@ -1,5 +1,7 @@
 # Domain 4 Cheatsheet: Migration and Modernization
 
+> Deeper notes: [Domain 4 overview](../Domain-4-Migration-Modernization/README.md) and the linked service guides.
+
 > Focus: select the right workload strategy, tool, target, and cutover plan. Validate service availability and current exam-guide objectives.
 
 ## The 7 Rs (Terminology Varies)

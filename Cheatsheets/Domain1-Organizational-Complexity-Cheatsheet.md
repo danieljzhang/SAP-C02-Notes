@@ -1,5 +1,7 @@
 # Domain 1 Cheatsheet: Design Solutions for Organizational Complexity
 
+> Deeper notes: [Domain 1 overview](../Domain-1-Organizational-Complexity/README.md) and the linked service guides.
+
 > Focus: governance, identity, multi-account operations, hybrid connectivity, and shared services. Use the current exam guide for exact objective wording.
 
 ## Governance and Identity

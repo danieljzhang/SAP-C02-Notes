@@ -47,4 +47,4 @@
 
 ---
 
-*Update this file after every session. See [WORKLOG.md](../WORKLOG.md) for the detailed task tracker.*
+*Update this file after every session.*

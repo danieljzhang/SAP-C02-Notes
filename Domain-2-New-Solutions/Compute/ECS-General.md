@@ -148,9 +148,7 @@ ALB
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 12. 🎯 Architecture Decision Notes
 
 ### Choosing the compute operating model
 
@@ -178,8 +176,6 @@ and chooses Fargate when host management adds no value.
 
 ---
 
-## 🎯 Architecture Decision Notes
-
 ### App Runner's operating model — when the simplest container platform wins
 
 App Runner is the lowest-operational-overhead way to run an HTTP workload on AWS: you hand it source code (from a repo) or a container image, and it returns a running HTTPS endpoint with load balancing and request-driven horizontal scaling — no clusters, task definitions, or service discovery to manage. Think of it as Elastic Beanstalk's simpler successor for plain web apps and APIs.
@@ -196,8 +192,6 @@ Traps: App Runner's VPC support is partial compared to ECS — verify private-re
 **Fresh example:** A two-person team has a Java Spring Boot service currently on EC2 behind an ALB and wants to stop patching hosts. They point App Runner at the GitHub repo, attach a custom domain with the built-in TLS certificate, and connect it to an RDS database. The hourly report job that used to run on the same EC2 box moves to Fargate as a scheduled task — because App Runner would have no trigger for it.
 
 ---
-
-## 🎯 Architecture Decision Notes
 
 ### AWS Batch — the managed scheduler for parallel batch work
 
@@ -218,10 +212,7 @@ Decision rules:
 
 **Fresh example:** A genomics team runs 20,000 independent sequence-alignment jobs nightly, each taking 1–3 hours. They define one Batch job definition, submit the work as an array job to a queue backed by a managed compute environment (Spot-first, On-Demand fallback), with input data in S3 and results written back to S3. No cluster to babysit, no queue consumer fleet to scale — and the Spot mix cuts the compute bill versus their old fixed cluster.
 
-
 ---
-
-## 🎯 Architecture Decision Notes
 
 ### ECS Anywhere — one orchestrator for cloud and on-premises capacity
 
@@ -251,8 +242,6 @@ ships identical task definitions to both, and later moves non-regulated
 services to Fargate without changing the task definitions — only the
 launch target changes.
 
-## 🎯 Architecture Decision Notes
-
 ### Fargate pulling ECR images from private subnets — pick the egress path deliberately
 
 A Fargate task in a private subnet fails image pulls (`CannotPullContainer`
@@ -279,7 +268,7 @@ and log delivery work with zero public exposure. When the same API later
 needs a fraud-scoring SaaS over HTTPS, they add a NAT gateway rather than
 punching public IPs onto tasks.
 
-## 12. Official References
+## 13. Official References
 
 - [ECS Developer Guide](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/)
 - [ECS Fargate](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html)
