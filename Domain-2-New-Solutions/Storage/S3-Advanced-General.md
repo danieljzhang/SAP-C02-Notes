@@ -197,6 +197,43 @@ Enforce encryption at rest via bucket policy:
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Choosing a storage class — decide from the access pattern
+
+Pick from retrieval frequency, acceptable delay, and resilience — not from
+the class name:
+
+| Signal | Direction |
+|---|---|
+| Accessed frequently, latency-sensitive | S3 Standard |
+| Access unknown or shifting | Intelligent-Tiering (watch monitoring fees and archive-tier fit) |
+| Infrequent but must be instant | Standard-IA (multi-AZ) — check retrieval fees and minimum duration |
+| Infrequent and recreatable | One Zone-IA — never the only copy of irreplaceable data |
+| Archive, rare access, ms retrieval needed | Glacier Instant Retrieval |
+| Archive, restore step acceptable | Glacier Flexible Retrieval (minutes–hours) |
+| Archive, almost never touched | Glacier Deep Archive (hours; cheapest) |
+| Single-AZ, microsecond object access | S3 Express One Zone — a performance tier, not an archive |
+
+For IA and archive tiers, compare **minimum storage duration, minimum
+billable object size, retrieval charges, and recovery time** against the real
+workload. Intelligent-Tiering's automation is not free — model it.
+
+### Layered access control — each layer answers a different question
+
+- **Block Public Access:** preventive guardrail against public grants.
+- **Bucket/IAM policies and access points:** who may do what.
+- **Access Analyzer:** finds policy-based exposure you did not intend.
+- **CloudTrail data events:** records object-level API calls — only when
+  enabled, and at extra cost.
+- **EventBridge alerts on logged events:** detection, not prevention.
+
+Versioning protects against overwrites/deletes but old versions keep
+billing until lifecycle rules expire them. Enabling versioning does not
+retroactively version existing objects — they stay as null-version objects.
+
 ## 11. Official References
 
 - [S3 User Guide](https://docs.aws.amazon.com/AmazonS3/latest/userguide/)

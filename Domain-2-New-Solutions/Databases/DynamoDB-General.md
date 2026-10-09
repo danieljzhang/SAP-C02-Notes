@@ -169,6 +169,26 @@ Use when the application benefits from local reads/writes in multiple Regions an
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### DynamoDB design decisions that matter at Professional level
+
+- **Access patterns first:** DynamoDB rewards designs derived from known
+  query patterns (single-table design, GSIs for alternate access). A
+  relational schema ported unchanged becomes an expensive anti-pattern —
+  if the workload needs joins and ad-hoc queries, the answer is usually
+  Aurora, not DynamoDB.
+- **Capacity mode:** on-demand absorbs spikes without planning; provisioned
+  with auto-scaling suits predictable baselines. Model the cost crossover
+  instead of defaulting.
+- **Recovery:** point-in-time recovery covers the last 35 days; on-demand
+  backup covers longer retention. Global tables replicate across Regions
+  for multi-active reads/writes — but the data model must fit key-value
+  access, and conflict resolution follows last-writer-wins.
+- **DAX** caches eligible read paths; it does not fix a bad key design.
+
 ## 12. Official References
 
 - [DynamoDB Developer Guide](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/)

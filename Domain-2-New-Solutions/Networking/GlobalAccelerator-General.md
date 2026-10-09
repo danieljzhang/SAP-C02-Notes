@@ -95,6 +95,24 @@ Accelerator
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Global Accelerator vs CloudFront — different jobs
+
+| | CloudFront | Global Accelerator |
+|---|---|---|
+| What it does | Caches and delivers HTTP(S) at the edge | Static anycast IPs + fast regional failover for TCP/UDP |
+| Caching/transform | Yes | No |
+| Non-HTTP traffic | No | Yes |
+
+Use both in one architecture without guilt: CloudFront in front of
+cacheable content, Global Accelerator in front of dynamic APIs. Choosing
+only CloudFront for a latency-sensitive API, or only Global Accelerator
+for a content-heavy site, leaves the other half of the requirement
+unaddressed.
+
 ## 8. Official References
 
 - [Global Accelerator Developer Guide](https://docs.aws.amazon.com/global-accelerator/latest/dg/)

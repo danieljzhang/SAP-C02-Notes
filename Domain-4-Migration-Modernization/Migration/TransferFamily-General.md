@@ -81,6 +81,20 @@ AWS Transfer Family endpoint
 - Do not treat successful upload as validation, malware scanning, or business acceptance.
 - FTP is not encrypted by itself; use a secure protocol or explicit compensating controls when a legacy requirement cannot be removed.
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Transfer Family placement decisions
+
+Decide the endpoint's network posture first: publicly reachable vs VPC-private.
+A private endpoint keeps transfers off the internet but needs the VPC,
+subnets, and security groups designed around the transfer clients. Then lock
+down identities — the protocol (SFTP/FTPS/FTP/AS2) determines the auth
+options, and the S3/EFS backend determines the IAM story. Measure the
+throughput need against the protocol choice; managed does not mean
+unlimited.
+
 ## 9. Official References
 
 - [What is AWS Transfer Family?](https://docs.aws.amazon.com/transfer/latest/userguide/what-is-aws-transfer-family.html)

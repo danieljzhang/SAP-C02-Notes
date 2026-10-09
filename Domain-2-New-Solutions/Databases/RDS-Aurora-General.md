@@ -165,6 +165,27 @@ Primary Region (us-east-1)
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Choosing the relational engine and capacity model
+
+- **RDS** fits steady relational workloads with a known engine; read
+  replicas scale reads, but writes still funnel through one primary.
+- **Aurora** adds storage auto-scaling, faster failover, and Global
+  Database for cross-Region reads with minute-scale failover.
+- **Aurora Serverless v2** scales compute in fine increments — the answer
+  for spiky relational workloads (e.g., 10x ticket on-sales) where
+  provisioned-for-peak would idle expensively. It keeps MySQL/PostgreSQL
+  compatibility, so no data-layer rewrite.
+- **Do not pick DynamoDB for a relational workload** just because "it
+  scales" — the key-value remodel is the real project cost.
+
+For point-in-time recovery, verify the backup retention window covers the
+required RPO rather than assuming defaults. Backtrack is not a substitute
+for tested restores.
+
 ## 9. Official References
 
 - [RDS User Guide](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/)
