@@ -153,7 +153,7 @@ Mini-example: an order API fans out one workflow per order ID and reuses the ord
 
 ## 8. Official References
 
-- [Step Functions Developer Guide](https://docs.aws.amazon.com/step-functions/latest/dg/)
-- [Standard vs Express](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-standard-vs-express.html)
-- [Workflow type execution guarantees](https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html)
-- [Service Integrations](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-service-integrations.html)
+- [Step Functions Developer Guide](https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html)
+- [Standard vs Express](https://docs.aws.amazon.com/step-functions/latest/dg/welcome.htmlchoosing-workflow-type.html)
+- [Workflow type execution guarantees](https://docs.aws.amazon.com/step-functions/latest/dg/welcome.htmlchoosing-workflow-type.html)
+- [Service Integrations](https://docs.aws.amazon.com/step-functions/latest/dg/welcome.htmlintegrate-services.html)

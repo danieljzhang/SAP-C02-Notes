@@ -213,4 +213,4 @@ dedup), SNS for notifications (fan-out). One service cannot do all four jobs
 - [SQS Developer Guide](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/)
 - [SNS Developer Guide](https://docs.aws.amazon.com/sns/latest/dg/)
 - [SNS Message Filtering](https://docs.aws.amazon.com/sns/latest/dg/sns-message-filtering.html)
-- [Fan-Out Pattern](https://docs.aws.amazon.com/sns/latest/dg/sns-common-scenarios.html)
+- [Fan-Out Pattern](https://docs.aws.amazon.com/sns/latest/dg/SNS_Scenarios.html)

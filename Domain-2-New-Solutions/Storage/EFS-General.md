@@ -120,4 +120,4 @@ do not provision throughput for a workload that bursts.
 
 - [EFS User Guide](https://docs.aws.amazon.com/efs/latest/ug/)
 - [EFS Performance](https://docs.aws.amazon.com/efs/latest/ug/performance.html)
-- [EFS Storage Classes](https://docs.aws.amazon.com/efs/latest/ug/storage-classes.html)
+- [EFS Storage Classes](https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html)

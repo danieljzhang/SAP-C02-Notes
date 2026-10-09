@@ -116,5 +116,5 @@ unaddressed.
 ## 8. Official References
 
 - [Global Accelerator Developer Guide](https://docs.aws.amazon.com/global-accelerator/latest/dg/)
-- [Global Accelerator vs CloudFront](https://docs.aws.amazon.com/global-accelerator/latest/dg/introduction-how-it-works-client-ip.html)
+- [Global Accelerator vs CloudFront](https://docs.aws.amazon.com/global-accelerator/latest/dg/preserve-client-ip-address.headers.html)
 - [Traffic Dials](https://docs.aws.amazon.com/global-accelerator/latest/dg/about-endpoint-groups-traffic-dial.html)

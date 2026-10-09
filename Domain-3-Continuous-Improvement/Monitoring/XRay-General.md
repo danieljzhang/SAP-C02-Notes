@@ -154,5 +154,5 @@ def process_order(order_id):
 
 - [X-Ray Developer Guide](https://docs.aws.amazon.com/xray/latest/devguide/)
 - [X-Ray Sampling](https://docs.aws.amazon.com/xray/latest/devguide/xray-console-sampling.html)
-- [CloudWatch ServiceLens](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ServiceLens.html)
+- [CloudWatch ServiceLens](https://docs.aws.amazon.com/xray/latest/devguide/xray-console-servicemap.html)
 - [X-Ray with Lambda](https://docs.aws.amazon.com/lambda/latest/dg/services-xray.html)

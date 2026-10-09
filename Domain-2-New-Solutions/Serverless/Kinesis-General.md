@@ -147,4 +147,4 @@ bookkeeping when the workload is really "land this data somewhere reliably"
 
 - [Kinesis Data Streams Developer Guide](https://docs.aws.amazon.com/streams/latest/dev/)
 - [Kinesis Data Firehose Developer Guide](https://docs.aws.amazon.com/firehose/latest/dev/)
-- [Kinesis Data Analytics](https://docs.aws.amazon.com/kinesisanalytics/latest/java/)
+- [Amazon Managed Service for Apache Flink (formerly Kinesis Data Analytics)](https://docs.aws.amazon.com/managed-flink/latest/java/what-is.html)

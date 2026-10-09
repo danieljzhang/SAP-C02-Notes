@@ -112,4 +112,4 @@ Treat cost as a design constraint, not a spreadsheet exercise at the end:
 
 - [Cost Explorer User Guide](https://docs.aws.amazon.com/cost-management/latest/userguide/ce-what-is.html)
 - [Rightsizing Recommendations](https://docs.aws.amazon.com/cost-management/latest/userguide/ce-rightsizing.html)
-- [Savings Plans Recommendations](https://docs.aws.amazon.com/cost-management/latest/userguide/ce-sp-recommendations.html)
+- [Savings Plans Recommendations](https://docs.aws.amazon.com/savingsplans/latest/userguide/purchase-rec.html)

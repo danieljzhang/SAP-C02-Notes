@@ -218,4 +218,4 @@ Secrets Manager rotation is not magic — it is a Lambda function you configure 
 - [Systems Manager User Guide](https://docs.aws.amazon.com/systems-manager/latest/userguide/)
 - [Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html)
 - [Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
-- [Patch Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-patch.html)
+- [Patch Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager.html)

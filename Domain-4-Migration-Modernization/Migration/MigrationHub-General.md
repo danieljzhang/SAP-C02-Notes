@@ -105,4 +105,4 @@ expects you to choose.
 
 - [AWS Migration Hub User Guide](https://docs.aws.amazon.com/migrationhub/latest/ug/whatishub.html)
 - [AWS Application Discovery Service](https://docs.aws.amazon.com/application-discovery/latest/userguide/what-is-appdiscovery.html)
-- [AWS Transform](https://docs.aws.amazon.com/transform/latest/userguide/what-is-aws-transform.html)
+- [AWS Transform](https://docs.aws.amazon.com/transform/latest/userguide/)

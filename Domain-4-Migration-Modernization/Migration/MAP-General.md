@@ -130,5 +130,5 @@ cutover night.
 
 - [AWS Migration Acceleration Program](https://aws.amazon.com/migration-acceleration-program/)
 - [AWS Cloud Adoption Framework](https://aws.amazon.com/cloud-adoption-framework/)
-- [AWS Migration Hub](https://aws.amazon.com/migration-hub/)
-- [AWS Transform](https://aws.amazon.com/aws-transform/)
+- [AWS Migration Hub](https://aws.amazon.com/transform/)
+- [AWS Transform](https://aws.amazon.com/transform/)
