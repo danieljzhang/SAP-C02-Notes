@@ -192,6 +192,30 @@ def retry_with_backoff(func, max_retries=5):
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Set RTO/RPO from business impact, then test the design
+
+RTO (how long to restore) and RPO (how much data loss is acceptable) are
+business decisions first, architecture second. Different tiers deserve
+different objectives — a reporting portal tolerating hours of rebuild and a
+transaction ledger tolerating minutes of loss should not share one
+active/active bill.
+
+| Pattern | Readiness | Cost profile |
+|---|---|---|
+| Backup and restore | Rebuild after event | Cheapest idle; slowest recovery |
+| Pilot light | Core data/components ready | Moderate |
+| Warm standby | Reduced functional copy, scale on event | Higher |
+| Multi-site active/active | Serving from multiple locations | Highest; adds consistency complexity |
+
+These are patterns, not guaranteed numbers — actual recovery depends on
+data volume, automation, dependencies, DNS behavior, and human steps.
+Rehearse failover *and* failback; measure a real restore before claiming an
+objective is met.
+
 ## 8. Official References
 
 - [AWS DR Whitepaper](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html)

@@ -89,6 +89,25 @@ AWS Cost Explorer provides interactive visualizations and analysis of AWS costs 
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Cost optimization starts at architecture time
+
+Treat cost as a design constraint, not a spreadsheet exercise at the end:
+
+- Match **commitment instruments to stable baselines**: Savings Plans and
+  Reserved Instances discount predictable usage; they do not make spiky
+  workloads cheap — right-sizing and serverless do.
+- **Savings Plans vs RIs:** Plans flex across instance families, regions,
+  and services (Compute plans cover EC2, Lambda, Fargate); RIs lock to
+  configuration. Flexibility has a price — model both.
+- Tag-driven allocation only works with a **governed tag vocabulary**
+  enforced by policy; untagged resources make every cost report fiction.
+- The cheapest architecture that misses RTO/RPO is not cheap — it is just
+  unpriced risk.
+
 ## 7. Official References
 
 - [Cost Explorer User Guide](https://docs.aws.amazon.com/cost-management/latest/userguide/ce-what-is.html)

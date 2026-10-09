@@ -200,6 +200,26 @@ Stream log data in real-time to:
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Choose the signal that answers the operational question
+
+- **Metrics and alarms** detect measured behavior changes. Metric math can
+  express utilization vs quota — but only when metric and quota share scope
+  and units. For quotas with a CloudWatch usage metric (`AWS/Usage`
+  namespace), `m1 / SERVICE_QUOTA(m1) * 100` gives a real percentage; alarm
+  at a threshold that leaves response time (e.g., 75%), which is an
+  operational choice, not an AWS default.
+- **Synthetics canaries** exercise the user journey — they catch a broken
+  experience while infrastructure metrics still look green.
+- **VPC Flow Logs** record IP metadata, not packet contents — right for
+  connectivity debugging, wrong for payload inspection.
+- **CloudTrail vs Config:** CloudTrail records *who called which API*;
+  Config records *what the configuration was* and evaluates compliance.
+  Incident investigation usually needs both.
+
 ## 12. Official References
 
 - [CloudWatch User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/)

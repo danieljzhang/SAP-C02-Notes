@@ -128,6 +128,27 @@ CopyActions:
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Replication is not backup
+
+Replicas, read replicas, and cross-Region replication copy *everything* —
+including corruption, ransomware encryption, and accidental deletes. A
+recovery plan needs **isolated recovery points** (snapshots, vault-locked
+backups) with separate retention, separate credentials, and ideally a
+separate account.
+
+- **AWS Backup Vault Lock (Compliance mode):** immutable for the retention
+  period — not even the backup account's root can delete early. This is the
+  control that survives a compromised administrator.
+- **S3 Object Lock (Compliance mode):** the object-level equivalent;
+  versioning alone is not immutability since versions can be deleted.
+- Document retention, cross-account/Region copies, KMS key access, restore
+  permissions, and validation of recovered data — then test the restore
+  quarterly. An untested backup is a hope.
+
 ## 9. Official References
 
 - [AWS Backup Developer Guide](https://docs.aws.amazon.com/aws-backup/latest/devguide/)

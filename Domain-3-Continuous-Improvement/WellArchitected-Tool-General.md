@@ -131,6 +131,19 @@ Extend the Well-Architected Framework for specific domains:
 
 ---
 
+---
+
+## 🎯 Architecture Decision Notes
+
+### Make the review repeatable, not ceremonial
+
+Run Well-Architected reviews on a cadence tied to change (major releases,
+new integrations), not on the calendar alone. For each pillar, convert
+findings into tracked remediation with owners — a review whose output is a
+PDF nobody opens is theater. Use the review to force the tradeoff
+conversations teams avoid: cost vs resilience, speed vs control, build vs
+buy. Re-run after remediation and compare; the delta is the value.
+
 ## 8. Official References
 
 - [Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
