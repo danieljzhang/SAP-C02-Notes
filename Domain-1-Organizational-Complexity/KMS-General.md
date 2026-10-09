@@ -34,9 +34,9 @@ Miss either one and the call fails. This is the exam's favorite KMS trap.
 ## 3. Envelope Encryption
 
 KMS uses envelope encryption: a **data key** encrypts the data; the **data key** is encrypted by the KMS key. This means:
-- The plaintext data key never leaves the caller — only the encrypted data key travels with the data.
+- The plaintext data key exists only in the caller's memory (`GenerateDataKey` returns it, but KMS never retains it) — only the encrypted data key travels/stores with the data.
 - `GenerateDataKey` returns both plaintext (for immediate use) and ciphertext (for storage) versions.
-- Key rotation re-encrypts data keys, not all the data — rotation is cheap.
+- Rotation creates a new key version for future encryption operations; existing ciphertexts (and their data keys) stay encrypted under the old version, which KMS retains for decryption. Nothing is re-encrypted — that is why rotation is cheap.
 
 ---
 
@@ -53,7 +53,7 @@ KMS uses envelope encryption: a **data key** encrypts the data; the **data key**
 ### The KMS questions the exam asks
 
 1. **"Who can use this key across accounts?"** → Check the key policy FIRST. IAM policies are necessary but not sufficient.
-2. **"How do we audit key usage?"** → CMK + CloudTrail (key usage is logged). AWS-managed keys offer less visibility.
+2. **"How do we audit key usage?"** → CMK + CloudTrail (key usage is logged). AWS-managed keys offer less control (no key-policy edits, no manual rotation/disable/delete); usage still logs to CloudTrail — only AWS-owned keys are invisible in your account.
 3. **"Temporary access for a service?"** → Grants, not key policy edits.
 4. **"KMS vs CloudHSM?"** → KMS is multi-tenant managed; CloudHSM is single-tenant dedicated hardware for compliance regimes requiring exclusive key custody (and you manage the HSM cluster).
 
@@ -61,33 +61,7 @@ KMS uses envelope encryption: a **data key** encrypts the data; the **data key**
 
 ---
 
-## 5. Exam Tips
-
-- Cross-account KMS = key policy + IAM policy. Memorize this.
-- Grants are for temporary/delegated access; key policies are the durable control.
-- Envelope encryption means rotation does not re-encrypt all data.
-- Deletion waiting period (7–30 days) is the safety net — the exam tests whether you know deletion is not instant.
-
----
-
-## 6. Official References
-
-- [AWS KMS key types](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html)
-- [Key policies](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html)
-- [Grants](https://docs.aws.amazon.com/kms/latest/developerguide/grants.html)
-- [Cross-account access](https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-modifying-external-accounts.html)
-
----
-
-# Gap fill: KMS vs CloudHSM decider
-
-> NOTE FOR INTEGRATION: the parallel gap-fill batch (fills/) is creating
-> `KMS-General.md` tomorrow. This section is designed to slot into that file
-> under its decision-notes area — do NOT create a second KMS file.
-
-## 🎯 Architecture Decision Notes
-
-### KMS vs CloudHSM — the custody question decides
+### KMS vs CloudHSM — the custody question decides (detail)
 
 Both manage encryption keys. The decider is **who holds the hardware**:
 
@@ -118,3 +92,21 @@ for HSM user management and client-side crypto integration.
 - **Key policies vs grants vs IAM policies:** the key policy is the
   primary authorization document for a KMS key — cross-account access
   needs the key policy to allow it, not just the caller's IAM policy.
+
+---
+
+## 5. Exam Tips
+
+- Cross-account KMS = key policy + IAM policy. Memorize this.
+- Grants are for temporary/delegated access; key policies are the durable control.
+- Envelope encryption means rotation does not re-encrypt all data.
+- Deletion waiting period (7–30 days) is the safety net — the exam tests whether you know deletion is not instant.
+
+---
+
+## 6. Official References
+
+- [AWS KMS key types](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html)
+- [Key policies](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html)
+- [Grants](https://docs.aws.amazon.com/kms/latest/developerguide/grants.html)
+- [Cross-account access](https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-modifying-external-accounts.html)

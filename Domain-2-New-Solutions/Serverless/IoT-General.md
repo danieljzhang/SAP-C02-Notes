@@ -67,7 +67,7 @@ The exam's classic trap: describing Greengrass as "extending the AWS Region to t
 
 - **Greengrass:** your devices, your hardware, intermittent links OK.
 - **Outposts:** AWS hardware in your building, needs Region connectivity, for residency/latency with AWS APIs.
-- **Snowball Edge:** offline data transfer or temporary edge compute where network transfer is impractical — a device you ship, not a deployment model.
+- **Snowball Edge:** offline data transfer or temporary edge compute where network transfer is impractical — a device you ship, not a deployment model (existing customers only; closed to new customers Nov 2025).
 
 When a scenario says "factory floor, unreliable WAN, local ML inference," the answer is Greengrass — and the wrong answers will be Outposts ("install AWS racks") or pure cloud ingestion ("stream everything to Kinesis" fails during the outage).
 

@@ -82,4 +82,4 @@ Container costs include compute, load balancers, storage, networking, observabil
 - [Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html)
 - [AWS Fargate](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html)
 - [Amazon ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html)
-- [AWS Prescriptive Guidance: Container migration](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-containerized-applications/introduction.html)
+- [AWS Prescriptive Guidance: Container migration](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-phased-approach/welcome.html)

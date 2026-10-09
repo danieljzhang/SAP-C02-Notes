@@ -98,6 +98,6 @@ unlimited.
 ## 9. Official References
 
 - [What is AWS Transfer Family?](https://docs.aws.amazon.com/transfer/latest/userguide/what-is-aws-transfer-family.html)
-- [Transfer Family identity providers](https://docs.aws.amazon.com/transfer/latest/userguide/authenticating-users.html)
+- [Transfer Family identity providers](https://docs.aws.amazon.com/transfer/latest/userguide/custom-idp-intro.html)
 - [Transfer Family managed workflows](https://docs.aws.amazon.com/transfer/latest/userguide/transfer-workflows.html)
 - [Transfer Family pricing](https://aws.amazon.com/aws-transfer-family/pricing/)

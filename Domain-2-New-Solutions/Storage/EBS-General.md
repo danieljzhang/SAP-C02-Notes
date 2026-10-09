@@ -1,6 +1,6 @@
 # Amazon EBS — SAP-C02 Study Notes
 
-> Exam relevance: Domain 2 (30%). EBS is the block storage behind most EC2 workloads. At the Professional level, focus on volume type selection, snapshot mechanics, and encryption — not just "what is EBS."
+> Exam relevance: Domain 2 (29%). EBS is the block storage behind most EC2 workloads. At the Professional level, focus on volume type selection, snapshot mechanics, and encryption — not just "what is EBS."
 
 ---
 
@@ -61,7 +61,7 @@
 - gp3 is the default answer unless the scenario demands provisioned IOPS (io2) or throughput HDD (st1).
 - "Encrypt an existing volume" → snapshot → encrypted copy → new volume. There is no in-place conversion.
 - Snapshot sharing across accounts requires **both** snapshot permissions **and** KMS key policy access.
-- Multi-attach is io2-only, same-AZ, and the application owns write fencing.
+- Multi-attach is io1/io2, same-AZ, and the application owns write fencing.
 
 ---
 

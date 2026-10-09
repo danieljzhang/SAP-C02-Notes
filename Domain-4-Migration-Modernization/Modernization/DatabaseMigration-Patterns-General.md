@@ -83,5 +83,5 @@ A low-downtime plan is not automatically zero downtime or zero data loss. Define
 
 - [AWS DMS User Guide](https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html)
 - [DMS Schema Conversion](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_SchemaConversion.html)
-- [AWS Database Migration guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/strategy-database-migration/overview.html)
-- [Choosing a database on AWS](https://aws.amazon.com/getting-started/decision-guides/databases-on-aws-how-to-choose/)
+- AWS Database Migration guidance (link removed — page unverifiable)
+- [Choosing a database on AWS](https://docs.aws.amazon.com/decision-guides/latest/decision-guides/databases-on-aws-how-to-choose.html)

@@ -84,4 +84,4 @@ Step Functions for durable multi-step orchestration
 - [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
 - [Amazon EventBridge User Guide](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html)
 - [AWS Step Functions Developer Guide](https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html)
-- [AWS Prescriptive Guidance: Modernization](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-intro/welcome.html)
+- [AWS Prescriptive Guidance: Modernization](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-phased-approach/welcome.html)

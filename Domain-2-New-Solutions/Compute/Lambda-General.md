@@ -6,7 +6,7 @@
 
 ## 1. Overview
 
-AWS Lambda runs code in response to events without provisioning or managing servers. You pay only for compute time consumed (per 100ms increments).
+AWS Lambda runs code in response to events without provisioning or managing servers. You pay only for compute time consumed (per 1-ms increments).
 
 **Key characteristics:**
 - Max execution timeout: **15 minutes**
@@ -34,7 +34,7 @@ AWS Lambda runs code in response to events without provisioning or managing serv
 - Affected by: runtime (Java/C# slower than Python/Node), VPC attachment, package size
 - Mitigations: Provisioned Concurrency, SnapStart (Java), keep-warm pings (not recommended at scale)
 
-### SnapStart (Java)
+### SnapStart (Java, Python, .NET)
 
 - Takes a snapshot of initialized execution environment
 - Restores from snapshot instead of initializing from scratch
@@ -150,7 +150,7 @@ Lambda (in VPC)
 
 - Lambda timeout max is **15 minutes** — not suitable for long-running processes
 - **Provisioned Concurrency** eliminates cold starts but costs more — use for latency-sensitive APIs
-- **SnapStart** is Java-only — reduces cold starts without the cost of Provisioned Concurrency
+- **SnapStart** supports Java 11+, Python 3.12+, and .NET 8+ — reduces cold starts without the cost of Provisioned Concurrency
 - Lambda in VPC uses **Hyperplane ENIs** — no longer causes cold start delays
 - **Reserved concurrency = 0** disables the function — useful for emergency shutoff
 - **Destinations** > DLQ for async invocations — more context, handles both success and failure

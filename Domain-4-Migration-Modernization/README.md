@@ -101,7 +101,7 @@ Discover goals, dependencies, constraints, and ownership
 ## Official References
 
 - [SAP-C02 exam page and guide](https://aws.amazon.com/certification/certified-solutions-architect-professional/)
-- [AWS Migration Hub](https://aws.amazon.com/migration-hub/)
+- [AWS Migration Hub](https://aws.amazon.com/transform/)
 - [AWS Migration Acceleration Program](https://aws.amazon.com/migration-acceleration-program/)
 - [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html)
-- [AWS Transform](https://aws.amazon.com/aws-transform/)
+- [AWS Transform](https://aws.amazon.com/transform/)
