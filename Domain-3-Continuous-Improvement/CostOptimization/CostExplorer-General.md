@@ -1,5 +1,3 @@
-# AWS Cost Explorer — SAP-C02 Study Notes
-
 > Exam relevance: Domain 3 (25%). Cost Explorer is the primary tool for analyzing and forecasting AWS costs. Know filtering, grouping, rightsizing recommendations, and Savings Plans analysis.
 
 ---
@@ -89,9 +87,7 @@ AWS Cost Explorer provides interactive visualizations and analysis of AWS costs 
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 7. 🎯 Architecture Decision Notes
 
 ### Cost optimization starts at architecture time
 
@@ -108,7 +104,7 @@ Treat cost as a design constraint, not a spreadsheet exercise at the end:
 - The cheapest architecture that misses RTO/RPO is not cheap — it is just
   unpriced risk.
 
-## 7. Official References
+## 8. Official References
 
 - [Cost Explorer User Guide](https://docs.aws.amazon.com/cost-management/latest/userguide/ce-what-is.html)
 - [Rightsizing Recommendations](https://docs.aws.amazon.com/cost-management/latest/userguide/ce-rightsizing.html)

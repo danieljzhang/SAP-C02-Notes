@@ -1,5 +1,3 @@
-# AWS Compute Optimizer — SAP-C02 Study Notes
-
 > Exam relevance: Domain 3 (25%). Compute Optimizer uses ML to recommend optimal resource configurations. Know supported resources, recommendation types, and how it differs from Cost Explorer rightsizing.
 
 ---

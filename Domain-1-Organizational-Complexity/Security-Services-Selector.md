@@ -1,6 +1,6 @@
 # Security Service Selection — SAP-C02 Study Notes
 
-> Security scenarios often require several controls. Select services by the control plane they provide, then design IAM, network, data, response, and governance integrations around them.
+> Exam relevance: Domain 1 (26%). Security scenarios often require several controls — select services by the control plane they provide, then design IAM, network, data, response, and governance integrations around them.
 
 ## 1. Which Service Answers Which Question?
 
@@ -48,7 +48,7 @@ GuardDuty / Inspector / Macie / Config
 - Use Network Firewall or a centralized inspection design for VPC network traffic. Validate return paths, AZ resilience, routing symmetry, and throughput.
 - Use Firewall Manager when central policy administration across an Organization is required and its supported resource types match.
 
-## 4. Original Scenario
+## 4. Exam Scenario
 
 **Scenario:** A regulated organization needs to find exposed S3 buckets, detect suspicious account behavior, identify vulnerable EC2 packages, and route high-severity findings to a security team across many accounts.
 

@@ -116,6 +116,6 @@ DynamoDB Global Tables) and design for its consistency/conflict semantics.
 - **Aurora vs RDS** is workload-specific: compare engine compatibility, HA/replication needs, features, performance, operations, and cost
 - **DynamoDB** fits access-pattern-driven key-value/document workloads; design partition keys, indexes, throughput, consistency, and hot-key behavior
 - **CloudFront** for static content and global distribution — not just CDN, also security (WAF, Shield)
-- **ECS Fargate** vs **EKS** — Fargate for simplicity, EKS for Kubernetes compatibility
+- **ECS** vs **EKS** — ECS (use the Fargate launch type for serverless compute) for AWS-native simplicity, EKS for Kubernetes compatibility
 - **Auto Scaling** — use health checks and multiple AZs where availability requirements call for them
 - Cost optimization: Spot for fault-tolerant, Savings Plans for steady-state, serverless for variable

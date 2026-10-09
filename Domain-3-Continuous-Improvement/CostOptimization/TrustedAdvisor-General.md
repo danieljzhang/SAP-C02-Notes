@@ -1,5 +1,3 @@
-# AWS Trusted Advisor — SAP-C02 Study Notes
-
 > Exam relevance: Domains 1 and 3. Trusted Advisor provides checks across six categories. These are not the six Well-Architected pillars. Check availability depends on the current AWS Support plan and is changing; verify the current plan and check reference before relying on a specific check.
 
 ---
@@ -68,15 +66,15 @@ The exact list and refresh behavior are plan-dependent and may change; do not de
 
 **Scenario 1:** A company wants to identify EC2 instances that have been running but have very low CPU utilization (potential waste). What is the quickest solution?
 
-> Check the relevant **Trusted Advisor Cost Optimization** check if it is available under the account's current plan. Use the current check reference for its utilization thresholds and evaluation window, then validate seasonal demand and application SLOs before rightsizing.
+> Check the **Trusted Advisor Cost Optimization** category for low-utilization EC2 instance checks. Confirm the check is available under the account's current Support plan, then validate seasonal demand and application SLOs before rightsizing.
 
 **Scenario 2:** A company wants to ensure no security groups allow unrestricted inbound access on sensitive ports (SSH, RDP). What is the solution?
 
-> Use a suitable **Trusted Advisor Security** check where the current plan exposes it, and/or continuously evaluate security groups with Config/security tooling. Confirm the check's exact ports, IPv4/IPv6 coverage, refresh behavior, and plan entitlement; do not assume it detects every unrestricted rule.
+> Use the **Trusted Advisor Security** check for unrestricted security-group rules (confirm availability under the account's Support plan), and back it with Config rules for continuous evaluation. Confirm the check's port coverage and refresh behavior — a point-in-time check does not replace continuous monitoring.
 
 **Scenario 3:** A company is approaching EC2 instance limits in a region and wants proactive notification. What is the solution?
 
-> Use **Service Quotas** to monitor supported quotas and configure proactive notifications/alarms where available; request increases ahead of demand. Trusted Advisor can provide complementary checks, but verify current metric and alert integration rather than assuming every quota is surfaced the same way.
+> Use **Service Quotas** to monitor the quota and set CloudWatch alarms on utilization where metrics are available; request increases ahead of demand. Trusted Advisor Service Limits checks can complement this, but confirm which quotas each source actually surfaces.
 
 ---
 

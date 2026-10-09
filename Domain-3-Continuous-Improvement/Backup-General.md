@@ -1,5 +1,3 @@
-# AWS Backup — SAP-C02 Study Notes
-
 > Exam relevance: Domains 2, 3. AWS Backup is the centralized backup service. Know backup plans, vaults, cross-region/cross-account backup, and supported services.
 
 ---
@@ -128,9 +126,7 @@ CopyActions:
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 9. 🎯 Architecture Decision Notes
 
 ### Replication is not backup
 
@@ -149,13 +145,9 @@ separate account.
   permissions, and validation of recovered data — then test the restore
   quarterly. An untested backup is a hope.
 
----
-
-## 🎯 Architecture Decision Notes
-
 ### Design the backup cadence from the RPO, not the other way around
 
-RPO (Recovery Point Objective) is the maximum data loss you can tolerate, measured in time. The design rule is simple: **your most frequent recovery point must be at least as frequent as the RPO**. An hourly full backup alone gives you an RPO of one hour — no better. To promise a 15-minute RPO, you need something captured every 15 minutes or less: transaction logs shipped every 5 minutes, continuous replication, or storage-level snapshots on a 15-minute schedule.
+RPO (Recovery Point Objective) is the maximum data loss a workload can tolerate, measured in time. The design rule is simple: **the most frequent recovery point must be at least as frequent as the RPO**. An hourly full backup alone gives you an RPO of one hour — no better. To promise a 15-minute RPO, you need something captured every 15 minutes or less: transaction logs shipped every 5 minutes, continuous replication, or storage-level snapshots on a 15-minute schedule.
 
 Decision rules:
 
@@ -166,13 +158,9 @@ Decision rules:
 
 **Fresh example:** A fintech ledger needs RPO ≤ 15 minutes. The design: nightly full database snapshots to S3, plus transaction logs streamed to a second S3 bucket every 5 minutes. Worst case, they lose at most 5 minutes of transactions — inside the objective. Quarterly, they restore the full snapshot plus logs into an isolated account and verify the ledger balances, proving the RPO is real.
 
----
-
-## 🎯 Architecture Decision Notes
-
 ### Classify what's in the backups — Macie on the backup buckets
 
-Backups concentrate your most sensitive data in one place, often with broader access than production (restores, audits, cross-account copies). Amazon Macie continuously scans S3 buckets and identifies sensitive data — PII, credentials, financial records — so you know *what* your backup buckets actually contain and can prove it to auditors.
+Backups concentrate the most sensitive data in one place, often with broader access than production (restores, audits, cross-account copies). Amazon Macie continuously scans S3 buckets and identifies sensitive data — PII, credentials, financial records — so teams know *what* backup buckets actually contain and can prove it to auditors.
 
 Decision rules:
 
@@ -184,10 +172,6 @@ Decision rules:
 **Fresh example:** A healthcare SaaS ships database transaction logs to S3 every 5 minutes for RPO purposes. Macie is enabled on the log bucket and flags that patient email addresses appear in a log stream the team assumed was de-identified. The team tightens the bucket policy, rotates to a dedicated KMS key, and fixes the logging pipeline — catching the exposure in the backup copy before an auditor (or worse) does.
 
 
----
-
-## 🎯 Architecture Decision Notes
-
 ### Continuous backups — when snapshot schedules can't meet the RPO
 
 AWS Backup offers two backup modes, and the choice is driven by the recovery point objective:
@@ -197,9 +181,9 @@ AWS Backup offers two backup modes, and the choice is driven by the recovery poi
 
 Use continuous backups when the RPO is measured in seconds-to-minutes rather than hours — e.g., "lose no more than 5 minutes of database writes." The tradeoff: continuous backup keeps log data flowing constantly, so model the storage cost of the log stream against the RPO it buys. For RDS specifically, native automated backups already provide PITR via 5-minute transaction-log capture to S3; choose AWS Backup continuous mode when you want that same PITR capability managed centrally alongside cross-region and cross-account copies in one backup plan.
 
-Mini-example: a payments database requires 10-minute RPO and 2-hour RTO. A daily snapshot alone misses the RPO — but an AWS Backup plan with continuous backups enabled gives second-granularity rewind within the window, satisfying the RPO while the plan's cross-region copy handles the DR side of the RTO.
+**Fresh example:** a payments database requires 10-minute RPO and 2-hour RTO. A daily snapshot alone misses the RPO — but an AWS Backup plan with continuous backups enabled gives second-granularity rewind within the window, satisfying the RPO while the plan's cross-region copy handles the DR side of the RTO.
 
-## 9. Official References
+## 10. Official References
 
 - [AWS Backup Developer Guide](https://docs.aws.amazon.com/aws-backup/latest/devguide/)
 - [Backup Vault Lock](https://docs.aws.amazon.com/aws-backup/latest/devguide/vault-lock.html)

@@ -32,23 +32,23 @@
 ## Files in This Domain
 
 ### Organizations/
-- [Organizations-General.md](./Organizations/Organizations-General.md) — AWS Organizations, OUs, account management
-- [SCPs-General.md](./Organizations/SCPs-General.md) — Service Control Policies, guardrails, deny strategies
+- [Organizations-General](./organizations/organizations-general.md) — AWS Organizations, OUs, account management
+- [SCPs-General](./organizations/scps-general.md) — Service Control Policies, guardrails, deny strategies
 
 ### ControlTower/
-- [ControlTower-General.md](./ControlTower/ControlTower-General.md) — Landing zones, account factory, guardrails
-- [LandingZone-General.md](./ControlTower/LandingZone-General.md) — Landing zone design, customizations, AFT
+- [ControlTower-General](./controltower/controltower-general.md) — Landing zones, account factory, guardrails
+- [LandingZone-General](./controltower/landingzone-general.md) — Landing zone design, customizations, AFT
 
 ### IAM/
-- [IAM-General.md](./IAM/IAM-General.md) — IAM roles, policies, cross-account trust, federation
-- [IAM-IdentityCenter-General.md](./IAM/IAM-IdentityCenter-General.md) — SSO, permission sets, multi-account access
-- [ResourceControlPolicies-General.md](./IAM/ResourceControlPolicies-General.md) — RCPs, data perimeter, vs SCPs
+- [IAM-General](./iam/iam-general.md) — IAM roles, policies, cross-account trust, federation
+- [IAM-IdentityCenter-General](./iam/iam-identitycenter-general.md) — SSO, permission sets, multi-account access
+- [ResourceControlPolicies-General](./iam/resourcecontrolpolicies-general.md) — RCPs, data perimeter, vs SCPs
 
 ### Networking/
-- [TransitGateway-General.md](./Networking/TransitGateway-General.md) — Hub-and-spoke, inter-region peering, route tables
-- [DirectConnect-General.md](./Networking/DirectConnect-General.md) — Dedicated/hosted connections, VIFs, resilience
-- [VPN-General.md](./Networking/VPN-General.md) — Site-to-Site VPN, Client VPN, accelerated VPN
-- [VPC-Advanced-General.md](./Networking/VPC-Advanced-General.md) — VPC sharing, PrivateLink, peering, endpoints
+- [TransitGateway-General](./networking/transitgateway-general.md) — Hub-and-spoke, inter-region peering, route tables
+- [DirectConnect-General](./networking/directconnect-general.md) — Dedicated/hosted connections, VIFs, resilience
+- [VPN-General](./networking/vpn-general.md) — Site-to-Site VPN, Client VPN, accelerated VPN
+- [VPC-Advanced-General](./networking/vpc-advanced-general.md) — VPC sharing, PrivateLink, peering, endpoints
 
 ### Standalone
 - [RAM-General.md](./RAM-General.md) — Resource Access Manager, cross-account sharing

@@ -177,9 +177,7 @@ Gradually shift traffic to new version. Roll back by setting new version weight 
 
 ---
 
----
-
-## 🎯 Architecture Decision Notes
+## 9. 🎯 Architecture Decision Notes
 
 ### DNS routing is not failover — respect the cache
 
@@ -197,10 +195,6 @@ mechanism; do not rely on short TTLs alone — not every resolver honors them.
   VPC association plus RAM sharing or cross-account authorization.
 - **DNSSEC** proves data integrity/authenticity; it does not encrypt queries.
 
----
-
-## 🎯 Architecture Decision Notes
-
 ### DNSSEC — signing (publishing) vs validation (checking)
 
 DNSSEC has two halves that the exam likes to separate:
@@ -208,13 +202,13 @@ DNSSEC has two halves that the exam likes to separate:
 - **DNSSEC signing** (on the hosted zone): Route 53 cryptographically signs every record in a public hosted zone. Route 53 manages the zone-signing key; you hold the key-signing key in KMS. This proves *data origin and integrity* — resolvers can verify the answer really came from your zone and wasn't altered. Use it for compliance-driven or high-trust domains (the classic driver is mandates like FedRAMP).
 - **DNSSEC validation** (on the Resolver): enabling validation on the Route 53 Resolver in your VPC makes it reject tampered DNS responses, protecting VPC workloads against DNS spoofing/poisoning.
 
-Decision rule: signing protects *your* domain's answers for everyone; validation protects *your VPC's* queries from everyone. They are independent toggles — you can validate without signing your own zones.
+Decision rule: signing protects *your* domain's answers for everyone; validation protects *your VPC's* queries from everyone. They are independent toggles — a VPC can validate without the zone owner signing.
 
 Trap: DNSSEC provides authenticity and integrity, **not confidentiality** — it does not encrypt DNS queries. If the requirement is private DNS traffic, the answer is TLS (DoH/DoT) or keeping queries inside the VPC, not DNSSEC. And DNSSEC doesn't replace health checks or routing policies; it only vouches that the DNS answer is genuine.
 
-Mini-example: a bank must meet a compliance mandate for its public domain and also protect its VPC resolvers from cache poisoning. Enable DNSSEC signing on the public hosted zone (KMS holds the key-signing key) *and* turn on DNSSEC validation on the Resolver — the first vouches for the bank's own records, the second verifies everyone else's.
+**Fresh example:** a bank must meet a compliance mandate for its public domain and also protect its VPC resolvers from cache poisoning. Enable DNSSEC signing on the public hosted zone (KMS holds the key-signing key) *and* turn on DNSSEC validation on the Resolver — the first vouches for the bank's own records, the second verifies everyone else's.
 
-## 9. Official References
+## 10. Official References
 
 - [Route 53 Developer Guide](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/)
 - [Routing Policies](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html)
